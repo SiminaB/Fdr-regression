@@ -1,7 +1,7 @@
-#README for FDR-regression project
+#README for FDR-regression repository
 
 This folder contains the code to fully reproduce the simulations and data analysis in the paper
-"A direct approach to false discovery rate regression" by SM Boca and JT Leek.
+"A regression framework for the proportion of true null hypotheses" by SM Boca and JT Leek.
 
 ##simulations.Rnw
 
