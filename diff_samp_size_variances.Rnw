@@ -238,6 +238,9 @@ for(m in 1:length(nTests))
 xtable(matrix(maxSm, nrow=1), digits=3)
 @
 
-
+Session info:
+<<sessInf>>=
+devtools::session_info()
+@
 
 \end{document}

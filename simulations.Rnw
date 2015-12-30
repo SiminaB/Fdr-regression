@@ -369,5 +369,9 @@ legend("top", ##x=-0.4, y=0.2,
        cex=1.2, x.intersp=0.2, y.intersp=1.0)
 @
 
+Session info:
+<<sessInf>>=
+devtools::session_info()
+@
 
 \end{document}
