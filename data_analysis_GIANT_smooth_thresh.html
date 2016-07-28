@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="Simina Boca, Jeff Leek" />
+
+
+<title>Data analysis for FDR regression</title>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<link href="data:text/css,pre%20%2Eoperator%2C%0Apre%20%2Eparen%20%7B%0A%20color%3A%20rgb%28104%2C%20118%2C%20135%29%0A%7D%0A%0Apre%20%2Eliteral%20%7B%0A%20color%3A%20%23990073%0A%7D%0A%0Apre%20%2Enumber%20%7B%0A%20color%3A%20%23099%3B%0A%7D%0A%0Apre%20%2Ecomment%20%7B%0A%20color%3A%20%23998%3B%0A%20font%2Dstyle%3A%20italic%0A%7D%0A%0Apre%20%2Ekeyword%20%7B%0A%20color%3A%20%23900%3B%0A%20font%2Dweight%3A%20bold%0A%7D%0A%0Apre%20%2Eidentifier%20%7B%0A%20color%3A%20rgb%280%2C%200%2C%200%29%3B%0A%7D%0A%0Apre%20%2Estring%20%7B%0A%20color%3A%20%23d14%3B%0A%7D%0A" rel="stylesheet" type="text/css" />
+<script src="data:application/x-javascript,var%20hljs%3Dnew%20function%28%29%7Bfunction%20m%28p%29%7Breturn%20p%2Ereplace%28%2F%26%2Fgm%2C%22%26amp%3B%22%29%2Ereplace%28%2F%3C%2Fgm%2C%22%26lt%3B%22%29%7Dfunction%20f%28r%2Cq%2Cp%29%7Breturn%20RegExp%28q%2C%22m%22%2B%28r%2EcI%3F%22i%22%3A%22%22%29%2B%28p%3F%22g%22%3A%22%22%29%29%7Dfunction%20b%28r%29%7Bfor%28var%20p%3D0%3Bp%3Cr%2EchildNodes%2Elength%3Bp%2B%2B%29%7Bvar%20q%3Dr%2EchildNodes%5Bp%5D%3Bif%28q%2EnodeName%3D%3D%22CODE%22%29%7Breturn%20q%7Dif%28%21%28q%2EnodeType%3D%3D3%26%26q%2EnodeValue%2Ematch%28%2F%5Cs%2B%2F%29%29%29%7Bbreak%7D%7D%7Dfunction%20h%28t%2Cs%29%7Bvar%20p%3D%22%22%3Bfor%28var%20r%3D0%3Br%3Ct%2EchildNodes%2Elength%3Br%2B%2B%29%7Bif%28t%2EchildNodes%5Br%5D%2EnodeType%3D%3D3%29%7Bvar%20q%3Dt%2EchildNodes%5Br%5D%2EnodeValue%3Bif%28s%29%7Bq%3Dq%2Ereplace%28%2F%5Cn%2Fg%2C%22%22%29%7Dp%2B%3Dq%7Delse%7Bif%28t%2EchildNodes%5Br%5D%2EnodeName%3D%3D%22BR%22%29%7Bp%2B%3D%22%5Cn%22%7Delse%7Bp%2B%3Dh%28t%2EchildNodes%5Br%5D%29%7D%7D%7Dif%28%2FMSIE%20%5B678%5D%2F%2Etest%28navigator%2EuserAgent%29%29%7Bp%3Dp%2Ereplace%28%2F%5Cr%2Fg%2C%22%5Cn%22%29%7Dreturn%20p%7Dfunction%20a%28s%29%7Bvar%20r%3Ds%2EclassName%2Esplit%28%2F%5Cs%2B%2F%29%3Br%3Dr%2Econcat%28s%2EparentNode%2EclassName%2Esplit%28%2F%5Cs%2B%2F%29%29%3Bfor%28var%20q%3D0%3Bq%3Cr%2Elength%3Bq%2B%2B%29%7Bvar%20p%3Dr%5Bq%5D%2Ereplace%28%2F%5Elanguage%2D%2F%2C%22%22%29%3Bif%28e%5Bp%5D%29%7Breturn%20p%7D%7D%7Dfunction%20c%28q%29%7Bvar%20p%3D%5B%5D%3B%28function%28s%2Ct%29%7Bfor%28var%20r%3D0%3Br%3Cs%2EchildNodes%2Elength%3Br%2B%2B%29%7Bif%28s%2EchildNodes%5Br%5D%2EnodeType%3D%3D3%29%7Bt%2B%3Ds%2EchildNodes%5Br%5D%2EnodeValue%2Elength%7Delse%7Bif%28s%2EchildNodes%5Br%5D%2EnodeName%3D%3D%22BR%22%29%7Bt%2B%3D1%7Delse%7Bif%28s%2EchildNodes%5Br%5D%2EnodeType%3D%3D1%29%7Bp%2Epush%28%7Bevent%3A%22start%22%2Coffset%3At%2Cnode%3As%2EchildNodes%5Br%5D%7D%29%3Bt%3Darguments%2Ecallee%28s%2EchildNodes%5Br%5D%2Ct%29%3Bp%2Epush%28%7Bevent%3A%22stop%22%2Coffset%3At%2Cnode%3As%2EchildNodes%5Br%5D%7D%29%7D%7D%7D%7Dreturn%20t%7D%29%28q%2C0%29%3Breturn%20p%7Dfunction%20k%28y%2Cw%2Cx%29%7Bvar%20q%3D0%3Bvar%20z%3D%22%22%3Bvar%20s%3D%5B%5D%3Bfunction%20u%28%29%7Bif%28y%2Elength%26%26w%2Elength%29%7Bif%28y%5B0%5D%2Eoffset%21%3Dw%5B0%5D%2Eoffset%29%7Breturn%28y%5B0%5D%2Eoffset%3Cw%5B0%5D%2Eoffset%29%3Fy%3Aw%7Delse%7Breturn%20w%5B0%5D%2Eevent%3D%3D%22start%22%3Fy%3Aw%7D%7Delse%7Breturn%20y%2Elength%3Fy%3Aw%7D%7Dfunction%20t%28D%29%7Bvar%20A%3D%22%3C%22%2BD%2EnodeName%2EtoLowerCase%28%29%3Bfor%28var%20B%3D0%3BB%3CD%2Eattributes%2Elength%3BB%2B%2B%29%7Bvar%20C%3DD%2Eattributes%5BB%5D%3BA%2B%3D%22%20%22%2BC%2EnodeName%2EtoLowerCase%28%29%3Bif%28C%2Evalue%21%3D%3Dundefined%26%26C%2Evalue%21%3D%3Dfalse%26%26C%2Evalue%21%3D%3Dnull%29%7BA%2B%3D%27%3D%22%27%2Bm%28C%2Evalue%29%2B%27%22%27%7D%7Dreturn%20A%2B%22%3E%22%7Dwhile%28y%2Elength%7C%7Cw%2Elength%29%7Bvar%20v%3Du%28%29%2Esplice%280%2C1%29%5B0%5D%3Bz%2B%3Dm%28x%2Esubstr%28q%2Cv%2Eoffset%2Dq%29%29%3Bq%3Dv%2Eoffset%3Bif%28v%2Eevent%3D%3D%22start%22%29%7Bz%2B%3Dt%28v%2Enode%29%3Bs%2Epush%28v%2Enode%29%7Delse%7Bif%28v%2Eevent%3D%3D%22stop%22%29%7Bvar%20p%2Cr%3Ds%2Elength%3Bdo%7Br%2D%2D%3Bp%3Ds%5Br%5D%3Bz%2B%3D%28%22%3C%2F%22%2Bp%2EnodeName%2EtoLowerCase%28%29%2B%22%3E%22%29%7Dwhile%28p%21%3Dv%2Enode%29%3Bs%2Esplice%28r%2C1%29%3Bwhile%28r%3Cs%2Elength%29%7Bz%2B%3Dt%28s%5Br%5D%29%3Br%2B%2B%7D%7D%7D%7Dreturn%20z%2Bm%28x%2Esubstr%28q%29%29%7Dfunction%20j%28%29%7Bfunction%20q%28x%2Cy%2Cv%29%7Bif%28x%2Ecompiled%29%7Breturn%7Dvar%20u%3Bvar%20s%3D%5B%5D%3Bif%28x%2Ek%29%7Bx%2ElR%3Df%28y%2Cx%2El%7C%7Chljs%2EIR%2Ctrue%29%3Bfor%28var%20w%20in%20x%2Ek%29%7Bif%28%21x%2Ek%2EhasOwnProperty%28w%29%29%7Bcontinue%7Dif%28x%2Ek%5Bw%5D%20instanceof%20Object%29%7Bu%3Dx%2Ek%5Bw%5D%7Delse%7Bu%3Dx%2Ek%3Bw%3D%22keyword%22%7Dfor%28var%20r%20in%20u%29%7Bif%28%21u%2EhasOwnProperty%28r%29%29%7Bcontinue%7Dx%2Ek%5Br%5D%3D%5Bw%2Cu%5Br%5D%5D%3Bs%2Epush%28r%29%7D%7D%7Dif%28%21v%29%7Bif%28x%2EbWK%29%7Bx%2Eb%3D%22%5C%5Cb%28%22%2Bs%2Ejoin%28%22%7C%22%29%2B%22%29%5C%5Cs%22%7Dx%2EbR%3Df%28y%2Cx%2Eb%3Fx%2Eb%3A%22%5C%5CB%7C%5C%5Cb%22%29%3Bif%28%21x%2Ee%26%26%21x%2EeW%29%7Bx%2Ee%3D%22%5C%5CB%7C%5C%5Cb%22%7Dif%28x%2Ee%29%7Bx%2EeR%3Df%28y%2Cx%2Ee%29%7D%7Dif%28x%2Ei%29%7Bx%2EiR%3Df%28y%2Cx%2Ei%29%7Dif%28x%2Er%3D%3D%3Dundefined%29%7Bx%2Er%3D1%7Dif%28%21x%2Ec%29%7Bx%2Ec%3D%5B%5D%7Dx%2Ecompiled%3Dtrue%3Bfor%28var%20t%3D0%3Bt%3Cx%2Ec%2Elength%3Bt%2B%2B%29%7Bif%28x%2Ec%5Bt%5D%3D%3D%22self%22%29%7Bx%2Ec%5Bt%5D%3Dx%7Dq%28x%2Ec%5Bt%5D%2Cy%2Cfalse%29%7Dif%28x%2Estarts%29%7Bq%28x%2Estarts%2Cy%2Cfalse%29%7D%7Dfor%28var%20p%20in%20e%29%7Bif%28%21e%2EhasOwnProperty%28p%29%29%7Bcontinue%7Dq%28e%5Bp%5D%2EdM%2Ce%5Bp%5D%2Ctrue%29%7D%7Dfunction%20d%28B%2CC%29%7Bif%28%21j%2Ecalled%29%7Bj%28%29%3Bj%2Ecalled%3Dtrue%7Dfunction%20q%28r%2CM%29%7Bfor%28var%20L%3D0%3BL%3CM%2Ec%2Elength%3BL%2B%2B%29%7Bif%28%28M%2Ec%5BL%5D%2EbR%2Eexec%28r%29%7C%7C%5Bnull%5D%29%5B0%5D%3D%3Dr%29%7Breturn%20M%2Ec%5BL%5D%7D%7D%7Dfunction%20v%28L%2Cr%29%7Bif%28D%5BL%5D%2Ee%26%26D%5BL%5D%2EeR%2Etest%28r%29%29%7Breturn%201%7Dif%28D%5BL%5D%2EeW%29%7Bvar%20M%3Dv%28L%2D1%2Cr%29%3Breturn%20M%3FM%2B1%3A0%7Dreturn%200%7Dfunction%20w%28r%2CL%29%7Breturn%20L%2Ei%26%26L%2EiR%2Etest%28r%29%7Dfunction%20K%28N%2CO%29%7Bvar%20M%3D%5B%5D%3Bfor%28var%20L%3D0%3BL%3CN%2Ec%2Elength%3BL%2B%2B%29%7BM%2Epush%28N%2Ec%5BL%5D%2Eb%29%7Dvar%20r%3DD%2Elength%2D1%3Bdo%7Bif%28D%5Br%5D%2Ee%29%7BM%2Epush%28D%5Br%5D%2Ee%29%7Dr%2D%2D%7Dwhile%28D%5Br%2B1%5D%2EeW%29%3Bif%28N%2Ei%29%7BM%2Epush%28N%2Ei%29%7Dreturn%20f%28O%2CM%2Ejoin%28%22%7C%22%29%2Ctrue%29%7Dfunction%20p%28M%2CL%29%7Bvar%20N%3DD%5BD%2Elength%2D1%5D%3Bif%28%21N%2Et%29%7BN%2Et%3DK%28N%2CE%29%7DN%2Et%2ElastIndex%3DL%3Bvar%20r%3DN%2Et%2Eexec%28M%29%3Breturn%20r%3F%5BM%2Esubstr%28L%2Cr%2Eindex%2DL%29%2Cr%5B0%5D%2Cfalse%5D%3A%5BM%2Esubstr%28L%29%2C%22%22%2Ctrue%5D%7Dfunction%20z%28N%2Cr%29%7Bvar%20L%3DE%2EcI%3Fr%5B0%5D%2EtoLowerCase%28%29%3Ar%5B0%5D%3Bvar%20M%3DN%2Ek%5BL%5D%3Bif%28M%26%26M%20instanceof%20Array%29%7Breturn%20M%7Dreturn%20false%7Dfunction%20F%28L%2CP%29%7BL%3Dm%28L%29%3Bif%28%21P%2Ek%29%7Breturn%20L%7Dvar%20r%3D%22%22%3Bvar%20O%3D0%3BP%2ElR%2ElastIndex%3D0%3Bvar%20M%3DP%2ElR%2Eexec%28L%29%3Bwhile%28M%29%7Br%2B%3DL%2Esubstr%28O%2CM%2Eindex%2DO%29%3Bvar%20N%3Dz%28P%2CM%29%3Bif%28N%29%7Bx%2B%3DN%5B1%5D%3Br%2B%3D%27%3Cspan%20class%3D%22%27%2BN%5B0%5D%2B%27%22%3E%27%2BM%5B0%5D%2B%22%3C%2Fspan%3E%22%7Delse%7Br%2B%3DM%5B0%5D%7DO%3DP%2ElR%2ElastIndex%3BM%3DP%2ElR%2Eexec%28L%29%7Dreturn%20r%2BL%2Esubstr%28O%2CL%2Elength%2DO%29%7Dfunction%20J%28L%2CM%29%7Bif%28M%2EsL%26%26e%5BM%2EsL%5D%29%7Bvar%20r%3Dd%28M%2EsL%2CL%29%3Bx%2B%3Dr%2Ekeyword%5Fcount%3Breturn%20r%2Evalue%7Delse%7Breturn%20F%28L%2CM%29%7D%7Dfunction%20I%28M%2Cr%29%7Bvar%20L%3DM%2EcN%3F%27%3Cspan%20class%3D%22%27%2BM%2EcN%2B%27%22%3E%27%3A%22%22%3Bif%28M%2ErB%29%7By%2B%3DL%3BM%2Ebuffer%3D%22%22%7Delse%7Bif%28M%2EeB%29%7By%2B%3Dm%28r%29%2BL%3BM%2Ebuffer%3D%22%22%7Delse%7By%2B%3DL%3BM%2Ebuffer%3Dr%7D%7DD%2Epush%28M%29%3BA%2B%3DM%2Er%7Dfunction%20G%28N%2CM%2CQ%29%7Bvar%20R%3DD%5BD%2Elength%2D1%5D%3Bif%28Q%29%7By%2B%3DJ%28R%2Ebuffer%2BN%2CR%29%3Breturn%20false%7Dvar%20P%3Dq%28M%2CR%29%3Bif%28P%29%7By%2B%3DJ%28R%2Ebuffer%2BN%2CR%29%3BI%28P%2CM%29%3Breturn%20P%2ErB%7Dvar%20L%3Dv%28D%2Elength%2D1%2CM%29%3Bif%28L%29%7Bvar%20O%3DR%2EcN%3F%22%3C%2Fspan%3E%22%3A%22%22%3Bif%28R%2ErE%29%7By%2B%3DJ%28R%2Ebuffer%2BN%2CR%29%2BO%7Delse%7Bif%28R%2EeE%29%7By%2B%3DJ%28R%2Ebuffer%2BN%2CR%29%2BO%2Bm%28M%29%7Delse%7By%2B%3DJ%28R%2Ebuffer%2BN%2BM%2CR%29%2BO%7D%7Dwhile%28L%3E1%29%7BO%3DD%5BD%2Elength%2D2%5D%2EcN%3F%22%3C%2Fspan%3E%22%3A%22%22%3By%2B%3DO%3BL%2D%2D%3BD%2Elength%2D%2D%7Dvar%20r%3DD%5BD%2Elength%2D1%5D%3BD%2Elength%2D%2D%3BD%5BD%2Elength%2D1%5D%2Ebuffer%3D%22%22%3Bif%28r%2Estarts%29%7BI%28r%2Estarts%2C%22%22%29%7Dreturn%20R%2ErE%7Dif%28w%28M%2CR%29%29%7Bthrow%22Illegal%22%7D%7Dvar%20E%3De%5BB%5D%3Bvar%20D%3D%5BE%2EdM%5D%3Bvar%20A%3D0%3Bvar%20x%3D0%3Bvar%20y%3D%22%22%3Btry%7Bvar%20s%2Cu%3D0%3BE%2EdM%2Ebuffer%3D%22%22%3Bdo%7Bs%3Dp%28C%2Cu%29%3Bvar%20t%3DG%28s%5B0%5D%2Cs%5B1%5D%2Cs%5B2%5D%29%3Bu%2B%3Ds%5B0%5D%2Elength%3Bif%28%21t%29%7Bu%2B%3Ds%5B1%5D%2Elength%7D%7Dwhile%28%21s%5B2%5D%29%3Bif%28D%2Elength%3E1%29%7Bthrow%22Illegal%22%7Dreturn%7Br%3AA%2Ckeyword%5Fcount%3Ax%2Cvalue%3Ay%7D%7Dcatch%28H%29%7Bif%28H%3D%3D%22Illegal%22%29%7Breturn%7Br%3A0%2Ckeyword%5Fcount%3A0%2Cvalue%3Am%28C%29%7D%7Delse%7Bthrow%20H%7D%7D%7Dfunction%20g%28t%29%7Bvar%20p%3D%7Bkeyword%5Fcount%3A0%2Cr%3A0%2Cvalue%3Am%28t%29%7D%3Bvar%20r%3Dp%3Bfor%28var%20q%20in%20e%29%7Bif%28%21e%2EhasOwnProperty%28q%29%29%7Bcontinue%7Dvar%20s%3Dd%28q%2Ct%29%3Bs%2Elanguage%3Dq%3Bif%28s%2Ekeyword%5Fcount%2Bs%2Er%3Er%2Ekeyword%5Fcount%2Br%2Er%29%7Br%3Ds%7Dif%28s%2Ekeyword%5Fcount%2Bs%2Er%3Ep%2Ekeyword%5Fcount%2Bp%2Er%29%7Br%3Dp%3Bp%3Ds%7D%7Dif%28r%2Elanguage%29%7Bp%2Esecond%5Fbest%3Dr%7Dreturn%20p%7Dfunction%20i%28r%2Cq%2Cp%29%7Bif%28q%29%7Br%3Dr%2Ereplace%28%2F%5E%28%28%3C%5B%5E%3E%5D%2B%3E%7C%5Ct%29%2B%29%2Fgm%2Cfunction%28t%2Cw%2Cv%2Cu%29%7Breturn%20w%2Ereplace%28%2F%5Ct%2Fg%2Cq%29%7D%29%7Dif%28p%29%7Br%3Dr%2Ereplace%28%2F%5Cn%2Fg%2C%22%3Cbr%3E%22%29%7Dreturn%20r%7Dfunction%20n%28t%2Cw%2Cr%29%7Bvar%20x%3Dh%28t%2Cr%29%3Bvar%20v%3Da%28t%29%3Bvar%20y%2Cs%3Bif%28v%29%7By%3Dd%28v%2Cx%29%7Delse%7Breturn%7Dvar%20q%3Dc%28t%29%3Bif%28q%2Elength%29%7Bs%3Ddocument%2EcreateElement%28%22pre%22%29%3Bs%2EinnerHTML%3Dy%2Evalue%3By%2Evalue%3Dk%28q%2Cc%28s%29%2Cx%29%7Dy%2Evalue%3Di%28y%2Evalue%2Cw%2Cr%29%3Bvar%20u%3Dt%2EclassName%3Bif%28%21u%2Ematch%28%22%28%5C%5Cs%7C%5E%29%28language%2D%29%3F%22%2Bv%2B%22%28%5C%5Cs%7C%24%29%22%29%29%7Bu%3Du%3F%28u%2B%22%20%22%2Bv%29%3Av%7Dif%28%2FMSIE%20%5B678%5D%2F%2Etest%28navigator%2EuserAgent%29%26%26t%2EtagName%3D%3D%22CODE%22%26%26t%2EparentNode%2EtagName%3D%3D%22PRE%22%29%7Bs%3Dt%2EparentNode%3Bvar%20p%3Ddocument%2EcreateElement%28%22div%22%29%3Bp%2EinnerHTML%3D%22%3Cpre%3E%3Ccode%3E%22%2By%2Evalue%2B%22%3C%2Fcode%3E%3C%2Fpre%3E%22%3Bt%3Dp%2EfirstChild%2EfirstChild%3Bp%2EfirstChild%2EcN%3Ds%2EcN%3Bs%2EparentNode%2EreplaceChild%28p%2EfirstChild%2Cs%29%7Delse%7Bt%2EinnerHTML%3Dy%2Evalue%7Dt%2EclassName%3Du%3Bt%2Eresult%3D%7Blanguage%3Av%2Ckw%3Ay%2Ekeyword%5Fcount%2Cre%3Ay%2Er%7D%3Bif%28y%2Esecond%5Fbest%29%7Bt%2Esecond%5Fbest%3D%7Blanguage%3Ay%2Esecond%5Fbest%2Elanguage%2Ckw%3Ay%2Esecond%5Fbest%2Ekeyword%5Fcount%2Cre%3Ay%2Esecond%5Fbest%2Er%7D%7D%7Dfunction%20o%28%29%7Bif%28o%2Ecalled%29%7Breturn%7Do%2Ecalled%3Dtrue%3Bvar%20r%3Ddocument%2EgetElementsByTagName%28%22pre%22%29%3Bfor%28var%20p%3D0%3Bp%3Cr%2Elength%3Bp%2B%2B%29%7Bvar%20q%3Db%28r%5Bp%5D%29%3Bif%28q%29%7Bn%28q%2Chljs%2EtabReplace%29%7D%7D%7Dfunction%20l%28%29%7Bif%28window%2EaddEventListener%29%7Bwindow%2EaddEventListener%28%22DOMContentLoaded%22%2Co%2Cfalse%29%3Bwindow%2EaddEventListener%28%22load%22%2Co%2Cfalse%29%7Delse%7Bif%28window%2EattachEvent%29%7Bwindow%2EattachEvent%28%22onload%22%2Co%29%7Delse%7Bwindow%2Eonload%3Do%7D%7D%7Dvar%20e%3D%7B%7D%3Bthis%2ELANGUAGES%3De%3Bthis%2Ehighlight%3Dd%3Bthis%2EhighlightAuto%3Dg%3Bthis%2EfixMarkup%3Di%3Bthis%2EhighlightBlock%3Dn%3Bthis%2EinitHighlighting%3Do%3Bthis%2EinitHighlightingOnLoad%3Dl%3Bthis%2EIR%3D%22%5Ba%2DzA%2DZ%5D%5Ba%2DzA%2DZ0%2D9%5F%5D%2A%22%3Bthis%2EUIR%3D%22%5Ba%2DzA%2DZ%5F%5D%5Ba%2DzA%2DZ0%2D9%5F%5D%2A%22%3Bthis%2ENR%3D%22%5C%5Cb%5C%5Cd%2B%28%5C%5C%2E%5C%5Cd%2B%29%3F%22%3Bthis%2ECNR%3D%22%5C%5Cb%280%5BxX%5D%5Ba%2DfA%2DF0%2D9%5D%2B%7C%28%5C%5Cd%2B%28%5C%5C%2E%5C%5Cd%2A%29%3F%7C%5C%5C%2E%5C%5Cd%2B%29%28%5BeE%5D%5B%2D%2B%5D%3F%5C%5Cd%2B%29%3F%29%22%3Bthis%2EBNR%3D%22%5C%5Cb%280b%5B01%5D%2B%29%22%3Bthis%2ERSR%3D%22%21%7C%21%3D%7C%21%3D%3D%7C%25%7C%25%3D%7C%26%7C%26%26%7C%26%3D%7C%5C%5C%2A%7C%5C%5C%2A%3D%7C%5C%5C%2B%7C%5C%5C%2B%3D%7C%2C%7C%5C%5C%2E%7C%2D%7C%2D%3D%7C%2F%7C%2F%3D%7C%3A%7C%3B%7C%3C%7C%3C%3C%7C%3C%3C%3D%7C%3C%3D%7C%3D%7C%3D%3D%7C%3D%3D%3D%7C%3E%7C%3E%3D%7C%3E%3E%7C%3E%3E%3D%7C%3E%3E%3E%7C%3E%3E%3E%3D%7C%5C%5C%3F%7C%5C%5C%5B%7C%5C%5C%7B%7C%5C%5C%28%7C%5C%5C%5E%7C%5C%5C%5E%3D%7C%5C%5C%7C%7C%5C%5C%7C%3D%7C%5C%5C%7C%5C%5C%7C%7C%7E%22%3Bthis%2EER%3D%22%28%3F%21%5B%5C%5Cs%5C%5CS%5D%29%22%3Bthis%2EBE%3D%7Bb%3A%22%5C%5C%5C%5C%2E%22%2Cr%3A0%7D%3Bthis%2EASM%3D%7BcN%3A%22string%22%2Cb%3A%22%27%22%2Ce%3A%22%27%22%2Ci%3A%22%5C%5Cn%22%2Cc%3A%5Bthis%2EBE%5D%2Cr%3A0%7D%3Bthis%2EQSM%3D%7BcN%3A%22string%22%2Cb%3A%27%22%27%2Ce%3A%27%22%27%2Ci%3A%22%5C%5Cn%22%2Cc%3A%5Bthis%2EBE%5D%2Cr%3A0%7D%3Bthis%2ECLCM%3D%7BcN%3A%22comment%22%2Cb%3A%22%2F%2F%22%2Ce%3A%22%24%22%7D%3Bthis%2ECBLCLM%3D%7BcN%3A%22comment%22%2Cb%3A%22%2F%5C%5C%2A%22%2Ce%3A%22%5C%5C%2A%2F%22%7D%3Bthis%2EHCM%3D%7BcN%3A%22comment%22%2Cb%3A%22%23%22%2Ce%3A%22%24%22%7D%3Bthis%2ENM%3D%7BcN%3A%22number%22%2Cb%3Athis%2ENR%2Cr%3A0%7D%3Bthis%2ECNM%3D%7BcN%3A%22number%22%2Cb%3Athis%2ECNR%2Cr%3A0%7D%3Bthis%2EBNM%3D%7BcN%3A%22number%22%2Cb%3Athis%2EBNR%2Cr%3A0%7D%3Bthis%2Einherit%3Dfunction%28r%2Cs%29%7Bvar%20p%3D%7B%7D%3Bfor%28var%20q%20in%20r%29%7Bp%5Bq%5D%3Dr%5Bq%5D%7Dif%28s%29%7Bfor%28var%20q%20in%20s%29%7Bp%5Bq%5D%3Ds%5Bq%5D%7D%7Dreturn%20p%7D%7D%28%29%3Bhljs%2ELANGUAGES%2Ebash%3Dfunction%28%29%7Bvar%20e%3D%7B%22true%22%3A1%2C%22false%22%3A1%7D%3Bvar%20b%3D%7BcN%3A%22variable%22%2Cb%3A%22%5C%5C%24%28%5Ba%2DzA%2DZ0%2D9%5F%5D%2B%29%5C%5Cb%22%7D%3Bvar%20a%3D%7BcN%3A%22variable%22%2Cb%3A%22%5C%5C%24%5C%5C%7B%28%28%5B%5E%7D%5D%29%7C%28%5C%5C%5C%5C%7D%29%29%2B%5C%5C%7D%22%2Cc%3A%5Bhljs%2ECNM%5D%7D%3Bvar%20f%3D%7BcN%3A%22string%22%2Cb%3A%27%22%27%2Ce%3A%27%22%27%2Ci%3A%22%5C%5Cn%22%2Cc%3A%5Bhljs%2EBE%2Cb%2Ca%5D%2Cr%3A0%7D%3Bvar%20c%3D%7BcN%3A%22string%22%2Cb%3A%22%27%22%2Ce%3A%22%27%22%2Cc%3A%5B%7Bb%3A%22%27%27%22%7D%5D%2Cr%3A0%7D%3Bvar%20d%3D%7BcN%3A%22test%5Fcondition%22%2Cb%3A%22%22%2Ce%3A%22%22%2Cc%3A%5Bf%2Cc%2Cb%2Ca%2Chljs%2ECNM%5D%2Ck%3A%7Bliteral%3Ae%7D%2Cr%3A0%7D%3Breturn%7BdM%3A%7Bk%3A%7Bkeyword%3A%7B%22if%22%3A1%2Cthen%3A1%2C%22else%22%3A1%2Cfi%3A1%2C%22for%22%3A1%2C%22break%22%3A1%2C%22continue%22%3A1%2C%22while%22%3A1%2C%22in%22%3A1%2C%22do%22%3A1%2Cdone%3A1%2Cecho%3A1%2Cexit%3A1%2C%22return%22%3A1%2Cset%3A1%2Cdeclare%3A1%7D%2Cliteral%3Ae%7D%2Cc%3A%5B%7BcN%3A%22shebang%22%2Cb%3A%22%28%23%21%5C%5C%2Fbin%5C%5C%2Fbash%29%7C%28%23%21%5C%5C%2Fbin%5C%5C%2Fsh%29%22%2Cr%3A10%7D%2Cb%2Ca%2Chljs%2EHCM%2Chljs%2ECNM%2Cf%2Cc%2Chljs%2Einherit%28d%2C%7Bb%3A%22%5C%5C%5B%20%22%2Ce%3A%22%20%5C%5C%5D%22%2Cr%3A0%7D%29%2Chljs%2Einherit%28d%2C%7Bb%3A%22%5C%5C%5B%5C%5C%5B%20%22%2Ce%3A%22%20%5C%5C%5D%5C%5C%5D%22%7D%29%5D%7D%7D%7D%28%29%3Bhljs%2ELANGUAGES%2Ecpp%3Dfunction%28%29%7Bvar%20a%3D%7Bkeyword%3A%7B%22false%22%3A1%2C%22int%22%3A1%2C%22float%22%3A1%2C%22while%22%3A1%2C%22private%22%3A1%2C%22char%22%3A1%2C%22catch%22%3A1%2C%22export%22%3A1%2Cvirtual%3A1%2Coperator%3A2%2Csizeof%3A2%2Cdynamic%5Fcast%3A2%2Ctypedef%3A2%2Cconst%5Fcast%3A2%2C%22const%22%3A1%2Cstruct%3A1%2C%22for%22%3A1%2Cstatic%5Fcast%3A2%2Cunion%3A1%2Cnamespace%3A1%2Cunsigned%3A1%2C%22long%22%3A1%2C%22throw%22%3A1%2C%22volatile%22%3A2%2C%22static%22%3A1%2C%22protected%22%3A1%2Cbool%3A1%2Ctemplate%3A1%2Cmutable%3A1%2C%22if%22%3A1%2C%22public%22%3A1%2Cfriend%3A2%2C%22do%22%3A1%2C%22return%22%3A1%2C%22goto%22%3A1%2Cauto%3A1%2C%22void%22%3A2%2C%22enum%22%3A1%2C%22else%22%3A1%2C%22break%22%3A1%2C%22new%22%3A1%2Cextern%3A1%2Cusing%3A1%2C%22true%22%3A1%2C%22class%22%3A1%2Casm%3A1%2C%22case%22%3A1%2Ctypeid%3A1%2C%22short%22%3A1%2Creinterpret%5Fcast%3A2%2C%22default%22%3A1%2C%22double%22%3A1%2Cregister%3A1%2Cexplicit%3A1%2Csigned%3A1%2Ctypename%3A1%2C%22try%22%3A1%2C%22this%22%3A1%2C%22switch%22%3A1%2C%22continue%22%3A1%2Cwchar%5Ft%3A1%2Cinline%3A1%2C%22delete%22%3A1%2Calignof%3A1%2Cchar16%5Ft%3A1%2Cchar32%5Ft%3A1%2Cconstexpr%3A1%2Cdecltype%3A1%2Cnoexcept%3A1%2Cnullptr%3A1%2Cstatic%5Fassert%3A1%2Cthread%5Flocal%3A1%2Crestrict%3A1%2C%5FBool%3A1%2Ccomplex%3A1%7D%2Cbuilt%5Fin%3A%7Bstd%3A1%2Cstring%3A1%2Ccin%3A1%2Ccout%3A1%2Ccerr%3A1%2Cclog%3A1%2Cstringstream%3A1%2Cistringstream%3A1%2Costringstream%3A1%2Cauto%5Fptr%3A1%2Cdeque%3A1%2Clist%3A1%2Cqueue%3A1%2Cstack%3A1%2Cvector%3A1%2Cmap%3A1%2Cset%3A1%2Cbitset%3A1%2Cmultiset%3A1%2Cmultimap%3A1%2Cunordered%5Fset%3A1%2Cunordered%5Fmap%3A1%2Cunordered%5Fmultiset%3A1%2Cunordered%5Fmultimap%3A1%2Carray%3A1%2Cshared%5Fptr%3A1%7D%7D%3Breturn%7BdM%3A%7Bk%3Aa%2Ci%3A%22%3C%2F%22%2Cc%3A%5Bhljs%2ECLCM%2Chljs%2ECBLCLM%2Chljs%2EQSM%2C%7BcN%3A%22string%22%2Cb%3A%22%27%5C%5C%5C%5C%3F%2E%22%2Ce%3A%22%27%22%2Ci%3A%22%2E%22%7D%2C%7BcN%3A%22number%22%2Cb%3A%22%5C%5Cb%28%5C%5Cd%2B%28%5C%5C%2E%5C%5Cd%2A%29%3F%7C%5C%5C%2E%5C%5Cd%2B%29%28u%7CU%7Cl%7CL%7Cul%7CUL%7Cf%7CF%29%22%7D%2Chljs%2ECNM%2C%7BcN%3A%22preprocessor%22%2Cb%3A%22%23%22%2Ce%3A%22%24%22%7D%2C%7BcN%3A%22stl%5Fcontainer%22%2Cb%3A%22%5C%5Cb%28deque%7Clist%7Cqueue%7Cstack%7Cvector%7Cmap%7Cset%7Cbitset%7Cmultiset%7Cmultimap%7Cunordered%5Fmap%7Cunordered%5Fset%7Cunordered%5Fmultiset%7Cunordered%5Fmultimap%7Carray%29%5C%5Cs%2A%3C%22%2Ce%3A%22%3E%22%2Ck%3Aa%2Cr%3A10%2Cc%3A%5B%22self%22%5D%7D%5D%7D%7D%7D%28%29%3Bhljs%2ELANGUAGES%2Ecss%3Dfunction%28%29%7Bvar%20a%3D%7BcN%3A%22function%22%2Cb%3Ahljs%2EIR%2B%22%5C%5C%28%22%2Ce%3A%22%5C%5C%29%22%2Cc%3A%5B%7BeW%3Atrue%2CeE%3Atrue%2Cc%3A%5Bhljs%2ENM%2Chljs%2EASM%2Chljs%2EQSM%5D%7D%5D%7D%3Breturn%7BcI%3Atrue%2CdM%3A%7Bi%3A%22%5B%3D%2F%7C%27%5D%22%2Cc%3A%5Bhljs%2ECBLCLM%2C%7BcN%3A%22id%22%2Cb%3A%22%5C%5C%23%5BA%2DZa%2Dz0%2D9%5F%2D%5D%2B%22%7D%2C%7BcN%3A%22class%22%2Cb%3A%22%5C%5C%2E%5BA%2DZa%2Dz0%2D9%5F%2D%5D%2B%22%2Cr%3A0%7D%2C%7BcN%3A%22attr%5Fselector%22%2Cb%3A%22%5C%5C%5B%22%2Ce%3A%22%5C%5C%5D%22%2Ci%3A%22%24%22%7D%2C%7BcN%3A%22pseudo%22%2Cb%3A%22%3A%28%3A%29%3F%5Ba%2DzA%2DZ0%2D9%5C%5C%5F%5C%5C%2D%5C%5C%2B%5C%5C%28%5C%5C%29%5C%5C%5C%22%5C%5C%27%5D%2B%22%7D%2C%7BcN%3A%22at%5Frule%22%2Cb%3A%22%40%28font%2Dface%7Cpage%29%22%2Cl%3A%22%5Ba%2Dz%2D%5D%2B%22%2Ck%3A%7B%22font%2Dface%22%3A1%2Cpage%3A1%7D%7D%2C%7BcN%3A%22at%5Frule%22%2Cb%3A%22%40%22%2Ce%3A%22%5B%7B%3B%5D%22%2CeE%3Atrue%2Ck%3A%7B%22import%22%3A1%2Cpage%3A1%2Cmedia%3A1%2Ccharset%3A1%7D%2Cc%3A%5Ba%2Chljs%2EASM%2Chljs%2EQSM%2Chljs%2ENM%5D%7D%2C%7BcN%3A%22tag%22%2Cb%3Ahljs%2EIR%2Cr%3A0%7D%2C%7BcN%3A%22rules%22%2Cb%3A%22%7B%22%2Ce%3A%22%7D%22%2Ci%3A%22%5B%5E%5C%5Cs%5D%22%2Cr%3A0%2Cc%3A%5Bhljs%2ECBLCLM%2C%7BcN%3A%22rule%22%2Cb%3A%22%5B%5E%5C%5Cs%5D%22%2CrB%3Atrue%2Ce%3A%22%3B%22%2CeW%3Atrue%2Cc%3A%5B%7BcN%3A%22attribute%22%2Cb%3A%22%5BA%2DZ%5C%5C%5F%5C%5C%2E%5C%5C%2D%5D%2B%22%2Ce%3A%22%3A%22%2CeE%3Atrue%2Ci%3A%22%5B%5E%5C%5Cs%5D%22%2Cstarts%3A%7BcN%3A%22value%22%2CeW%3Atrue%2CeE%3Atrue%2Cc%3A%5Ba%2Chljs%2ENM%2Chljs%2EQSM%2Chljs%2EASM%2Chljs%2ECBLCLM%2C%7BcN%3A%22hexcolor%22%2Cb%3A%22%5C%5C%23%5B0%2D9A%2DF%5D%2B%22%7D%2C%7BcN%3A%22important%22%2Cb%3A%22%21important%22%7D%5D%7D%7D%5D%7D%5D%7D%5D%7D%7D%7D%28%29%3Bhljs%2ELANGUAGES%2Eini%3D%7BcI%3Atrue%2CdM%3A%7Bi%3A%22%5B%5E%5C%5Cs%5D%22%2Cc%3A%5B%7BcN%3A%22comment%22%2Cb%3A%22%3B%22%2Ce%3A%22%24%22%7D%2C%7BcN%3A%22title%22%2Cb%3A%22%5E%5C%5C%5B%22%2Ce%3A%22%5C%5C%5D%22%7D%2C%7BcN%3A%22setting%22%2Cb%3A%22%5E%5Ba%2Dz0%2D9%5F%5C%5C%5B%5C%5C%5D%5D%2B%5B%20%5C%5Ct%5D%2A%3D%5B%20%5C%5Ct%5D%2A%22%2Ce%3A%22%24%22%2Cc%3A%5B%7BcN%3A%22value%22%2CeW%3Atrue%2Ck%3A%7Bon%3A1%2Coff%3A1%2C%22true%22%3A1%2C%22false%22%3A1%2Cyes%3A1%2Cno%3A1%7D%2Cc%3A%5Bhljs%2EQSM%2Chljs%2ENM%5D%7D%5D%7D%5D%7D%7D%3Bhljs%2ELANGUAGES%2Eperl%3Dfunction%28%29%7Bvar%20d%3D%7Bgetpwent%3A1%2Cgetservent%3A1%2Cquotemeta%3A1%2Cmsgrcv%3A1%2Cscalar%3A1%2Ckill%3A1%2Cdbmclose%3A1%2Cundef%3A1%2Clc%3A1%2Cma%3A1%2Csyswrite%3A1%2Ctr%3A1%2Csend%3A1%2Cumask%3A1%2Csysopen%3A1%2Cshmwrite%3A1%2Cvec%3A1%2Cqx%3A1%2Cutime%3A1%2Clocal%3A1%2Coct%3A1%2Csemctl%3A1%2Clocaltime%3A1%2Creadpipe%3A1%2C%22do%22%3A1%2C%22return%22%3A1%2Cformat%3A1%2Cread%3A1%2Csprintf%3A1%2Cdbmopen%3A1%2Cpop%3A1%2Cgetpgrp%3A1%2Cnot%3A1%2Cgetpwnam%3A1%2Crewinddir%3A1%2Cqq%3A1%2Cfileno%3A1%2Cqw%3A1%2Cendprotoent%3A1%2Cwait%3A1%2Csethostent%3A1%2Cbless%3A1%2Cs%3A0%2Copendir%3A1%2C%22continue%22%3A1%2Ceach%3A1%2Csleep%3A1%2Cendgrent%3A1%2Cshutdown%3A1%2Cdump%3A1%2Cchomp%3A1%2Cconnect%3A1%2Cgetsockname%3A1%2Cdie%3A1%2Csocketpair%3A1%2Cclose%3A1%2Cflock%3A1%2Cexists%3A1%2Cindex%3A1%2Cshmget%3A1%2Csub%3A1%2C%22for%22%3A1%2Cendpwent%3A1%2Credo%3A1%2Clstat%3A1%2Cmsgctl%3A1%2Csetpgrp%3A1%2Cabs%3A1%2Cexit%3A1%2Cselect%3A1%2Cprint%3A1%2Cref%3A1%2Cgethostbyaddr%3A1%2Cunshift%3A1%2Cfcntl%3A1%2Csyscall%3A1%2C%22goto%22%3A1%2Cgetnetbyaddr%3A1%2Cjoin%3A1%2Cgmtime%3A1%2Csymlink%3A1%2Csemget%3A1%2Csplice%3A1%2Cx%3A0%2Cgetpeername%3A1%2Crecv%3A1%2Clog%3A1%2Csetsockopt%3A1%2Ccos%3A1%2Clast%3A1%2Creverse%3A1%2Cgethostbyname%3A1%2Cgetgrnam%3A1%2Cstudy%3A1%2Cformline%3A1%2Cendhostent%3A1%2Ctimes%3A1%2Cchop%3A1%2Clength%3A1%2Cgethostent%3A1%2Cgetnetent%3A1%2Cpack%3A1%2Cgetprotoent%3A1%2Cgetservbyname%3A1%2Crand%3A1%2Cmkdir%3A1%2Cpos%3A1%2Cchmod%3A1%2Cy%3A0%2Csubstr%3A1%2Cendnetent%3A1%2Cprintf%3A1%2Cnext%3A1%2Copen%3A1%2Cmsgsnd%3A1%2Creaddir%3A1%2Cuse%3A1%2Cunlink%3A1%2Cgetsockopt%3A1%2Cgetpriority%3A1%2Crindex%3A1%2Cwantarray%3A1%2Chex%3A1%2Csystem%3A1%2Cgetservbyport%3A1%2Cendservent%3A1%2C%22int%22%3A1%2Cchr%3A1%2Cuntie%3A1%2Crmdir%3A1%2Cprototype%3A1%2Ctell%3A1%2Clisten%3A1%2Cfork%3A1%2Cshmread%3A1%2Cucfirst%3A1%2Csetprotoent%3A1%2C%22else%22%3A1%2Csysseek%3A1%2Clink%3A1%2Cgetgrgid%3A1%2Cshmctl%3A1%2Cwaitpid%3A1%2Cunpack%3A1%2Cgetnetbyname%3A1%2Creset%3A1%2Cchdir%3A1%2Cgrep%3A1%2Csplit%3A1%2Crequire%3A1%2Ccaller%3A1%2Clcfirst%3A1%2Cuntil%3A1%2Cwarn%3A1%2C%22while%22%3A1%2Cvalues%3A1%2Cshift%3A1%2Ctelldir%3A1%2Cgetpwuid%3A1%2Cmy%3A1%2Cgetprotobynumber%3A1%2C%22delete%22%3A1%2Cand%3A1%2Csort%3A1%2Cuc%3A1%2Cdefined%3A1%2Csrand%3A1%2Caccept%3A1%2C%22package%22%3A1%2Cseekdir%3A1%2Cgetprotobyname%3A1%2Csemop%3A1%2Cour%3A1%2Crename%3A1%2Cseek%3A1%2C%22if%22%3A1%2Cq%3A0%2Cchroot%3A1%2Csysread%3A1%2Csetpwent%3A1%2Cno%3A1%2Ccrypt%3A1%2Cgetc%3A1%2Cchown%3A1%2Csqrt%3A1%2Cwrite%3A1%2Csetnetent%3A1%2Csetpriority%3A1%2Cforeach%3A1%2Ctie%3A1%2Csin%3A1%2Cmsgget%3A1%2Cmap%3A1%2Cstat%3A1%2Cgetlogin%3A1%2Cunless%3A1%2Celsif%3A1%2Ctruncate%3A1%2Cexec%3A1%2Ckeys%3A1%2Cglob%3A1%2Ctied%3A1%2Cclosedir%3A1%2Cioctl%3A1%2Csocket%3A1%2Creadlink%3A1%2C%22eval%22%3A1%2Cxor%3A1%2Creadline%3A1%2Cbinmode%3A1%2Csetservent%3A1%2Ceof%3A1%2Cord%3A1%2Cbind%3A1%2Calarm%3A1%2Cpipe%3A1%2Catan2%3A1%2Cgetgrent%3A1%2Cexp%3A1%2Ctime%3A1%2Cpush%3A1%2Csetgrent%3A1%2Cgt%3A1%2Clt%3A1%2Cor%3A1%2Cne%3A1%2Cm%3A0%7D%3Bvar%20f%3D%7BcN%3A%22subst%22%2Cb%3A%22%5B%24%40%5D%5C%5C%7B%22%2Ce%3A%22%5C%5C%7D%22%2Ck%3Ad%2Cr%3A10%7D%3Bvar%20c%3D%7BcN%3A%22variable%22%2Cb%3A%22%5C%5C%24%5C%5Cd%22%7D%3Bvar%20b%3D%7BcN%3A%22variable%22%2Cb%3A%22%5B%5C%5C%24%5C%5C%25%5C%5C%40%5C%5C%2A%5D%28%5C%5C%5E%5C%5Cw%5C%5Cb%7C%23%5C%5Cw%2B%28%5C%5C%3A%5C%5C%3A%5C%5Cw%2B%29%2A%7C%5B%5E%5C%5Cs%5C%5Cw%7B%5D%7C%7B%5C%5Cw%2B%7D%7C%5C%5Cw%2B%28%5C%5C%3A%5C%5C%3A%5C%5Cw%2A%29%2A%29%22%7D%3Bvar%20h%3D%5Bhljs%2EBE%2Cf%2Cc%2Cb%5D%3Bvar%20g%3D%7Bb%3A%22%2D%3E%22%2Cc%3A%5B%7Bb%3Ahljs%2EIR%7D%2C%7Bb%3A%22%7B%22%2Ce%3A%22%7D%22%7D%5D%7D%3Bvar%20e%3D%7BcN%3A%22comment%22%2Cb%3A%22%5E%28%5F%5FEND%5F%5F%7C%5F%5FDATA%5F%5F%29%22%2Ce%3A%22%5C%5Cn%24%22%2Cr%3A5%7D%3Bvar%20a%3D%5Bc%2Cb%2Chljs%2EHCM%2Ce%2Cg%2C%7BcN%3A%22string%22%2Cb%3A%22q%5Bqwxr%5D%3F%5C%5Cs%2A%5C%5C%28%22%2Ce%3A%22%5C%5C%29%22%2Cc%3Ah%2Cr%3A5%7D%2C%7BcN%3A%22string%22%2Cb%3A%22q%5Bqwxr%5D%3F%5C%5Cs%2A%5C%5C%5B%22%2Ce%3A%22%5C%5C%5D%22%2Cc%3Ah%2Cr%3A5%7D%2C%7BcN%3A%22string%22%2Cb%3A%22q%5Bqwxr%5D%3F%5C%5Cs%2A%5C%5C%7B%22%2Ce%3A%22%5C%5C%7D%22%2Cc%3Ah%2Cr%3A5%7D%2C%7BcN%3A%22string%22%2Cb%3A%22q%5Bqwxr%5D%3F%5C%5Cs%2A%5C%5C%7C%22%2Ce%3A%22%5C%5C%7C%22%2Cc%3Ah%2Cr%3A5%7D%2C%7BcN%3A%22string%22%2Cb%3A%22q%5Bqwxr%5D%3F%5C%5Cs%2A%5C%5C%3C%22%2Ce%3A%22%5C%5C%3E%22%2Cc%3Ah%2Cr%3A5%7D%2C%7BcN%3A%22string%22%2Cb%3A%22qw%5C%5Cs%2Bq%22%2Ce%3A%22q%22%2Cc%3Ah%2Cr%3A5%7D%2C%7BcN%3A%22string%22%2Cb%3A%22%27%22%2Ce%3A%22%27%22%2Cc%3A%5Bhljs%2EBE%5D%2Cr%3A0%7D%2C%7BcN%3A%22string%22%2Cb%3A%27%22%27%2Ce%3A%27%22%27%2Cc%3Ah%2Cr%3A0%7D%2C%7BcN%3A%22string%22%2Cb%3A%22%60%22%2Ce%3A%22%60%22%2Cc%3A%5Bhljs%2EBE%5D%7D%2C%7BcN%3A%22string%22%2Cb%3A%22%7B%5C%5Cw%2B%7D%22%2Cr%3A0%7D%2C%7BcN%3A%22string%22%2Cb%3A%22%2D%3F%5C%5Cw%2B%5C%5Cs%2A%5C%5C%3D%5C%5C%3E%22%2Cr%3A0%7D%2C%7BcN%3A%22number%22%2Cb%3A%22%28%5C%5Cb0%5B0%2D7%5F%5D%2B%29%7C%28%5C%5Cb0x%5B0%2D9a%2DfA%2DF%5F%5D%2B%29%7C%28%5C%5Cb%5B1%2D9%5D%5B0%2D9%5F%5D%2A%28%5C%5C%2E%5B0%2D9%5F%5D%2B%29%3F%29%7C%5B0%5F%5D%5C%5Cb%22%2Cr%3A0%7D%2C%7Bb%3A%22%28%22%2Bhljs%2ERSR%2B%22%7C%5C%5Cb%28split%7Creturn%7Cprint%7Creverse%7Cgrep%29%5C%5Cb%29%5C%5Cs%2A%22%2Ck%3A%7Bsplit%3A1%2C%22return%22%3A1%2Cprint%3A1%2Creverse%3A1%2Cgrep%3A1%7D%2Cr%3A0%2Cc%3A%5Bhljs%2EHCM%2Ce%2C%7BcN%3A%22regexp%22%2Cb%3A%22%28s%7Ctr%7Cy%29%2F%28%5C%5C%5C%5C%2E%7C%5B%5E%2F%5D%29%2A%2F%28%5C%5C%5C%5C%2E%7C%5B%5E%2F%5D%29%2A%2F%5Ba%2Dz%5D%2A%22%2Cr%3A10%7D%2C%7BcN%3A%22regexp%22%2Cb%3A%22%28m%7Cqr%29%3F%2F%22%2Ce%3A%22%2F%5Ba%2Dz%5D%2A%22%2Cc%3A%5Bhljs%2EBE%5D%2Cr%3A0%7D%5D%7D%2C%7BcN%3A%22sub%22%2Cb%3A%22%5C%5Cbsub%5C%5Cb%22%2Ce%3A%22%28%5C%5Cs%2A%5C%5C%28%2E%2A%3F%5C%5C%29%29%3F%5B%3B%7B%5D%22%2Ck%3A%7Bsub%3A1%7D%2Cr%3A5%7D%2C%7BcN%3A%22operator%22%2Cb%3A%22%2D%5C%5Cw%5C%5Cb%22%2Cr%3A0%7D%2C%7BcN%3A%22pod%22%2Cb%3A%22%5C%5C%3D%5C%5Cw%22%2Ce%3A%22%5C%5C%3Dcut%22%7D%5D%3Bf%2Ec%3Da%3Bg%2Ec%5B1%5D%2Ec%3Da%3Breturn%7BdM%3A%7Bk%3Ad%2Cc%3Aa%7D%7D%7D%28%29%3Bhljs%2ELANGUAGES%2Epython%3Dfunction%28%29%7Bvar%20b%3D%5B%7BcN%3A%22string%22%2Cb%3A%22%28u%7Cb%29%3Fr%3F%27%27%27%22%2Ce%3A%22%27%27%27%22%2Cr%3A10%7D%2C%7BcN%3A%22string%22%2Cb%3A%27%28u%7Cb%29%3Fr%3F%22%22%22%27%2Ce%3A%27%22%22%22%27%2Cr%3A10%7D%2C%7BcN%3A%22string%22%2Cb%3A%22%28u%7Cr%7Cur%29%27%22%2Ce%3A%22%27%22%2Cc%3A%5Bhljs%2EBE%5D%2Cr%3A10%7D%2C%7BcN%3A%22string%22%2Cb%3A%27%28u%7Cr%7Cur%29%22%27%2Ce%3A%27%22%27%2Cc%3A%5Bhljs%2EBE%5D%2Cr%3A10%7D%2C%7BcN%3A%22string%22%2Cb%3A%22%28b%7Cbr%29%27%22%2Ce%3A%22%27%22%2Cc%3A%5Bhljs%2EBE%5D%7D%2C%7BcN%3A%22string%22%2Cb%3A%27%28b%7Cbr%29%22%27%2Ce%3A%27%22%27%2Cc%3A%5Bhljs%2EBE%5D%7D%5D%2Econcat%28%5Bhljs%2EASM%2Chljs%2EQSM%5D%29%3Bvar%20d%3D%7BcN%3A%22title%22%2Cb%3Ahljs%2EUIR%7D%3Bvar%20c%3D%7BcN%3A%22params%22%2Cb%3A%22%5C%5C%28%22%2Ce%3A%22%5C%5C%29%22%2Cc%3Ab%2Econcat%28%5Bhljs%2ECNM%5D%29%7D%3Bvar%20a%3D%7BbWK%3Atrue%2Ce%3A%22%3A%22%2Ci%3A%22%5B%24%7B%5D%22%2Cc%3A%5Bd%2Cc%5D%2Cr%3A10%7D%3Breturn%7BdM%3A%7Bk%3A%7Bkeyword%3A%7Band%3A1%2Celif%3A1%2Cis%3A1%2Cglobal%3A1%2Cas%3A1%2C%22in%22%3A1%2C%22if%22%3A1%2Cfrom%3A1%2Craise%3A1%2C%22for%22%3A1%2Cexcept%3A1%2C%22finally%22%3A1%2Cprint%3A1%2C%22import%22%3A1%2Cpass%3A1%2C%22return%22%3A1%2Cexec%3A1%2C%22else%22%3A1%2C%22break%22%3A1%2Cnot%3A1%2C%22with%22%3A1%2C%22class%22%3A1%2Cassert%3A1%2Cyield%3A1%2C%22try%22%3A1%2C%22while%22%3A1%2C%22continue%22%3A1%2Cdel%3A1%2Cor%3A1%2Cdef%3A1%2Clambda%3A1%2Cnonlocal%3A10%7D%2Cbuilt%5Fin%3A%7BNone%3A1%2CTrue%3A1%2CFalse%3A1%2CEllipsis%3A1%2CNotImplemented%3A1%7D%7D%2Ci%3A%22%28%3C%2F%7C%2D%3E%7C%5C%5C%3F%29%22%2Cc%3Ab%2Econcat%28%5Bhljs%2EHCM%2Chljs%2Einherit%28a%2C%7BcN%3A%22function%22%2Ck%3A%7Bdef%3A1%7D%7D%29%2Chljs%2Einherit%28a%2C%7BcN%3A%22class%22%2Ck%3A%7B%22class%22%3A1%7D%7D%29%2Chljs%2ECNM%2C%7BcN%3A%22decorator%22%2Cb%3A%22%40%22%2Ce%3A%22%24%22%7D%5D%29%7D%7D%7D%28%29%3Bhljs%2ELANGUAGES%2Er%3D%7BdM%3A%7Bc%3A%5Bhljs%2EHCM%2C%7BcN%3A%22number%22%2Cb%3A%22%5C%5Cb0%5BxX%5D%5B0%2D9a%2DfA%2DF%5D%2B%5BLi%5D%3F%5C%5Cb%22%2Ce%3Ahljs%2EIMMEDIATE%5FRE%2Cr%3A0%7D%2C%7BcN%3A%22number%22%2Cb%3A%22%5C%5Cb%5C%5Cd%2B%28%3F%3A%5BeE%5D%5B%2B%5C%5C%2D%5D%3F%5C%5Cd%2A%29%3FL%5C%5Cb%22%2Ce%3Ahljs%2EIMMEDIATE%5FRE%2Cr%3A0%7D%2C%7BcN%3A%22number%22%2Cb%3A%22%5C%5Cb%5C%5Cd%2B%5C%5C%2E%28%3F%21%5C%5Cd%29%28%3F%3Ai%5C%5Cb%29%3F%22%2Ce%3Ahljs%2EIMMEDIATE%5FRE%2Cr%3A1%7D%2C%7BcN%3A%22number%22%2Cb%3A%22%5C%5Cb%5C%5Cd%2B%28%3F%3A%5C%5C%2E%5C%5Cd%2A%29%3F%28%3F%3A%5BeE%5D%5B%2B%5C%5C%2D%5D%3F%5C%5Cd%2A%29%3Fi%3F%5C%5Cb%22%2Ce%3Ahljs%2EIMMEDIATE%5FRE%2Cr%3A0%7D%2C%7BcN%3A%22number%22%2Cb%3A%22%5C%5C%2E%5C%5Cd%2B%28%3F%3A%5BeE%5D%5B%2B%5C%5C%2D%5D%3F%5C%5Cd%2A%29%3Fi%3F%5C%5Cb%22%2Ce%3Ahljs%2EIMMEDIATE%5FRE%2Cr%3A1%7D%2C%7BcN%3A%22keyword%22%2Cb%3A%22%28%3F%3AtryCatch%7Clibrary%7CsetGeneric%7CsetGroupGeneric%29%5C%5Cb%22%2Ce%3Ahljs%2EIMMEDIATE%5FRE%2Cr%3A10%7D%2C%7BcN%3A%22keyword%22%2Cb%3A%22%5C%5C%2E%5C%5C%2E%5C%5C%2E%22%2Ce%3Ahljs%2EIMMEDIATE%5FRE%2Cr%3A10%7D%2C%7BcN%3A%22keyword%22%2Cb%3A%22%5C%5C%2E%5C%5C%2E%5C%5Cd%2B%28%3F%21%5B%5C%5Cw%2E%5D%29%22%2Ce%3Ahljs%2EIMMEDIATE%5FRE%2Cr%3A10%7D%2C%7BcN%3A%22keyword%22%2Cb%3A%22%5C%5Cb%28%3F%3Afunction%29%22%2Ce%3Ahljs%2EIMMEDIATE%5FRE%2Cr%3A2%7D%2C%7BcN%3A%22keyword%22%2Cb%3A%22%28%3F%3Aif%7Cin%7Cbreak%7Cnext%7Crepeat%7Celse%7Cfor%7Creturn%7Cswitch%7Cwhile%7Ctry%7Cstop%7Cwarning%7Crequire%7Cattach%7Cdetach%7Csource%7CsetMethod%7CsetClass%29%5C%5Cb%22%2Ce%3Ahljs%2EIMMEDIATE%5FRE%2Cr%3A1%7D%2C%7BcN%3A%22literal%22%2Cb%3A%22%28%3F%3ANA%7CNA%5Finteger%5F%7CNA%5Freal%5F%7CNA%5Fcharacter%5F%7CNA%5Fcomplex%5F%29%5C%5Cb%22%2Ce%3Ahljs%2EIMMEDIATE%5FRE%2Cr%3A10%7D%2C%7BcN%3A%22literal%22%2Cb%3A%22%28%3F%3ANULL%7CTRUE%7CFALSE%7CT%7CF%7CInf%7CNaN%29%5C%5Cb%22%2Ce%3Ahljs%2EIMMEDIATE%5FRE%2Cr%3A1%7D%2C%7BcN%3A%22identifier%22%2Cb%3A%22%5Ba%2DzA%2DZ%2E%5D%5Ba%2DzA%2DZ0%2D9%2E%5F%5D%2A%5C%5Cb%22%2Ce%3Ahljs%2EIMMEDIATE%5FRE%2Cr%3A0%7D%2C%7BcN%3A%22operator%22%2Cb%3A%22%3C%5C%5C%2D%28%3F%21%5C%5Cs%2A%5C%5Cd%29%22%2Ce%3Ahljs%2EIMMEDIATE%5FRE%2Cr%3A2%7D%2C%7BcN%3A%22operator%22%2Cb%3A%22%5C%5C%2D%3E%7C%3C%5C%5C%2D%22%2Ce%3Ahljs%2EIMMEDIATE%5FRE%2Cr%3A1%7D%2C%7BcN%3A%22operator%22%2Cb%3A%22%25%25%7C%7E%22%2Ce%3Ahljs%2EIMMEDIATE%5FRE%7D%2C%7BcN%3A%22operator%22%2Cb%3A%22%3E%3D%7C%3C%3D%7C%3D%3D%7C%21%3D%7C%5C%5C%7C%5C%5C%7C%7C%26%26%7C%3D%7C%5C%5C%2B%7C%5C%5C%2D%7C%5C%5C%2A%7C%2F%7C%5C%5C%5E%7C%3E%7C%3C%7C%21%7C%26%7C%5C%5C%7C%7C%5C%5C%24%7C%3A%22%2Ce%3Ahljs%2EIMMEDIATE%5FRE%2Cr%3A0%7D%2C%7BcN%3A%22operator%22%2Cb%3A%22%25%22%2Ce%3A%22%25%22%2Ci%3A%22%5C%5Cn%22%2Cr%3A1%7D%2C%7BcN%3A%22identifier%22%2Cb%3A%22%60%22%2Ce%3A%22%60%22%2Cr%3A0%7D%2C%7BcN%3A%22string%22%2Cb%3A%27%22%27%2Ce%3A%27%22%27%2Cc%3A%5Bhljs%2EBE%5D%2Cr%3A0%7D%2C%7BcN%3A%22string%22%2Cb%3A%22%27%22%2Ce%3A%22%27%22%2Cc%3A%5Bhljs%2EBE%5D%2Cr%3A0%7D%2C%7BcN%3A%22paren%22%2Cb%3A%22%5B%5B%28%7B%5C%5C%5D%29%7D%5D%22%2Ce%3Ahljs%2EIMMEDIATE%5FRE%2Cr%3A0%7D%5D%7D%7D%3Bhljs%2ELANGUAGES%2Eruby%3Dfunction%28%29%7Bvar%20a%3D%22%5Ba%2DzA%2DZ%5F%5D%5Ba%2DzA%2DZ0%2D9%5F%5D%2A%28%5C%5C%21%7C%5C%5C%3F%29%3F%22%3Bvar%20j%3D%22%5Ba%2DzA%2DZ%5F%5D%5C%5Cw%2A%5B%21%3F%3D%5D%3F%7C%5B%2D%2B%7E%5D%5C%5C%40%7C%3C%3C%7C%3E%3E%7C%3D%7E%7C%3D%3D%3D%3F%7C%3C%3D%3E%7C%5B%3C%3E%5D%3D%3F%7C%5C%5C%2A%5C%5C%2A%7C%5B%2D%2F%2B%25%5E%26%2A%7E%60%7C%5D%7C%5C%5C%5B%5C%5C%5D%3D%3F%22%3Bvar%20f%3D%7Bkeyword%3A%7Band%3A1%2C%22false%22%3A1%2Cthen%3A1%2Cdefined%3A1%2Cmodule%3A1%2C%22in%22%3A1%2C%22return%22%3A1%2Credo%3A1%2C%22if%22%3A1%2CBEGIN%3A1%2Cretry%3A1%2Cend%3A1%2C%22for%22%3A1%2C%22true%22%3A1%2Cself%3A1%2Cwhen%3A1%2Cnext%3A1%2Cuntil%3A1%2C%22do%22%3A1%2Cbegin%3A1%2Cunless%3A1%2CEND%3A1%2Crescue%3A1%2Cnil%3A1%2C%22else%22%3A1%2C%22break%22%3A1%2Cundef%3A1%2Cnot%3A1%2C%22super%22%3A1%2C%22class%22%3A1%2C%22case%22%3A1%2Crequire%3A1%2Cyield%3A1%2Calias%3A1%2C%22while%22%3A1%2Censure%3A1%2Celsif%3A1%2Cor%3A1%2Cdef%3A1%7D%2Ckeymethods%3A%7B%5F%5Fid%5F%5F%3A1%2C%5F%5Fsend%5F%5F%3A1%2Cabort%3A1%2Cabs%3A1%2C%22all%3F%22%3A1%2Callocate%3A1%2Cancestors%3A1%2C%22any%3F%22%3A1%2Carity%3A1%2Cassoc%3A1%2Cat%3A1%2Cat%5Fexit%3A1%2Cautoload%3A1%2C%22autoload%3F%22%3A1%2C%22between%3F%22%3A1%2Cbinding%3A1%2Cbinmode%3A1%2C%22block%5Fgiven%3F%22%3A1%2Ccall%3A1%2Ccallcc%3A1%2Ccaller%3A1%2Ccapitalize%3A1%2C%22capitalize%21%22%3A1%2Ccasecmp%3A1%2C%22catch%22%3A1%2Cceil%3A1%2Ccenter%3A1%2Cchomp%3A1%2C%22chomp%21%22%3A1%2Cchop%3A1%2C%22chop%21%22%3A1%2Cchr%3A1%2C%22class%22%3A1%2Cclass%5Feval%3A1%2C%22class%5Fvariable%5Fdefined%3F%22%3A1%2Cclass%5Fvariables%3A1%2Cclear%3A1%2Cclone%3A1%2Cclose%3A1%2Cclose%5Fread%3A1%2Cclose%5Fwrite%3A1%2C%22closed%3F%22%3A1%2Ccoerce%3A1%2Ccollect%3A1%2C%22collect%21%22%3A1%2Ccompact%3A1%2C%22compact%21%22%3A1%2Cconcat%3A1%2C%22const%5Fdefined%3F%22%3A1%2Cconst%5Fget%3A1%2Cconst%5Fmissing%3A1%2Cconst%5Fset%3A1%2Cconstants%3A1%2Ccount%3A1%2Ccrypt%3A1%2C%22default%22%3A1%2Cdefault%5Fproc%3A1%2C%22delete%22%3A1%2C%22delete%21%22%3A1%2Cdelete%5Fat%3A1%2Cdelete%5Fif%3A1%2Cdetect%3A1%2Cdisplay%3A1%2Cdiv%3A1%2Cdivmod%3A1%2Cdowncase%3A1%2C%22downcase%21%22%3A1%2Cdownto%3A1%2Cdump%3A1%2Cdup%3A1%2Ceach%3A1%2Ceach%5Fbyte%3A1%2Ceach%5Findex%3A1%2Ceach%5Fkey%3A1%2Ceach%5Fline%3A1%2Ceach%5Fpair%3A1%2Ceach%5Fvalue%3A1%2Ceach%5Fwith%5Findex%3A1%2C%22empty%3F%22%3A1%2Centries%3A1%2Ceof%3A1%2C%22eof%3F%22%3A1%2C%22eql%3F%22%3A1%2C%22equal%3F%22%3A1%2C%22eval%22%3A1%2Cexec%3A1%2Cexit%3A1%2C%22exit%21%22%3A1%2Cextend%3A1%2Cfail%3A1%2Cfcntl%3A1%2Cfetch%3A1%2Cfileno%3A1%2Cfill%3A1%2Cfind%3A1%2Cfind%5Fall%3A1%2Cfirst%3A1%2Cflatten%3A1%2C%22flatten%21%22%3A1%2Cfloor%3A1%2Cflush%3A1%2Cfor%5Ffd%3A1%2Cforeach%3A1%2Cfork%3A1%2Cformat%3A1%2Cfreeze%3A1%2C%22frozen%3F%22%3A1%2Cfsync%3A1%2Cgetc%3A1%2Cgets%3A1%2Cglobal%5Fvariables%3A1%2Cgrep%3A1%2Cgsub%3A1%2C%22gsub%21%22%3A1%2C%22has%5Fkey%3F%22%3A1%2C%22has%5Fvalue%3F%22%3A1%2Chash%3A1%2Chex%3A1%2Cid%3A1%2Cinclude%3A1%2C%22include%3F%22%3A1%2Cincluded%5Fmodules%3A1%2Cindex%3A1%2Cindexes%3A1%2Cindices%3A1%2Cinduced%5Ffrom%3A1%2Cinject%3A1%2Cinsert%3A1%2Cinspect%3A1%2Cinstance%5Feval%3A1%2Cinstance%5Fmethod%3A1%2Cinstance%5Fmethods%3A1%2C%22instance%5Fof%3F%22%3A1%2C%22instance%5Fvariable%5Fdefined%3F%22%3A1%2Cinstance%5Fvariable%5Fget%3A1%2Cinstance%5Fvariable%5Fset%3A1%2Cinstance%5Fvariables%3A1%2C%22integer%3F%22%3A1%2Cintern%3A1%2Cinvert%3A1%2Cioctl%3A1%2C%22is%5Fa%3F%22%3A1%2Cisatty%3A1%2C%22iterator%3F%22%3A1%2Cjoin%3A1%2C%22key%3F%22%3A1%2Ckeys%3A1%2C%22kind%5Fof%3F%22%3A1%2Clambda%3A1%2Clast%3A1%2Clength%3A1%2Clineno%3A1%2Cljust%3A1%2Cload%3A1%2Clocal%5Fvariables%3A1%2Cloop%3A1%2Clstrip%3A1%2C%22lstrip%21%22%3A1%2Cmap%3A1%2C%22map%21%22%3A1%2Cmatch%3A1%2Cmax%3A1%2C%22member%3F%22%3A1%2Cmerge%3A1%2C%22merge%21%22%3A1%2Cmethod%3A1%2C%22method%5Fdefined%3F%22%3A1%2Cmethod%5Fmissing%3A1%2Cmethods%3A1%2Cmin%3A1%2Cmodule%5Feval%3A1%2Cmodulo%3A1%2Cname%3A1%2Cnesting%3A1%2C%22new%22%3A1%2Cnext%3A1%2C%22next%21%22%3A1%2C%22nil%3F%22%3A1%2Cnitems%3A1%2C%22nonzero%3F%22%3A1%2Cobject%5Fid%3A1%2Coct%3A1%2Copen%3A1%2Cpack%3A1%2Cpartition%3A1%2Cpid%3A1%2Cpipe%3A1%2Cpop%3A1%2Cpopen%3A1%2Cpos%3A1%2Cprec%3A1%2Cprec%5Ff%3A1%2Cprec%5Fi%3A1%2Cprint%3A1%2Cprintf%3A1%2Cprivate%5Fclass%5Fmethod%3A1%2Cprivate%5Finstance%5Fmethods%3A1%2C%22private%5Fmethod%5Fdefined%3F%22%3A1%2Cprivate%5Fmethods%3A1%2Cproc%3A1%2Cprotected%5Finstance%5Fmethods%3A1%2C%22protected%5Fmethod%5Fdefined%3F%22%3A1%2Cprotected%5Fmethods%3A1%2Cpublic%5Fclass%5Fmethod%3A1%2Cpublic%5Finstance%5Fmethods%3A1%2C%22public%5Fmethod%5Fdefined%3F%22%3A1%2Cpublic%5Fmethods%3A1%2Cpush%3A1%2Cputc%3A1%2Cputs%3A1%2Cquo%3A1%2Craise%3A1%2Crand%3A1%2Crassoc%3A1%2Cread%3A1%2Cread%5Fnonblock%3A1%2Creadchar%3A1%2Creadline%3A1%2Creadlines%3A1%2Creadpartial%3A1%2Crehash%3A1%2Creject%3A1%2C%22reject%21%22%3A1%2Cremainder%3A1%2Creopen%3A1%2Creplace%3A1%2Crequire%3A1%2C%22respond%5Fto%3F%22%3A1%2Creverse%3A1%2C%22reverse%21%22%3A1%2Creverse%5Feach%3A1%2Crewind%3A1%2Crindex%3A1%2Crjust%3A1%2Cround%3A1%2Crstrip%3A1%2C%22rstrip%21%22%3A1%2Cscan%3A1%2Cseek%3A1%2Cselect%3A1%2Csend%3A1%2Cset%5Ftrace%5Ffunc%3A1%2Cshift%3A1%2Csingleton%5Fmethod%5Fadded%3A1%2Csingleton%5Fmethods%3A1%2Csize%3A1%2Csleep%3A1%2Cslice%3A1%2C%22slice%21%22%3A1%2Csort%3A1%2C%22sort%21%22%3A1%2Csort%5Fby%3A1%2Csplit%3A1%2Csprintf%3A1%2Csqueeze%3A1%2C%22squeeze%21%22%3A1%2Csrand%3A1%2Cstat%3A1%2Cstep%3A1%2Cstore%3A1%2Cstrip%3A1%2C%22strip%21%22%3A1%2Csub%3A1%2C%22sub%21%22%3A1%2Csucc%3A1%2C%22succ%21%22%3A1%2Csum%3A1%2Csuperclass%3A1%2Cswapcase%3A1%2C%22swapcase%21%22%3A1%2Csync%3A1%2Csyscall%3A1%2Csysopen%3A1%2Csysread%3A1%2Csysseek%3A1%2Csystem%3A1%2Csyswrite%3A1%2Ctaint%3A1%2C%22tainted%3F%22%3A1%2Ctell%3A1%2Ctest%3A1%2C%22throw%22%3A1%2Ctimes%3A1%2Cto%5Fa%3A1%2Cto%5Fary%3A1%2Cto%5Ff%3A1%2Cto%5Fhash%3A1%2Cto%5Fi%3A1%2Cto%5Fint%3A1%2Cto%5Fio%3A1%2Cto%5Fproc%3A1%2Cto%5Fs%3A1%2Cto%5Fstr%3A1%2Cto%5Fsym%3A1%2Ctr%3A1%2C%22tr%21%22%3A1%2Ctr%5Fs%3A1%2C%22tr%5Fs%21%22%3A1%2Ctrace%5Fvar%3A1%2Ctranspose%3A1%2Ctrap%3A1%2Ctruncate%3A1%2C%22tty%3F%22%3A1%2Ctype%3A1%2Cungetc%3A1%2Cuniq%3A1%2C%22uniq%21%22%3A1%2Cunpack%3A1%2Cunshift%3A1%2Cuntaint%3A1%2Cuntrace%5Fvar%3A1%2Cupcase%3A1%2C%22upcase%21%22%3A1%2Cupdate%3A1%2Cupto%3A1%2C%22value%3F%22%3A1%2Cvalues%3A1%2Cvalues%5Fat%3A1%2Cwarn%3A1%2Cwrite%3A1%2Cwrite%5Fnonblock%3A1%2C%22zero%3F%22%3A1%2Czip%3A1%7D%7D%3Bvar%20c%3D%7BcN%3A%22yardoctag%22%2Cb%3A%22%40%5BA%2DZa%2Dz%5D%2B%22%7D%3Bvar%20k%3D%5B%7BcN%3A%22comment%22%2Cb%3A%22%23%22%2Ce%3A%22%24%22%2Cc%3A%5Bc%5D%7D%2C%7BcN%3A%22comment%22%2Cb%3A%22%5E%5C%5C%3Dbegin%22%2Ce%3A%22%5E%5C%5C%3Dend%22%2Cc%3A%5Bc%5D%2Cr%3A10%7D%2C%7BcN%3A%22comment%22%2Cb%3A%22%5E%5F%5FEND%5F%5F%22%2Ce%3A%22%5C%5Cn%24%22%7D%5D%3Bvar%20d%3D%7BcN%3A%22subst%22%2Cb%3A%22%23%5C%5C%7B%22%2Ce%3A%22%7D%22%2Cl%3Aa%2Ck%3Af%7D%3Bvar%20i%3D%5Bhljs%2EBE%2Cd%5D%3Bvar%20b%3D%5B%7BcN%3A%22string%22%2Cb%3A%22%27%22%2Ce%3A%22%27%22%2Cc%3Ai%2Cr%3A0%7D%2C%7BcN%3A%22string%22%2Cb%3A%27%22%27%2Ce%3A%27%22%27%2Cc%3Ai%2Cr%3A0%7D%2C%7BcN%3A%22string%22%2Cb%3A%22%25%5Bqw%5D%3F%5C%5C%28%22%2Ce%3A%22%5C%5C%29%22%2Cc%3Ai%2Cr%3A10%7D%2C%7BcN%3A%22string%22%2Cb%3A%22%25%5Bqw%5D%3F%5C%5C%5B%22%2Ce%3A%22%5C%5C%5D%22%2Cc%3Ai%2Cr%3A10%7D%2C%7BcN%3A%22string%22%2Cb%3A%22%25%5Bqw%5D%3F%7B%22%2Ce%3A%22%7D%22%2Cc%3Ai%2Cr%3A10%7D%2C%7BcN%3A%22string%22%2Cb%3A%22%25%5Bqw%5D%3F%3C%22%2Ce%3A%22%3E%22%2Cc%3Ai%2Cr%3A10%7D%2C%7BcN%3A%22string%22%2Cb%3A%22%25%5Bqw%5D%3F%2F%22%2Ce%3A%22%2F%22%2Cc%3Ai%2Cr%3A10%7D%2C%7BcN%3A%22string%22%2Cb%3A%22%25%5Bqw%5D%3F%25%22%2Ce%3A%22%25%22%2Cc%3Ai%2Cr%3A10%7D%2C%7BcN%3A%22string%22%2Cb%3A%22%25%5Bqw%5D%3F%2D%22%2Ce%3A%22%2D%22%2Cc%3Ai%2Cr%3A10%7D%2C%7BcN%3A%22string%22%2Cb%3A%22%25%5Bqw%5D%3F%5C%5C%7C%22%2Ce%3A%22%5C%5C%7C%22%2Cc%3Ai%2Cr%3A10%7D%5D%3Bvar%20h%3D%7BcN%3A%22function%22%2Cb%3A%22%5C%5Cbdef%5C%5Cs%2B%22%2Ce%3A%22%20%7C%24%7C%3B%22%2Cl%3Aa%2Ck%3Af%2Cc%3A%5B%7BcN%3A%22title%22%2Cb%3Aj%2Cl%3Aa%2Ck%3Af%7D%2C%7BcN%3A%22params%22%2Cb%3A%22%5C%5C%28%22%2Ce%3A%22%5C%5C%29%22%2Cl%3Aa%2Ck%3Af%7D%5D%2Econcat%28k%29%7D%3Bvar%20g%3D%7BcN%3A%22identifier%22%2Cb%3Aa%2Cl%3Aa%2Ck%3Af%2Cr%3A0%7D%3Bvar%20e%3Dk%2Econcat%28b%2Econcat%28%5B%7BcN%3A%22class%22%2Cb%3A%22%5C%5Cb%28class%7Cmodule%29%5C%5Cb%22%2Ce%3A%22%24%7C%3B%22%2Ck%3A%7B%22class%22%3A1%2Cmodule%3A1%7D%2Cc%3A%5B%7BcN%3A%22title%22%2Cb%3A%22%5BA%2DZa%2Dz%5F%5D%5C%5Cw%2A%28%3A%3A%5C%5Cw%2B%29%2A%28%5C%5C%3F%7C%5C%5C%21%29%3F%22%2Cr%3A0%7D%2C%7BcN%3A%22inheritance%22%2Cb%3A%22%3C%5C%5Cs%2A%22%2Cc%3A%5B%7BcN%3A%22parent%22%2Cb%3A%22%28%22%2Bhljs%2EIR%2B%22%3A%3A%29%3F%22%2Bhljs%2EIR%7D%5D%7D%5D%2Econcat%28k%29%7D%2Ch%2C%7BcN%3A%22constant%22%2Cb%3A%22%28%3A%3A%29%3F%28%5BA%2DZ%5D%5C%5Cw%2A%28%3A%3A%29%3F%29%2B%22%2Cr%3A0%7D%2C%7BcN%3A%22symbol%22%2Cb%3A%22%3A%22%2Cc%3Ab%2Econcat%28%5Bg%5D%29%2Cr%3A0%7D%2C%7BcN%3A%22number%22%2Cb%3A%22%28%5C%5Cb0%5B0%2D7%5F%5D%2B%29%7C%28%5C%5Cb0x%5B0%2D9a%2DfA%2DF%5F%5D%2B%29%7C%28%5C%5Cb%5B1%2D9%5D%5B0%2D9%5F%5D%2A%28%5C%5C%2E%5B0%2D9%5F%5D%2B%29%3F%29%7C%5B0%5F%5D%5C%5Cb%22%2Cr%3A0%7D%2C%7BcN%3A%22number%22%2Cb%3A%22%5C%5C%3F%5C%5Cw%22%7D%2C%7BcN%3A%22variable%22%2Cb%3A%22%28%5C%5C%24%5C%5CW%29%7C%28%28%5C%5C%24%7C%5C%5C%40%5C%5C%40%3F%29%28%5C%5Cw%2B%29%29%22%7D%2Cg%2C%7Bb%3A%22%28%22%2Bhljs%2ERSR%2B%22%29%5C%5Cs%2A%22%2Cc%3Ak%2Econcat%28%5B%7BcN%3A%22regexp%22%2Cb%3A%22%2F%22%2Ce%3A%22%2F%5Ba%2Dz%5D%2A%22%2Ci%3A%22%5C%5Cn%22%2Cc%3A%5Bhljs%2EBE%5D%7D%5D%29%2Cr%3A0%7D%5D%29%29%3Bd%2Ec%3De%3Bh%2Ec%5B1%5D%2Ec%3De%3Breturn%7BdM%3A%7Bl%3Aa%2Ck%3Af%2Cc%3Ae%7D%7D%7D%28%29%3Bhljs%2ELANGUAGES%2Escala%3Dfunction%28%29%7Bvar%20b%3D%7BcN%3A%22annotation%22%2Cb%3A%22%40%5BA%2DZa%2Dz%5D%2B%22%7D%3Bvar%20a%3D%7BcN%3A%22string%22%2Cb%3A%27u%3Fr%3F%22%22%22%27%2Ce%3A%27%22%22%22%27%2Cr%3A10%7D%3Breturn%7BdM%3A%7Bk%3A%7Btype%3A1%2Cyield%3A1%2Clazy%3A1%2Coverride%3A1%2Cdef%3A1%2C%22with%22%3A1%2Cval%3A1%2C%22var%22%3A1%2C%22false%22%3A1%2C%22true%22%3A1%2Csealed%3A1%2C%22abstract%22%3A1%2C%22private%22%3A1%2Ctrait%3A1%2Cobject%3A1%2C%22null%22%3A1%2C%22if%22%3A1%2C%22for%22%3A1%2C%22while%22%3A1%2C%22throw%22%3A1%2C%22finally%22%3A1%2C%22protected%22%3A1%2C%22extends%22%3A1%2C%22import%22%3A1%2C%22final%22%3A1%2C%22return%22%3A1%2C%22else%22%3A1%2C%22break%22%3A1%2C%22new%22%3A1%2C%22catch%22%3A1%2C%22super%22%3A1%2C%22class%22%3A1%2C%22case%22%3A1%2C%22package%22%3A1%2C%22default%22%3A1%2C%22try%22%3A1%2C%22this%22%3A1%2Cmatch%3A1%2C%22continue%22%3A1%2C%22throws%22%3A1%7D%2Cc%3A%5B%7BcN%3A%22javadoc%22%2Cb%3A%22%2F%5C%5C%2A%5C%5C%2A%22%2Ce%3A%22%5C%5C%2A%2F%22%2Cc%3A%5B%7BcN%3A%22javadoctag%22%2Cb%3A%22%40%5BA%2DZa%2Dz%5D%2B%22%7D%5D%2Cr%3A10%7D%2Chljs%2ECLCM%2Chljs%2ECBLCLM%2Chljs%2EASM%2Chljs%2EQSM%2Ca%2C%7BcN%3A%22class%22%2Cb%3A%22%28%28case%20%29%3Fclass%20%7Cobject%20%7Ctrait%20%29%22%2Ce%3A%22%28%7B%7C%24%29%22%2Ci%3A%22%3A%22%2Ck%3A%7B%22case%22%3A1%2C%22class%22%3A1%2Ctrait%3A1%2Cobject%3A1%7D%2Cc%3A%5B%7BbWK%3Atrue%2Ck%3A%7B%22extends%22%3A1%2C%22with%22%3A1%7D%2Cr%3A10%7D%2C%7BcN%3A%22title%22%2Cb%3Ahljs%2EUIR%7D%2C%7BcN%3A%22params%22%2Cb%3A%22%5C%5C%28%22%2Ce%3A%22%5C%5C%29%22%2Cc%3A%5Bhljs%2EASM%2Chljs%2EQSM%2Ca%2Cb%5D%7D%5D%7D%2Chljs%2ECNM%2Cb%5D%7D%7D%7D%28%29%3Bhljs%2ELANGUAGES%2Esql%3D%7BcI%3Atrue%2CdM%3A%7Bi%3A%22%5B%5E%5C%5Cs%5D%22%2Cc%3A%5B%7BcN%3A%22operator%22%2Cb%3A%22%28begin%7Cstart%7Ccommit%7Crollback%7Csavepoint%7Clock%7Calter%7Ccreate%7Cdrop%7Crename%7Ccall%7Cdelete%7Cdo%7Chandler%7Cinsert%7Cload%7Creplace%7Cselect%7Ctruncate%7Cupdate%7Cset%7Cshow%7Cpragma%7Cgrant%29%5C%5Cb%22%2Ce%3A%22%3B%7C%22%2Bhljs%2EER%2Ck%3A%7Bkeyword%3A%7Ball%3A1%2Cpartial%3A1%2Cglobal%3A1%2Cmonth%3A1%2Ccurrent%5Ftimestamp%3A1%2Cusing%3A1%2Cgo%3A1%2Crevoke%3A1%2Csmallint%3A1%2Cindicator%3A1%2C%22end%2Dexec%22%3A1%2Cdisconnect%3A1%2Czone%3A1%2C%22with%22%3A1%2Ccharacter%3A1%2Cassertion%3A1%2Cto%3A1%2Cadd%3A1%2Ccurrent%5Fuser%3A1%2Cusage%3A1%2Cinput%3A1%2Clocal%3A1%2Calter%3A1%2Cmatch%3A1%2Ccollate%3A1%2Creal%3A1%2Cthen%3A1%2Crollback%3A1%2Cget%3A1%2Cread%3A1%2Ctimestamp%3A1%2Csession%5Fuser%3A1%2Cnot%3A1%2Cinteger%3A1%2Cbit%3A1%2Cunique%3A1%2Cday%3A1%2Cminute%3A1%2Cdesc%3A1%2Cinsert%3A1%2Cexecute%3A1%2Clike%3A1%2Cilike%3A2%2Clevel%3A1%2Cdecimal%3A1%2Cdrop%3A1%2C%22continue%22%3A1%2Cisolation%3A1%2Cfound%3A1%2Cwhere%3A1%2Cconstraints%3A1%2Cdomain%3A1%2Cright%3A1%2Cnational%3A1%2Csome%3A1%2Cmodule%3A1%2Ctransaction%3A1%2Crelative%3A1%2Csecond%3A1%2Cconnect%3A1%2Cescape%3A1%2Cclose%3A1%2Csystem%5Fuser%3A1%2C%22for%22%3A1%2Cdeferred%3A1%2Csection%3A1%2Ccast%3A1%2Ccurrent%3A1%2Csqlstate%3A1%2Callocate%3A1%2Cintersect%3A1%2Cdeallocate%3A1%2Cnumeric%3A1%2C%22public%22%3A1%2Cpreserve%3A1%2Cfull%3A1%2C%22goto%22%3A1%2Cinitially%3A1%2Casc%3A1%2Cno%3A1%2Ckey%3A1%2Coutput%3A1%2Ccollation%3A1%2Cgroup%3A1%2Cby%3A1%2Cunion%3A1%2Csession%3A1%2Cboth%3A1%2Clast%3A1%2Clanguage%3A1%2Cconstraint%3A1%2Ccolumn%3A1%2Cof%3A1%2Cspace%3A1%2Cforeign%3A1%2Cdeferrable%3A1%2Cprior%3A1%2Cconnection%3A1%2Cunknown%3A1%2Caction%3A1%2Ccommit%3A1%2Cview%3A1%2Cor%3A1%2Cfirst%3A1%2Cinto%3A1%2C%22float%22%3A1%2Cyear%3A1%2Cprimary%3A1%2Ccascaded%3A1%2Cexcept%3A1%2Crestrict%3A1%2Cset%3A1%2Creferences%3A1%2Cnames%3A1%2Ctable%3A1%2Couter%3A1%2Copen%3A1%2Cselect%3A1%2Csize%3A1%2Care%3A1%2Crows%3A1%2Cfrom%3A1%2Cprepare%3A1%2Cdistinct%3A1%2Cleading%3A1%2Ccreate%3A1%2Conly%3A1%2Cnext%3A1%2Cinner%3A1%2Cauthorization%3A1%2Cschema%3A1%2Ccorresponding%3A1%2Coption%3A1%2Cdeclare%3A1%2Cprecision%3A1%2Cimmediate%3A1%2C%22else%22%3A1%2Ctimezone%5Fminute%3A1%2Cexternal%3A1%2Cvarying%3A1%2Ctranslation%3A1%2C%22true%22%3A1%2C%22case%22%3A1%2Cexception%3A1%2Cjoin%3A1%2Chour%3A1%2C%22default%22%3A1%2C%22double%22%3A1%2Cscroll%3A1%2Cvalue%3A1%2Ccursor%3A1%2Cdescriptor%3A1%2Cvalues%3A1%2Cdec%3A1%2Cfetch%3A1%2Cprocedure%3A1%2C%22delete%22%3A1%2Cand%3A1%2C%22false%22%3A1%2C%22int%22%3A1%2Cis%3A1%2Cdescribe%3A1%2C%22char%22%3A1%2Cas%3A1%2Cat%3A1%2C%22in%22%3A1%2Cvarchar%3A1%2C%22null%22%3A1%2Ctrailing%3A1%2Cany%3A1%2Cabsolute%3A1%2Ccurrent%5Ftime%3A1%2Cend%3A1%2Cgrant%3A1%2Cprivileges%3A1%2Cwhen%3A1%2Ccross%3A1%2Ccheck%3A1%2Cwrite%3A1%2Ccurrent%5Fdate%3A1%2Cpad%3A1%2Cbegin%3A1%2Ctemporary%3A1%2Cexec%3A1%2Ctime%3A1%2Cupdate%3A1%2Ccatalog%3A1%2Cuser%3A1%2Csql%3A1%2Cdate%3A1%2Con%3A1%2Cidentity%3A1%2Ctimezone%5Fhour%3A1%2Cnatural%3A1%2Cwhenever%3A1%2Cinterval%3A1%2Cwork%3A1%2Corder%3A1%2Ccascade%3A1%2Cdiagnostics%3A1%2Cnchar%3A1%2Chaving%3A1%2Cleft%3A1%2Ccall%3A1%2C%22do%22%3A1%2Chandler%3A1%2Cload%3A1%2Creplace%3A1%2Ctruncate%3A1%2Cstart%3A1%2Clock%3A1%2Cshow%3A1%2Cpragma%3A1%7D%2Caggregate%3A%7Bcount%3A1%2Csum%3A1%2Cmin%3A1%2Cmax%3A1%2Cavg%3A1%7D%7D%2Cc%3A%5B%7BcN%3A%22string%22%2Cb%3A%22%27%22%2Ce%3A%22%27%22%2Cc%3A%5Bhljs%2EBE%2C%7Bb%3A%22%27%27%22%7D%5D%2Cr%3A0%7D%2C%7BcN%3A%22string%22%2Cb%3A%27%22%27%2Ce%3A%27%22%27%2Cc%3A%5Bhljs%2EBE%2C%7Bb%3A%27%22%22%27%7D%5D%2Cr%3A0%7D%2C%7BcN%3A%22string%22%2Cb%3A%22%60%22%2Ce%3A%22%60%22%2Cc%3A%5Bhljs%2EBE%5D%7D%2Chljs%2ECNM%5D%7D%2Chljs%2ECBLCLM%2C%7BcN%3A%22comment%22%2Cb%3A%22%2D%2D%22%2Ce%3A%22%24%22%7D%5D%7D%7D%3Bhljs%2ELANGUAGES%2Estan%3D%7BdM%3A%7Bc%3A%5Bhljs%2EHCM%2Chljs%2ECLCM%2Chljs%2EQSM%2Chljs%2ECNM%2C%7BcN%3A%22operator%22%2Cb%3A%22%28%3F%3A%3C%2D%7C%7E%7C%5C%5C%7C%5C%5C%7C%7C%26%26%7C%3D%3D%7C%21%3D%7C%3C%3D%3F%7C%3E%3D%3F%7C%5C%5C%2B%7C%2D%7C%5C%5C%2E%3F%2F%7C%5C%5C%5C%5C%7C%5C%5C%5E%7C%5C%5C%5E%7C%21%7C%27%7C%25%7C%3A%7C%2C%7C%3B%7C%3D%29%5C%5Cb%22%2Ce%3Ahljs%2EIMMEDIATE%5FRE%2Cr%3A10%7D%2C%7BcN%3A%22paren%22%2Cb%3A%22%5B%5B%28%7B%5C%5C%5D%29%7D%5D%22%2Ce%3Ahljs%2EIMMEDIATE%5FRE%2Cr%3A0%7D%2C%7BcN%3A%22function%22%2Cb%3A%22%28%3F%3APhi%7CPhi%5Fapprox%7Cabs%7Cacos%7Cacosh%7Cappend%5Fcol%7Cappend%5Frow%7Casin%7Casinh%7Catan%7Catan2%7Catanh%7Cbernoulli%5Fccdf%5Flog%7Cbernoulli%5Fcdf%7Cbernoulli%5Fcdf%5Flog%7Cbernoulli%5Flog%7Cbernoulli%5Flogit%5Flog%7Cbernoulli%5Frng%7Cbessel%5Ffirst%5Fkind%7Cbessel%5Fsecond%5Fkind%7Cbeta%5Fbinomial%5Fccdf%5Flog%7Cbeta%5Fbinomial%5Fcdf%7Cbeta%5Fbinomial%5Fcdf%5Flog%7Cbeta%5Fbinomial%5Flog%7Cbeta%5Fbinomial%5Frng%7Cbeta%5Fccdf%5Flog%7Cbeta%5Fcdf%7Cbeta%5Fcdf%5Flog%7Cbeta%5Flog%7Cbeta%5Frng%7Cbinary%5Flog%5Floss%7Cbinomial%5Fccdf%5Flog%7Cbinomial%5Fcdf%7Cbinomial%5Fcdf%5Flog%7Cbinomial%5Fcoefficient%5Flog%7Cbinomial%5Flog%7Cbinomial%5Flogit%5Flog%7Cbinomial%5Frng%7Cblock%7Ccategorical%5Flog%7Ccategorical%5Flogit%5Flog%7Ccategorical%5Frng%7Ccauchy%5Fccdf%5Flog%7Ccauchy%5Fcdf%7Ccauchy%5Fcdf%5Flog%7Ccauchy%5Flog%7Ccauchy%5Frng%7Ccbrt%7Cceil%7Cchi%5Fsquare%5Fccdf%5Flog%7Cchi%5Fsquare%5Fcdf%7Cchi%5Fsquare%5Fcdf%5Flog%7Cchi%5Fsquare%5Flog%7Cchi%5Fsquare%5Frng%7Ccholesky%5Fdecompose%7Ccol%7Ccols%7Ccolumns%5Fdot%5Fproduct%7Ccolumns%5Fdot%5Fself%7Ccos%7Ccosh%7Ccrossprod%7Ccsr%5Fextract%5Fu%7Ccsr%5Fextract%5Fv%7Ccsr%5Fextract%5Fw%7Ccsr%5Fmatrix%5Ftimes%5Fvector%7Ccsr%5Fto%5Fdense%5Fmatrix%7Ccumulative%5Fsum%7Cdeterminant%7Cdiag%5Fmatrix%7Cdiag%5Fpost%5Fmultiply%7Cdiag%5Fpre%5Fmultiply%7Cdiagonal%7Cdigamma%7Cdims%7Cdirichlet%5Flog%7Cdirichlet%5Frng%7Cdistance%7Cdot%5Fproduct%7Cdot%5Fself%7Cdouble%5Fexponential%5Fccdf%5Flog%7Cdouble%5Fexponential%5Fcdf%7Cdouble%5Fexponential%5Fcdf%5Flog%7Cdouble%5Fexponential%5Flog%7Cdouble%5Fexponential%5Frng%7Ce%7Ceigenvalues%5Fsym%7Ceigenvectors%5Fsym%7Cerf%7Cerfc%7Cexp%7Cexp2%7Cexp%5Fmod%5Fnormal%5Fccdf%5Flog%7Cexp%5Fmod%5Fnormal%5Fcdf%7Cexp%5Fmod%5Fnormal%5Fcdf%5Flog%7Cexp%5Fmod%5Fnormal%5Flog%7Cexp%5Fmod%5Fnormal%5Frng%7Cexpm1%7Cexponential%5Fccdf%5Flog%7Cexponential%5Fcdf%7Cexponential%5Fcdf%5Flog%7Cexponential%5Flog%7Cexponential%5Frng%7Cfabs%7Cfalling%5Ffactorial%7Cfdim%7Cfloor%7Cfma%7Cfmax%7Cfmin%7Cfmod%7Cfrechet%5Fccdf%5Flog%7Cfrechet%5Fcdf%7Cfrechet%5Fcdf%5Flog%7Cfrechet%5Flog%7Cfrechet%5Frng%7Cgamma%5Fccdf%5Flog%7Cgamma%5Fcdf%7Cgamma%5Fcdf%5Flog%7Cgamma%5Flog%7Cgamma%5Fp%7Cgamma%5Fq%7Cgamma%5Frng%7Cgaussian%5Fdlm%5Fobs%5Flog%7Cget%5Flp%7Cgumbel%5Fccdf%5Flog%7Cgumbel%5Fcdf%7Cgumbel%5Fcdf%5Flog%7Cgumbel%5Flog%7Cgumbel%5Frng%7Chead%7Chypergeometric%5Flog%7Chypergeometric%5Frng%7Chypot%7Cif%5Felse%7Cint%5Fstep%7Cinv%7Cinv%5Fchi%5Fsquare%5Fccdf%5Flog%7Cinv%5Fchi%5Fsquare%5Fcdf%7Cinv%5Fchi%5Fsquare%5Fcdf%5Flog%7Cinv%5Fchi%5Fsquare%5Flog%7Cinv%5Fchi%5Fsquare%5Frng%7Cinv%5Fcloglog%7Cinv%5Fgamma%5Fccdf%5Flog%7Cinv%5Fgamma%5Fcdf%7Cinv%5Fgamma%5Fcdf%5Flog%7Cinv%5Fgamma%5Flog%7Cinv%5Fgamma%5Frng%7Cinv%5Flogit%7Cinv%5Fphi%7Cinv%5Fsqrt%7Cinv%5Fsquare%7Cinv%5Fwishart%5Flog%7Cinv%5Fwishart%5Frng%7Cinverse%7Cinverse%5Fspd%7Cis%5Finf%7Cis%5Fnan%7Clbeta%7Clgamma%7Clkj%5Fcorr%5Fcholesky%5Flog%7Clkj%5Fcorr%5Fcholesky%5Frng%7Clkj%5Fcorr%5Flog%7Clkj%5Fcorr%5Frng%7Clmgamma%7Clog%7Clog10%7Clog1m%7Clog1m%5Fexp%7Clog1m%5Finv%5Flogit%7Clog1p%7Clog1p%5Fexp%7Clog2%7Clog%5Fdeterminant%7Clog%5Fdiff%5Fexp%7Clog%5Ffalling%5Ffactorial%7Clog%5Finv%5Flogit%7Clog%5Fmix%7Clog%5Frising%5Ffactorial%7Clog%5Fsoftmax%7Clog%5Fsum%5Fexp%7Clogistic%5Fccdf%5Flog%7Clogistic%5Fcdf%7Clogistic%5Fcdf%5Flog%7Clogistic%5Flog%7Clogistic%5Frng%7Clogit%7Clognormal%5Fccdf%5Flog%7Clognormal%5Fcdf%7Clognormal%5Fcdf%5Flog%7Clognormal%5Flog%7Clognormal%5Frng%7Cmachine%5Fprecision%7Cmax%7Cmdivide%5Fleft%5Ftri%5Flow%7Cmdivide%5Fright%5Ftri%5Flow%7Cmean%7Cmin%7Cmodified%5Fbessel%5Ffirst%5Fkind%7Cmodified%5Fbessel%5Fsecond%5Fkind%7Cmulti%5Fgp%5Fcholesky%5Flog%7Cmulti%5Fgp%5Flog%7Cmulti%5Fnormal%5Fcholesky%5Flog%7Cmulti%5Fnormal%5Fcholesky%5Frng%7Cmulti%5Fnormal%5Flog%7Cmulti%5Fnormal%5Fprec%5Flog%7Cmulti%5Fnormal%5Frng%7Cmulti%5Fstudent%5Ft%5Flog%7Cmulti%5Fstudent%5Ft%5Frng%7Cmultinomial%5Flog%7Cmultinomial%5Frng%7Cmultiply%5Flog%7Cmultiply%5Flower%5Ftri%5Fself%5Ftranspose%7Cneg%5Fbinomial%5F2%5Fccdf%5Flog%7Cneg%5Fbinomial%5F2%5Fcdf%7Cneg%5Fbinomial%5F2%5Fcdf%5Flog%7Cneg%5Fbinomial%5F2%5Flog%7Cneg%5Fbinomial%5F2%5Flog%5Flog%7Cneg%5Fbinomial%5F2%5Flog%5Frng%7Cneg%5Fbinomial%5F2%5Frng%7Cneg%5Fbinomial%5Fccdf%5Flog%7Cneg%5Fbinomial%5Fcdf%7Cneg%5Fbinomial%5Fcdf%5Flog%7Cneg%5Fbinomial%5Flog%7Cneg%5Fbinomial%5Frng%7Cnegative%5Finfinity%7Cnormal%5Fccdf%5Flog%7Cnormal%5Fcdf%7Cnormal%5Fcdf%5Flog%7Cnormal%5Flog%7Cnormal%5Frng%7Cnot%5Fa%5Fnumber%7Cnum%5Felements%7Cordered%5Flogistic%5Flog%7Cordered%5Flogistic%5Frng%7Cowens%5Ft%7Cpareto%5Fccdf%5Flog%7Cpareto%5Fcdf%7Cpareto%5Fcdf%5Flog%7Cpareto%5Flog%7Cpareto%5Frng%7Cpareto%5Ftype%5F2%5Fccdf%5Flog%7Cpareto%5Ftype%5F2%5Fcdf%7Cpareto%5Ftype%5F2%5Fcdf%5Flog%7Cpareto%5Ftype%5F2%5Flog%7Cpareto%5Ftype%5F2%5Frng%7Cpi%7Cpoisson%5Fccdf%5Flog%7Cpoisson%5Fcdf%7Cpoisson%5Fcdf%5Flog%7Cpoisson%5Flog%7Cpoisson%5Flog%5Flog%7Cpoisson%5Flog%5Frng%7Cpoisson%5Frng%7Cpositive%5Finfinity%7Cpow%7Cprod%7Cqr%5FQ%7Cqr%5FR%7Cquad%5Fform%7Cquad%5Fform%5Fdiag%7Cquad%5Fform%5Fsym%7Crank%7Crayleigh%5Fccdf%5Flog%7Crayleigh%5Fcdf%7Crayleigh%5Fcdf%5Flog%7Crayleigh%5Flog%7Crayleigh%5Frng%7Crep%5Farray%7Crep%5Fmatrix%7Crep%5Frow%5Fvector%7Crep%5Fvector%7Crising%5Ffactorial%7Cround%7Crow%7Crows%7Crows%5Fdot%5Fproduct%7Crows%5Fdot%5Fself%7Cscaled%5Finv%5Fchi%5Fsquare%5Fccdf%5Flog%7Cscaled%5Finv%5Fchi%5Fsquare%5Fcdf%7Cscaled%5Finv%5Fchi%5Fsquare%5Fcdf%5Flog%7Cscaled%5Finv%5Fchi%5Fsquare%5Flog%7Cscaled%5Finv%5Fchi%5Fsquare%5Frng%7Csd%7Csegment%7Csin%7Csingular%5Fvalues%7Csinh%7Csize%7Cskew%5Fnormal%5Fccdf%5Flog%7Cskew%5Fnormal%5Fcdf%7Cskew%5Fnormal%5Fcdf%5Flog%7Cskew%5Fnormal%5Flog%7Cskew%5Fnormal%5Frng%7Csoftmax%7Csort%5Fasc%7Csort%5Fdesc%7Csort%5Findices%5Fasc%7Csort%5Findices%5Fdesc%7Csqrt%7Csqrt2%7Csquare%7Csquared%5Fdistance%7Cstep%7Cstudent%5Ft%5Fccdf%5Flog%7Cstudent%5Ft%5Fcdf%7Cstudent%5Ft%5Fcdf%5Flog%7Cstudent%5Ft%5Flog%7Cstudent%5Ft%5Frng%7Csub%5Fcol%7Csub%5Frow%7Csum%7Ctail%7Ctan%7Ctanh%7Ctcrossprod%7Ctgamma%7Cto%5Farray%5F1d%7Cto%5Farray%5F2d%7Cto%5Fmatrix%7Cto%5Frow%5Fvector%7Cto%5Fvector%7Ctrace%7Ctrace%5Fgen%5Fquad%5Fform%7Ctrace%5Fquad%5Fform%7Ctrigamma%7Ctrunc%7Cuniform%5Fccdf%5Flog%7Cuniform%5Fcdf%7Cuniform%5Fcdf%5Flog%7Cuniform%5Flog%7Cuniform%5Frng%7Cvariance%7Cvon%5Fmises%5Flog%7Cvon%5Fmises%5Frng%7Cweibull%5Fccdf%5Flog%7Cweibull%5Fcdf%7Cweibull%5Fcdf%5Flog%7Cweibull%5Flog%7Cweibull%5Frng%7Cwiener%5Flog%7Cwishart%5Flog%7Cwishart%5Frng%29%5C%5Cb%22%2Ce%3Ahljs%2EIMMEDIATE%5FRE%2Cr%3A10%7D%2C%7BcN%3A%22function%22%2Cb%3A%22%28%3F%3Abernoulli%7Cbernoulli%5Flogit%7Cbeta%7Cbeta%5Fbinomial%7Cbinomial%7Cbinomial%5Flogit%7Ccategorical%7Ccategorical%5Flogit%7Ccauchy%7Cchi%5Fsquare%7Cdirichlet%7Cdouble%5Fexponential%7Cexp%5Fmod%5Fnormal%7Cexponential%7Cfrechet%7Cgamma%7Cgaussian%5Fdlm%5Fobs%7Cgumbel%7Chypergeometric%7Cinv%5Fchi%5Fsquare%7Cinv%5Fgamma%7Cinv%5Fwishart%7Clkj%5Fcorr%7Clkj%5Fcorr%5Fcholesky%7Clogistic%7Clognormal%7Cmulti%5Fgp%7Cmulti%5Fgp%5Fcholesky%7Cmulti%5Fnormal%7Cmulti%5Fnormal%5Fcholesky%7Cmulti%5Fnormal%5Fprec%7Cmulti%5Fstudent%5Ft%7Cmultinomial%7Cneg%5Fbinomial%7Cneg%5Fbinomial%5F2%7Cneg%5Fbinomial%5F2%5Flog%7Cnormal%7Cordered%5Flogistic%7Cpareto%7Cpareto%5Ftype%5F2%7Cpoisson%7Cpoisson%5Flog%7Crayleigh%7Cscaled%5Finv%5Fchi%5Fsquare%7Cskew%5Fnormal%7Cstudent%5Ft%7Cuniform%7Cvon%5Fmises%7Cweibull%7Cwiener%7Cwishart%29%5C%5Cb%22%2Ce%3Ahljs%2EIMMEDIATE%5FRE%2Cr%3A10%7D%2C%7BcN%3A%22keyword%22%2Cb%3A%22%28%3F%3Afor%7Cin%7Cwhile%7Cif%7Cthen%7Celse%7Creturn%7Clower%7Cupper%7Cprint%7Cincrement%5Flog%5Fprob%7Cintegrate%5Fode%7Creject%29%5C%5Cb%22%2Ce%3Ahljs%2EIMMEDIATE%5FRE%2Cr%3A10%7D%2C%7BcN%3A%22keyword%22%2Cb%3A%22%28%3F%3Aint%7Creal%7Cvector%7Csimplex%7Cunit%5Fvector%7Cordered%7Cpositive%5Fordered%7Crow%5Fvector%7Cmatrix%7Ccholesky%5Ffactor%5Fcov%7Ccholesky%5Ffactor%5Fcorr%7Ccorr%5Fmatrix%7Ccov%5Fmatrix%7Cvoid%29%5C%5Cb%22%2Ce%3Ahljs%2EIMMEDIATE%5FRE%2Cr%3A5%7D%2C%7BcN%3A%22keyword%22%2Cb%3A%22%28%3F%3Afunctions%7Cdata%7Ctransformed%5C%5Cs%2Bdata%7Cparameters%7Ctransformed%5C%5Cs%2Bparameters%7Cmodel%7Cgenerated%5C%5Cs%2Bquantities%29%5C%5Cb%22%2Ce%3Ahljs%2EIMMEDIATE%5FRE%2Cr%3A5%7D%5D%7D%7D%3Bhljs%2ELANGUAGES%2Exml%3Dfunction%28%29%7Bvar%20b%3D%22%5BA%2DZa%2Dz0%2D9%5C%5C%2E%5F%3A%2D%5D%2B%22%3Bvar%20a%3D%7BeW%3Atrue%2Cc%3A%5B%7BcN%3A%22attribute%22%2Cb%3Ab%2Cr%3A0%7D%2C%7Bb%3A%27%3D%22%27%2CrB%3Atrue%2Ce%3A%27%22%27%2Cc%3A%5B%7BcN%3A%22value%22%2Cb%3A%27%22%27%2CeW%3Atrue%7D%5D%7D%2C%7Bb%3A%22%3D%27%22%2CrB%3Atrue%2Ce%3A%22%27%22%2Cc%3A%5B%7BcN%3A%22value%22%2Cb%3A%22%27%22%2CeW%3Atrue%7D%5D%7D%2C%7Bb%3A%22%3D%22%2Cc%3A%5B%7BcN%3A%22value%22%2Cb%3A%22%5B%5E%5C%5Cs%2F%3E%5D%2B%22%7D%5D%7D%5D%7D%3Breturn%7BcI%3Atrue%2CdM%3A%7Bc%3A%5B%7BcN%3A%22pi%22%2Cb%3A%22%3C%5C%5C%3F%22%2Ce%3A%22%5C%5C%3F%3E%22%2Cr%3A10%7D%2C%7BcN%3A%22doctype%22%2Cb%3A%22%3C%21DOCTYPE%22%2Ce%3A%22%3E%22%2Cr%3A10%2Cc%3A%5B%7Bb%3A%22%5C%5C%5B%22%2Ce%3A%22%5C%5C%5D%22%7D%5D%7D%2C%7BcN%3A%22comment%22%2Cb%3A%22%3C%21%2D%2D%22%2Ce%3A%22%2D%2D%3E%22%2Cr%3A10%7D%2C%7BcN%3A%22cdata%22%2Cb%3A%22%3C%5C%5C%21%5C%5C%5BCDATA%5C%5C%5B%22%2Ce%3A%22%5C%5C%5D%5C%5C%5D%3E%22%2Cr%3A10%7D%2C%7BcN%3A%22tag%22%2Cb%3A%22%3Cstyle%28%3F%3D%5C%5Cs%7C%3E%7C%24%29%22%2Ce%3A%22%3E%22%2Ck%3A%7Btitle%3A%7Bstyle%3A1%7D%7D%2Cc%3A%5Ba%5D%2Cstarts%3A%7BcN%3A%22css%22%2Ce%3A%22%3C%2Fstyle%3E%22%2CrE%3Atrue%2CsL%3A%22css%22%7D%7D%2C%7BcN%3A%22tag%22%2Cb%3A%22%3Cscript%28%3F%3D%5C%5Cs%7C%3E%7C%24%29%22%2Ce%3A%22%3E%22%2Ck%3A%7Btitle%3A%7Bscript%3A1%7D%7D%2Cc%3A%5Ba%5D%2Cstarts%3A%7BcN%3A%22javascript%22%2Ce%3A%22%3C%5C%2Fscript%3E%22%2CrE%3Atrue%2CsL%3A%22javascript%22%7D%7D%2C%7BcN%3A%22vbscript%22%2Cb%3A%22%3C%25%22%2Ce%3A%22%25%3E%22%2CsL%3A%22vbscript%22%7D%2C%7BcN%3A%22tag%22%2Cb%3A%22%3C%2F%3F%22%2Ce%3A%22%2F%3F%3E%22%2Cc%3A%5B%7BcN%3A%22title%22%2Cb%3A%22%5B%5E%20%2F%3E%5D%2B%22%7D%2Ca%5D%7D%5D%7D%7D%7D%28%29%3B%0Ahljs%2EinitHighlightingOnLoad%28%29%3B%0A%0A"></script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+<link href="data:text/css,body%2C%20td%20%7B%0A%20%20%20font%2Dfamily%3A%20sans%2Dserif%3B%0A%20%20%20background%2Dcolor%3A%20white%3B%0A%20%20%20font%2Dsize%3A%2013px%3B%0A%7D%0A%0Abody%20%7B%0A%20%20max%2Dwidth%3A%20800px%3B%0A%20%20margin%3A%200%20auto%3B%0A%20%20padding%3A%201em%201em%202em%3B%0A%20%20line%2Dheight%3A%2020px%3B%0A%7D%0A%0A%2F%2A%20Table%20of%20contents%20style%20%2A%2F%0A%0Adiv%23TOC%20li%20%7B%0A%20%20%20%20list%2Dstyle%3Anone%3B%0A%20%20%20%20background%2Dimage%3Anone%3B%0A%20%20%20%20background%2Drepeat%3Anone%3B%0A%20%20%20%20background%2Dposition%3A0%3B%0A%7D%0A%0A%2F%2A%20element%20spacing%20%2A%2F%0A%0Ap%2C%20pre%20%7B%20%0A%20%20margin%3A%200em%200em%201em%3B%0A%7D%0A%0A%2F%2A%20center%20images%20and%20tables%20%2A%2F%0Aimg%2C%20table%20%7B%0A%20%20margin%3A%200em%20auto%201em%3B%0A%7D%0A%0Ap%20%7B%0A%20%20text%2Dalign%3A%20justify%3B%0A%7D%0A%0Att%2C%20code%2C%20pre%20%7B%0A%20%20%20font%2Dfamily%3A%20%27DejaVu%20Sans%20Mono%27%2C%20%27Droid%20Sans%20Mono%27%2C%20%27Lucida%20Console%27%2C%20Consolas%2C%20Monaco%2C%20monospace%3B%0A%7D%0A%0Ah1%2C%20h2%2C%20h3%2C%20h4%2C%20h5%2C%20h6%20%7B%20%0A%20%20font%2Dfamily%3A%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0A%20%20margin%3A%201%2E2em%200em%200%2E6em%200em%3B%0A%20%20font%2Dweight%3A%20bold%3B%0A%7D%0A%0Ah1%2Etitle%20%7B%0A%20%20font%2Dsize%3A%20250%25%3B%0A%20%20font%2Dweight%3A%20normal%3B%0A%20%20color%3A%20%2387b13f%3B%0A%20%20line%2Dheight%3A%201%2E1em%3B%0A%20%20margin%2Dtop%3A%200px%3B%0A%20%20border%2Dbottom%3A%200px%3B%0A%7D%0A%0Ah1%20%7B%0A%20%20font%2Dsize%3A%20160%25%3B%0A%20%20font%2Dweight%3A%20normal%3B%0A%20%20line%2Dheight%3A%201%2E4em%3B%0A%20%20border%2Dbottom%3A%201px%20%231a81c2%20solid%3B%0A%7D%0A%0Ah2%20%7B%0A%20%20font%2Dsize%3A%20130%25%3B%20%20%0A%7D%0A%0Ah1%2C%20h2%2C%20h3%20%7B%0A%20%20color%3A%20%231a81c2%3B%0A%7D%0A%0Ah3%2C%20h4%2C%20h5%2C%20h6%20%7B%0A%20%20font%2Dsize%3A115%25%3B%0A%7D%20%2F%2A%20not%20expecting%20to%20dive%20deeper%20than%20four%20levels%20on%20a%20single%20page%20%2A%2F%0A%0A%2F%2A%20links%20are%20simply%20blue%2C%20hovering%20slightly%20less%20blue%20%2A%2F%0Aa%20%7B%20color%3A%20%231a81c2%3B%20%7D%0Aa%3Aactive%20%7B%20outline%3A%20none%3B%20%7D%0Aa%3Avisited%20%7B%20color%3A%20%231a81c2%3B%20%7D%0Aa%3Ahover%20%7B%20color%3A%20%234c94c2%3B%20%7D%0A%0Apre%2C%20img%20%7B%0A%20%20max%2Dwidth%3A%20100%25%3B%0A%20%20display%3A%20block%3B%0A%7D%0A%0Apre%20%7B%0A%20%20border%3A%200px%20none%3B%0A%20%20background%2Dcolor%3A%20%23F8F8F8%3B%0A%20%20white%2Dspace%3A%20pre%3B%0A%20%20overflow%2Dx%3A%20auto%3B%0A%7D%0A%0Apre%20code%20%7B%0A%20%20border%3A%201px%20%23aaa%20dashed%3B%0A%20%20background%2Dcolor%3A%20white%3B%0A%20%20display%3A%20block%3B%0A%20%20padding%3A%201em%3B%20%20%0A%20%20color%3A%20%23111%3B%0A%20%20overflow%2Dx%3A%20inherit%3B%0A%7D%0A%0A%2F%2A%20markdown%20v1%20%2A%2F%0Apre%20code%5Bclass%5D%20%7B%0A%20%20background%2Dcolor%3A%20inherit%3B%0A%7D%0A%0A%2F%2A%20markdown%20v2%20%2A%2F%0Apre%5Bclass%5D%20code%20%7B%0A%20%20background%2Dcolor%3A%20inherit%3B%0A%7D%0A%0A%2F%2A%20formatting%20of%20inline%20code%20%2A%2F%0Acode%20%7B%20%0A%20%20background%2Dcolor%3A%20transparent%3B%0A%20%20color%3A%20%2387b13f%3B%0A%20%20font%2Dsize%3A%2092%25%3B%0A%7D%0A%0A%2F%2A%20formatting%20of%20tables%20%2A%2F%0A%0Atable%2C%20td%2C%20th%20%7B%0A%20%20border%3A%20none%3B%0A%20%20padding%3A%200%200%2E5em%3B%0A%7D%0A%0A%2F%2A%20alternating%20row%20colors%20%2A%2F%0Atbody%20tr%3Anth%2Dchild%28odd%29%20td%20%7B%0A%20%20background%2Dcolor%3A%20%23F8F8F8%3B%0A%7D%0A%0Ablockquote%20%7B%0A%20%20%20color%3A%23666666%3B%0A%20%20%20margin%3A0%3B%0A%20%20%20padding%2Dleft%3A%201em%3B%0A%20%20%20border%2Dleft%3A%200%2E5em%20%23EEE%20solid%3B%0A%7D%0A%0Ahr%20%7B%0A%20%20%20height%3A%200px%3B%0A%20%20%20border%2Dbottom%3A%20none%3B%0A%20%20%20border%2Dtop%2Dwidth%3A%20thin%3B%0A%20%20%20border%2Dtop%2Dstyle%3A%20dotted%3B%0A%20%20%20border%2Dtop%2Dcolor%3A%20%23999999%3B%0A%7D%0A%0Aspan%2Eheader%2Dsection%2Dnumber%20%7B%0A%20%20padding%2Dright%3A%201em%3B%0A%7D%0A%0Aspan%2Etoc%2Dsection%2Dnumber%3A%3Aafter%20%7B%0A%20%20%20%20content%3A%20%22%20%20%22%3B%0A%20%20%20%20white%2Dspace%3A%20pre%3B%0A%7D%0A%0A%40media%20print%20%7B%0A%20%20%20%2A%20%7B%0A%20%20%20%20%20%20background%3A%20transparent%20%21important%3B%0A%20%20%20%20%20%20color%3A%20black%20%21important%3B%0A%20%20%20%20%20%20filter%3Anone%20%21important%3B%0A%20%20%20%20%20%20%2Dms%2Dfilter%3A%20none%20%21important%3B%0A%20%20%20%7D%0A%0A%20%20%20body%20%7B%0A%20%20%20%20%20%20font%2Dsize%3A12pt%3B%0A%20%20%20%20%20%20max%2Dwidth%3A100%25%3B%0A%20%20%20%7D%0A%0A%20%20%20a%2C%20a%3Avisited%20%7B%0A%20%20%20%20%20%20text%2Ddecoration%3A%20underline%3B%0A%20%20%20%7D%0A%0A%20%20%20hr%20%7B%0A%20%20%20%20%20%20visibility%3A%20hidden%3B%0A%20%20%20%20%20%20page%2Dbreak%2Dbefore%3A%20always%3B%0A%20%20%20%7D%0A%0A%20%20%20pre%2C%20blockquote%20%7B%0A%20%20%20%20%20%20padding%2Dright%3A%201em%3B%0A%20%20%20%20%20%20page%2Dbreak%2Dinside%3A%20avoid%3B%0A%20%20%20%7D%0A%0A%20%20%20tr%2C%20img%20%7B%0A%20%20%20%20%20%20page%2Dbreak%2Dinside%3A%20avoid%3B%0A%20%20%20%7D%0A%0A%20%20%20img%20%7B%0A%20%20%20%20%20%20max%2Dwidth%3A%20100%25%20%21important%3B%0A%20%20%20%7D%0A%0A%20%20%20%40page%20%3Aleft%20%7B%0A%20%20%20%20%20%20margin%3A%2015mm%2020mm%2015mm%2010mm%3B%0A%20%20%20%7D%0A%0A%20%20%20%40page%20%3Aright%20%7B%0A%20%20%20%20%20%20margin%3A%2015mm%2010mm%2015mm%2020mm%3B%0A%20%20%20%7D%0A%0A%20%20%20p%2C%20h2%2C%20h3%20%7B%0A%20%20%20%20%20%20orphans%3A%203%3B%20widows%3A%203%3B%0A%20%20%20%7D%0A%0A%20%20%20h2%2C%20h3%20%7B%0A%20%20%20%20%20%20page%2Dbreak%2Dafter%3A%20avoid%3B%0A%20%20%20%7D%0A%7D%0A" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function() {
+  var links = document.links;  
+  for (var i = 0, linksLength = links.length; i < linksLength; i++)
+    if(links[i].hostname != window.location.hostname)
+      links[i].target = '_blank';
+});
+</script>
+
+</head>
+
+<body>
+
+
+<div id="header">
+<h1 class="title">Data analysis for FDR regression</h1>
+<h4 class="author"><em>Simina Boca, Jeff Leek</em></h4>
+<h4 class="date"><em>Deceomber 30, 2015</em></h4>
+</div>
+
+<h1>Contents</h1>
+<div id="TOC">
+<ul>
+<li><a href="#load-the-relevant-libraries"><span class="toc-section-number">0.0.1</span> Load the relevant libraries</a></li>
+<li><a href="#load-the-data-first-need-to-download-the-file-from-httpswww.broadinstitute.orgcollaborationgiantindex.phpgiant_consortium_data_filesgwas_anthropometric_2015_bmi"><span class="toc-section-number">0.0.2</span> Load the data (first need to download the file from <a href="https://www.broadinstitute.org/collaboration/giant/index.php/GIANT_consortium_data_files#GWAS_Anthropometric_2015_BMI" class="uri">https://www.broadinstitute.org/collaboration/giant/index.php/GIANT_consortium_data_files#GWAS_Anthropometric_2015_BMI</a>)</a></li>
+<li><a href="#estimate-covariate-specific-pi0"><span class="toc-section-number">0.0.3</span> Estimate covariate-specific pi0</a></li>
+<li><a href="#make-figures"><span class="toc-section-number">0.0.4</span> Make figures</a></li>
+<li><a href="#session-information"><span class="toc-section-number">0.0.5</span> Session Information</a></li>
+</ul>
+</div>
+
+<!--
+%% \VignetteEngine{knitr::rmarkdown}
+-->
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function() {
+  document.querySelector("h1").className = "title";
+});
+</script>
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function() {
+  var links = document.links;  
+  for (var i = 0, linksLength = links.length; i < linksLength; i++)
+    if (links[i].hostname != window.location.hostname)
+      links[i].target = '_blank';
+});
+</script>
+<div id="load-the-relevant-libraries" class="section level3">
+<h3><span class="header-section-number">0.0.1</span> Load the relevant libraries</h3>
+<pre class="r"><code>library(readr)
+library(dplyr)
+library(fdrtool)
+library(betareg)
+library(splines)
+library(Hmisc)
+library(ggplot2)
+library(reshape2)</code></pre>
+</div>
+<div id="load-the-data-first-need-to-download-the-file-from-httpswww.broadinstitute.orgcollaborationgiantindex.phpgiant_consortium_data_filesgwas_anthropometric_2015_bmi" class="section level3">
+<h3><span class="header-section-number">0.0.2</span> Load the data (first need to download the file from <a href="https://www.broadinstitute.org/collaboration/giant/index.php/GIANT_consortium_data_files#GWAS_Anthropometric_2015_BMI" class="uri">https://www.broadinstitute.org/collaboration/giant/index.php/GIANT_consortium_data_files#GWAS_Anthropometric_2015_BMI</a>)</h3>
+<pre class="r"><code>tot = read_tsv(&quot;../FDR projects/Prior prob regression/code/All_ancestries_SNP_gwas_mc_merge_nogc.tbl.uniq&quot;)
+dim(tot)</code></pre>
+<pre><code>## [1] 2555510       8</code></pre>
+<pre class="r"><code>tot = filter(tot,!is.na(Freq1.Hapmap))
+dim(tot)</code></pre>
+<pre><code>## [1] 2500573       8</code></pre>
+<pre class="r"><code>##change the frequency to the minor allele frequency
+tot$Freq1.Hapmap[tot$Freq1.Hapmap &gt; 0.5] &lt;- 1-tot$Freq1.Hapmap[tot$Freq1.Hapmap &gt; 0.5]
+tot = mutate(tot,freq=cut2(Freq1.Hapmap,g=3)) ##added a new variable with frequency intervals for HapMap CEU frequencies
+table(tot$freq)</code></pre>
+<pre><code>## 
+## [0.000,0.127) [0.127,0.302) [0.302,0.500] 
+##        838070        850600        811903</code></pre>
+</div>
+<div id="estimate-covariate-specific-pi0" class="section level3">
+<h3><span class="header-section-number">0.0.3</span> Estimate covariate-specific pi0</h3>
+<p>Source code:</p>
+<pre class="r"><code>source(&quot;https://raw.githubusercontent.com/leekgroup/fdrreg/master/R/estPi0Reg.R&quot;)</code></pre>
+<p>Create design matrix:</p>
+<pre class="r"><code>X &lt;- cbind(ns(tot$N,df=5),tot$freq)
+dim(X)</code></pre>
+<pre><code>## [1] 2500573       6</code></pre>
+<pre class="r"><code>pi0Est &lt;- estPi0Reg(p=tot$p, X=X, smooth.df=3)</code></pre>
+<pre><code>## [1] 10000
+## [1] 20000
+## [1] 30000
+## [1] 40000
+## [1] 50000
+## [1] 60000
+## [1] 70000
+## [1] 80000
+## [1] 90000
+## [1] 100000
+## [1] 110000
+## [1] 120000
+## [1] 130000
+## [1] 140000
+## [1] 150000
+## [1] 160000
+## [1] 170000
+## [1] 180000
+## [1] 190000
+## [1] 200000
+## [1] 210000
+## [1] 220000
+## [1] 230000
+## [1] 240000
+## [1] 250000
+## [1] 260000
+## [1] 270000
+## [1] 280000
+## [1] 290000
+## [1] 300000
+## [1] 310000
+## [1] 320000
+## [1] 330000
+## [1] 340000
+## [1] 350000
+## [1] 360000
+## [1] 370000
+## [1] 380000
+## [1] 390000
+## [1] 400000
+## [1] 410000
+## [1] 420000
+## [1] 430000
+## [1] 440000
+## [1] 450000
+## [1] 460000
+## [1] 470000
+## [1] 480000
+## [1] 490000
+## [1] 500000
+## [1] 510000
+## [1] 520000
+## [1] 530000
+## [1] 540000
+## [1] 550000
+## [1] 560000
+## [1] 570000
+## [1] 580000
+## [1] 590000
+## [1] 600000
+## [1] 610000
+## [1] 620000
+## [1] 630000
+## [1] 640000
+## [1] 650000
+## [1] 660000
+## [1] 670000
+## [1] 680000
+## [1] 690000
+## [1] 700000
+## [1] 710000
+## [1] 720000
+## [1] 730000
+## [1] 740000
+## [1] 750000
+## [1] 760000
+## [1] 770000
+## [1] 780000
+## [1] 790000
+## [1] 800000
+## [1] 810000
+## [1] 820000
+## [1] 830000
+## [1] 840000
+## [1] 850000
+## [1] 860000
+## [1] 870000
+## [1] 880000
+## [1] 890000
+## [1] 900000
+## [1] 910000
+## [1] 920000
+## [1] 930000
+## [1] 940000
+## [1] 950000
+## [1] 960000
+## [1] 970000
+## [1] 980000
+## [1] 990000
+## [1] 1000000
+## [1] 1010000
+## [1] 1020000
+## [1] 1030000
+## [1] 1040000
+## [1] 1050000
+## [1] 1060000
+## [1] 1070000
+## [1] 1080000
+## [1] 1090000
+## [1] 1100000
+## [1] 1110000
+## [1] 1120000
+## [1] 1130000
+## [1] 1140000
+## [1] 1150000
+## [1] 1160000
+## [1] 1170000
+## [1] 1180000
+## [1] 1190000
+## [1] 1200000
+## [1] 1210000
+## [1] 1220000
+## [1] 1230000
+## [1] 1240000
+## [1] 1250000
+## [1] 1260000
+## [1] 1270000
+## [1] 1280000
+## [1] 1290000
+## [1] 1300000
+## [1] 1310000
+## [1] 1320000
+## [1] 1330000
+## [1] 1340000
+## [1] 1350000
+## [1] 1360000
+## [1] 1370000
+## [1] 1380000
+## [1] 1390000
+## [1] 1400000
+## [1] 1410000
+## [1] 1420000
+## [1] 1430000
+## [1] 1440000
+## [1] 1450000
+## [1] 1460000
+## [1] 1470000
+## [1] 1480000
+## [1] 1490000
+## [1] 1500000
+## [1] 1510000
+## [1] 1520000
+## [1] 1530000
+## [1] 1540000
+## [1] 1550000
+## [1] 1560000
+## [1] 1570000
+## [1] 1580000
+## [1] 1590000
+## [1] 1600000
+## [1] 1610000
+## [1] 1620000
+## [1] 1630000
+## [1] 1640000
+## [1] 1650000
+## [1] 1660000
+## [1] 1670000
+## [1] 1680000
+## [1] 1690000
+## [1] 1700000
+## [1] 1710000
+## [1] 1720000
+## [1] 1730000
+## [1] 1740000
+## [1] 1750000
+## [1] 1760000
+## [1] 1770000
+## [1] 1780000
+## [1] 1790000
+## [1] 1800000
+## [1] 1810000
+## [1] 1820000
+## [1] 1830000
+## [1] 1840000
+## [1] 1850000
+## [1] 1860000
+## [1] 1870000
+## [1] 1880000
+## [1] 1890000
+## [1] 1900000
+## [1] 1910000
+## [1] 1920000
+## [1] 1930000
+## [1] 1940000
+## [1] 1950000
+## [1] 1960000
+## [1] 1970000
+## [1] 1980000
+## [1] 1990000
+## [1] 2000000
+## [1] 2010000
+## [1] 2020000
+## [1] 2030000
+## [1] 2040000
+## [1] 2050000
+## [1] 2060000
+## [1] 2070000
+## [1] 2080000
+## [1] 2090000
+## [1] 2100000
+## [1] 2110000
+## [1] 2120000
+## [1] 2130000
+## [1] 2140000
+## [1] 2150000
+## [1] 2160000
+## [1] 2170000
+## [1] 2180000
+## [1] 2190000
+## [1] 2200000
+## [1] 2210000
+## [1] 2220000
+## [1] 2230000
+## [1] 2240000
+## [1] 2250000
+## [1] 2260000
+## [1] 2270000
+## [1] 2280000
+## [1] 2290000
+## [1] 2300000
+## [1] 2310000
+## [1] 2320000
+## [1] 2330000
+## [1] 2340000
+## [1] 2350000
+## [1] 2360000
+## [1] 2370000
+## [1] 2380000
+## [1] 2390000
+## [1] 2400000
+## [1] 2410000
+## [1] 2420000
+## [1] 2430000
+## [1] 2440000
+## [1] 2450000
+## [1] 2460000
+## [1] 2470000
+## [1] 2480000
+## [1] 2490000
+## [1] 2500000</code></pre>
+<pre class="r"><code>##caution: this should take about an hour!
+
+##add the estimates for lambda=0.8, lambda=0.9, final smoothed value
+tot$fitted0.8 &lt;- pi0Est$pi0.lambda[,pi0Est$lambda==0.8]
+tot$fitted0.9 &lt;- pi0Est$pi0.lambda[,round(pi0Est$lambda,2)==0.9]
+tot$fitted.final.smooth &lt;- pi0Est$pi0
+
+range(tot$fitted0.8)</code></pre>
+<pre><code>## [1] 0.6904013 1.1532059</code></pre>
+<pre class="r"><code>range(tot$fitted0.9)</code></pre>
+<pre><code>## [1] 0.6771457 1.1620516</code></pre>
+<pre class="r"><code>range(tot$fitted.final.smooth)</code></pre>
+<pre><code>## [1] 0.6785504 1.0000000</code></pre>
+<pre class="r"><code>##censor pi for 0.8 and 0.9 at 1 as well
+tot$fitted0.8 &lt;- ifelse(tot$fitted0.8 &gt; 1, 1, tot$fitted0.8)
+tot$fitted0.9 &lt;- ifelse(tot$fitted0.9 &gt; 1, 1, tot$fitted0.9)
+
+##get random sample of 50,000 SNPs
+set.seed(310841)
+d1 = tot %&gt;% sample_n(5e4)
+
+##how many SNPs have N &lt; 200,000?
+sum(tot$N &lt; 200000)</code></pre>
+<pre><code>## [1] 187114</code></pre>
+<p>Create long data frame:</p>
+<pre class="r"><code>d3 &lt;- melt(d1,
+           id.vars=colnames(d1)[-grep(&quot;fitted&quot;,colnames(d1))],
+           value.name = &quot;pi0&quot;,variable.name = &quot;lambda&quot;)
+d3$lambda &lt;- as.character(d3$lambda)
+d3$lambda[d3$lambda==&quot;fitted0.8&quot;] &lt;- &quot;lambda=0.8&quot;
+d3$lambda[d3$lambda==&quot;fitted0.9&quot;] &lt;- &quot;lambda=0.9&quot;
+d3$lambda[d3$lambda==&quot;fitted.final.smooth&quot;] &lt;- &quot;final smoothed pi0(x)&quot;</code></pre>
+</div>
+<div id="make-figures" class="section level3">
+<h3><span class="header-section-number">0.0.4</span> Make figures</h3>
+<pre class="r"><code>par(mfrow=c(1,2))
+hist(tot$p, col=&quot;grey&quot;, main=&quot;All N&quot;, xlab=&quot;P-value&quot;)
+hist(tot$p[tot$N &lt; 200000], col=&quot;grey&quot;, main=&quot;N &lt; 200,000&quot;, xlab=&quot;P-value&quot;)</code></pre>
+<p><img src="data:image/png;base64,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" /></p>
+<pre class="r"><code>ggplot(d3, aes(x=N, y=pi0))+
+  geom_line(aes(col=freq, linetype=lambda)) +
+  ylab(&quot;Estimated proportion of nulls&quot;) +
+  guides(color=guide_legend(title=&quot;MAF in HapMap CEU population&quot;),
+         linetype=guide_legend(title=&quot;Estimate&quot;))</code></pre>
+<p><img src="data:image/png;base64,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" /></p>
+</div>
+<div id="session-information" class="section level3">
+<h3><span class="header-section-number">0.0.5</span> Session Information</h3>
+<pre class="r"><code>devtools::session_info()</code></pre>
+<pre><code>## Session info --------------------------------------------------------------</code></pre>
+<pre><code>##  setting  value                       
+##  version  R version 3.3.1 (2016-06-21)
+##  system   x86_64, mingw32             
+##  ui       RTerm                       
+##  language (EN)                        
+##  collate  English_United States.1252  
+##  tz       America/New_York            
+##  date     2016-07-26</code></pre>
+<pre><code>## Packages ------------------------------------------------------------------</code></pre>
+<pre><code>##  package      * version date       source        
+##  acepack        1.3-3.3 2014-11-24 CRAN (R 3.3.0)
+##  assertthat     0.1     2013-12-06 CRAN (R 3.3.1)
+##  betareg      * 3.0-5   2014-09-25 CRAN (R 3.3.1)
+##  BiocStyle    * 2.0.2   2016-05-16 Bioconductor  
+##  chron          2.3-47  2015-06-24 CRAN (R 3.3.1)
+##  cluster        2.0.4   2016-04-18 CRAN (R 3.3.1)
+##  colorspace     1.2-6   2015-03-11 CRAN (R 3.3.1)
+##  data.table     1.9.6   2015-09-19 CRAN (R 3.3.1)
+##  DBI            0.4-1   2016-05-08 CRAN (R 3.3.1)
+##  devtools       1.12.0  2016-06-24 CRAN (R 3.3.1)
+##  digest         0.6.9   2016-01-08 CRAN (R 3.3.1)
+##  dplyr        * 0.5.0   2016-06-24 CRAN (R 3.3.1)
+##  evaluate       0.9     2016-04-29 CRAN (R 3.3.1)
+##  fdrtool      * 1.2.15  2015-07-08 CRAN (R 3.3.0)
+##  flexmix        2.3-13  2015-01-17 CRAN (R 3.3.1)
+##  foreign        0.8-66  2015-08-19 CRAN (R 3.3.1)
+##  formatR        1.4     2016-05-09 CRAN (R 3.3.1)
+##  Formula      * 1.2-1   2015-04-07 CRAN (R 3.3.0)
+##  ggplot2      * 2.1.0   2016-03-01 CRAN (R 3.3.1)
+##  gridExtra      2.2.1   2016-02-29 CRAN (R 3.3.1)
+##  gtable         0.2.0   2016-02-26 CRAN (R 3.3.1)
+##  Hmisc        * 3.17-4  2016-05-02 CRAN (R 3.3.1)
+##  htmltools      0.3.5   2016-03-21 CRAN (R 3.3.1)
+##  knitr          1.13    2016-05-09 CRAN (R 3.3.1)
+##  lattice      * 0.20-33 2015-07-14 CRAN (R 3.3.1)
+##  latticeExtra   0.6-28  2016-02-09 CRAN (R 3.3.1)
+##  lmtest         0.9-34  2015-06-06 CRAN (R 3.3.1)
+##  magrittr       1.5     2014-11-22 CRAN (R 3.3.1)
+##  Matrix         1.2-6   2016-05-02 CRAN (R 3.3.1)
+##  memoise        1.0.0   2016-01-29 CRAN (R 3.3.1)
+##  modeltools     0.2-21  2013-09-02 CRAN (R 3.3.0)
+##  munsell        0.4.3   2016-02-13 CRAN (R 3.3.1)
+##  nnet           7.3-12  2016-02-02 CRAN (R 3.3.1)
+##  plyr           1.8.4   2016-06-08 CRAN (R 3.3.1)
+##  R6             2.1.2   2016-01-26 CRAN (R 3.3.1)
+##  RColorBrewer   1.1-2   2014-12-07 CRAN (R 3.3.0)
+##  Rcpp           0.12.5  2016-05-14 CRAN (R 3.3.1)
+##  readr        * 0.2.2   2015-10-22 CRAN (R 3.3.1)
+##  reshape2     * 1.4.1   2014-12-06 CRAN (R 3.3.1)
+##  rmarkdown      1.0     2016-07-08 CRAN (R 3.3.1)
+##  rpart          4.1-10  2015-06-29 CRAN (R 3.3.1)
+##  sandwich       2.3-4   2015-09-24 CRAN (R 3.3.1)
+##  scales         0.4.0   2016-02-26 CRAN (R 3.3.1)
+##  stringi        1.1.1   2016-05-27 CRAN (R 3.3.0)
+##  stringr        1.0.0   2015-04-30 CRAN (R 3.3.1)
+##  survival     * 2.39-4  2016-05-11 CRAN (R 3.3.1)
+##  tibble         1.1     2016-07-04 CRAN (R 3.3.1)
+##  withr          1.0.2   2016-06-20 CRAN (R 3.3.1)
+##  yaml           2.1.13  2014-06-12 CRAN (R 3.3.1)
+##  zoo            1.7-13  2016-05-03 CRAN (R 3.3.1)</code></pre>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

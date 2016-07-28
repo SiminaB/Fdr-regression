@@ -1,0 +1,126 @@
+---
+title: "Data analysis for FDR regression"
+author: "Simina Boca, Jeff Leek"
+date: "July 26, 2016"
+VignetteBuilder: knitr
+Suggests: BiocStyle, knitr, rmarkdown
+output:
+    BiocStyle::html_document:
+    toc: true
+---
+
+<!--
+%% \VignetteEngine{knitr::rmarkdown}
+-->
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.path='Figures/')
+```
+
+```{r style, echo = FALSE, results = 'asis'}
+BiocStyle::markdown()
+```
+
+### Load the relevant libraries
+
+```{r,message=FALSE}
+library(readr)
+library(dplyr)
+library(fdrtool)
+library(betareg)
+library(splines)
+library(Hmisc)
+library(ggplot2)
+library(reshape2)
+```
+
+
+### Load the data (first need to download the file from https://www.broadinstitute.org/collaboration/giant/index.php/GIANT_consortium_data_files#GWAS_Anthropometric_2015_BMI)
+
+```{r,cache=TRUE}
+tot = read_tsv("../FDR projects/Prior prob regression/code/All_ancestries_SNP_gwas_mc_merge_nogc.tbl.uniq")
+dim(tot)
+
+tot = filter(tot,!is.na(Freq1.Hapmap))
+dim(tot)
+##change the frequency to the minor allele frequency
+tot$Freq1.Hapmap[tot$Freq1.Hapmap > 0.5] <- 1-tot$Freq1.Hapmap[tot$Freq1.Hapmap > 0.5]
+tot = mutate(tot,freq=cut2(Freq1.Hapmap,g=3)) ##added a new variable with frequency intervals for HapMap CEU frequencies
+table(tot$freq)
+```
+
+### Estimate covariate-specific pi0
+
+Source code:
+
+```{r}
+source("https://raw.githubusercontent.com/leekgroup/fdrreg/master/R/estPi0Reg.R")
+```
+
+Create design matrix:
+
+```{r}
+X <- cbind(ns(tot$N,df=5),tot$freq)
+dim(X)
+```
+
+```{r,cache=TRUE}
+pi0Est <- estPi0Reg(p=tot$p, X=X, smooth.df=3)
+##caution: this should take about an hour!
+
+##add the estimates for lambda=0.8, lambda=0.9, final smoothed value
+tot$fitted0.8 <- pi0Est$pi0.lambda[,pi0Est$lambda==0.8]
+tot$fitted0.9 <- pi0Est$pi0.lambda[,round(pi0Est$lambda,2)==0.9]
+tot$fitted.final.smooth <- pi0Est$pi0
+
+range(tot$fitted0.8)
+range(tot$fitted0.9)
+range(tot$fitted.final.smooth)
+
+##censor pi for 0.8 and 0.9 at 1 as well
+tot$fitted0.8 <- ifelse(tot$fitted0.8 > 1, 1, tot$fitted0.8)
+tot$fitted0.9 <- ifelse(tot$fitted0.9 > 1, 1, tot$fitted0.9)
+
+##get random sample of 50,000 SNPs
+set.seed(310841)
+d1 = tot %>% sample_n(5e4)
+
+##how many SNPs have N < 200,000?
+sum(tot$N < 200000)
+```
+
+Create long data frame:
+
+```{r}
+d3 <- melt(d1,
+           id.vars=colnames(d1)[-grep("fitted",colnames(d1))],
+           value.name = "pi0",variable.name = "lambda")
+d3$lambda <- as.character(d3$lambda)
+d3$lambda[d3$lambda=="fitted0.8"] <- "lambda=0.8"
+d3$lambda[d3$lambda=="fitted0.9"] <- "lambda=0.9"
+d3$lambda[d3$lambda=="fitted.final.smooth"] <- "final smoothed pi0(x)"
+```
+
+### Make figures
+
+```{r Fig3,cache=TRUE, fig.width=9, fig.height=5}
+par(mfrow=c(1,2))
+hist(tot$p, col="grey", main="All N", xlab="P-value")
+hist(tot$p[tot$N < 200000], col="grey", main="N < 200,000", xlab="P-value")
+```
+
+```{r Fig4,cache=TRUE, fig.width=6, fig.height=3}
+ggplot(d3, aes(x=N, y=pi0))+
+  geom_line(aes(col=freq, linetype=lambda)) +
+  ylab("Estimated proportion of nulls") +
+  guides(color=guide_legend(title="MAF in HapMap CEU population"),
+         linetype=guide_legend(title="Estimate"))
+
+```
+
+### Session Information
+
+```{r}
+devtools::session_info()
+```
+
