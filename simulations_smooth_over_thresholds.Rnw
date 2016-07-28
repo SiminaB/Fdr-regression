@@ -1,0 +1,396 @@
+\documentclass{article}
+
+\begin{document}
+
+<<setup, include=FALSE, cache=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='figures/', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=60)
+@
+
+<<prelims>>=
+## Load libraries
+library(splines)
+library(MASS)
+
+## Define the number of tests
+ntest <- 1000
+
+## Set nuber of simulations
+nSims <- 100##10000
+
+##second shape parameter for beta distribution
+shape2 <- 2
+
+source("https://raw.githubusercontent.com/leekgroup/fdrreg/master/R/estPi0Reg.R")
+
+@
+
+Function to generate p-values:
+<<>>=
+genPvals <- function(pi0, shape2)
+{
+  ntest <- length(pi0)
+  
+  nullI <- rbinom(ntest,prob=pi0,size=1)> 0
+  
+  pValues <- rep(NA,ntest)
+  pValues[nullI] <- runif(sum(nullI))
+  pValues[!nullI] <- rbeta(sum(!nullI),1,shape2)
+  
+  pValues
+}
+@
+
+\section{Probability of being a false positive as a linear function of time}
+
+<<linearFuncTime>>=
+set.seed(1345)
+
+## Set up the time vector and the probability of being null
+tme <- seq(-1,2,length=ntest)
+pi0 <- 1/4*tme+1/2
+
+##save the value of pi0hat for each simulation for lambda=0.8, 0.9, final smoothed value
+pi0hatMat0.8 <- pi0hatMat0.9 <- pi0hatMatFinal <- 
+  matrix(NA, nrow=nSims, ncol=ntest)
+
+for(sim in 1:nSims)
+  {
+  
+  if(sim%%100 == 0)
+  {
+    print(sim)
+  }
+  
+  ##generate p-values
+  pValues <- genPvals(pi0, shape2)
+  
+  ## Get the estimate
+  pi0Est <- estPi0Reg(pValues, X=tme, smooth.df=3)
+  
+  pi0hatMat0.8[sim, ] <- pi0Est$pi0.lambda[,round(pi0Est$lambda,2)==0.8]
+  pi0hatMat0.9[sim, ] <- pi0Est$pi0.lambda[,round(pi0Est$lambda,2)==0.9]
+  pi0hatMatFinal[sim, ] <- pi0Est$pi0
+} 
+
+## Get the mean values:
+pi0hatMean0.8 <- colMeans(pi0hatMat0.8)
+pi0hatMean0.9 <- colMeans(pi0hatMat0.9)
+pi0hatMeanFinal <- colMeans(pi0hatMatFinal)
+
+##Get the variances:
+pi0hatVar0.8 <- apply(pi0hatMat0.8, 2, var)
+pi0hatVar0.9 <- apply(pi0hatMat0.9, 2, var)
+pi0hatVarFinal <- apply(pi0hatMatFinal, 2, var)
+
+##Get the variance bounds:
+# zMat <- tmeInt
+# S <- zMat%*%solve(t(zMat)%*%zMat)%*%t(zMat)
+# pi0hatVarBound <- 
+#   diag(S)/(4*(1-0.8)^2)
+@
+
+\subsection{Plot for means}
+
+<<Fig1a, fig.width=6, fig.height=6>>=
+par(cex.axis = 1.1, cex.main=1.3)
+
+plot(pi0 ~ tme,col="black",type="l",lwd=8, lty=1,
+     xlab="", yaxt = "n",
+     ylim=c(0,1), ylab="")
+mtext(expression(x[i]), 1, line=3, cex=1.3)
+mtext(expression(paste("Mean ", hat(pi)[0](x[i])," and ", pi[0](x[i]))), 2, line=2, cex=1.3)
+points(pi0hatMean0.8 ~ tme,col="orange",type="l",lwd=1, lty=2)
+points(pi0hatMean0.9 ~ tme,col="orange",type="l",lwd=1, lty=2)
+points(pi0hatMeanFinal ~ tme,col="orange",type="l",lwd=3, lty=2)
+
+legend(x=-0.4, y=0.2, 
+       legend=c("Truth", "Simple linear regression (lambda=0.8)", "Simple linear regression (lambda=0.9)", "Simple linear regression (smoothed final value)"),
+       col=c("black", "orange", "orange", "orange"), bty="n",
+       lwd=c(8,1,1,3), lty=c(1,2,2,2),
+       cex=1.2, x.intersp=0.2, y.intersp=1.0)
+axis(side=2, at=(0:5)/5, mgp=c(3, 0.7, 0)) 
+@
+
+\subsection{Plot for variances}
+
+<<Fig2a, fig.width=6, fig.height=6>>=
+# par(cex.axis = 1.1, cex.main=1.3)
+# 
+# plot(pi0hatVarBound ~ tme, col="red", ylim=c(0, max(pi0hatVarBound)),
+#      lwd=3, lty=3,
+#      type="l", 
+#      xlab="", ylab="")
+# mtext(expression(x[i]), 1, line=3, cex=1.3)
+# mtext(expression(paste("Variance and upper bound of variance for ", " ", hat(pi)[0](x[i]), sep=" ")), 2, line=2, cex=1.3)
+# points(pi0hatVar ~ tme, col="black", type="l", lwd=3, lty=1)
+# legend("top", ##x=-0.4, y=0.2, 
+#        legend=c("Empirical variance", "Upper bound"),
+#        col=c("black", "red"), bty="n",
+#        lwd=c(3,3), lty=c(1,3),
+#        cex=1.2, x.intersp=0.2, y.intersp=1.0)
+@
+
+\section{Probability of being a false positive as a smooth function of time}
+
+<<smoothFuncTime>>=
+set.seed(1345)
+
+## Set up the time vector and the probability of being null
+tme <- seq(-1,2,length=ntest)
+pi0 <- pnorm(tme)
+
+splineMat <- ns(tme,df=3)
+
+##save the value of pi0hat for each simulation for lambda=0.8, 0.9, final smoothed value for both fits
+pi0hatMatLin0.8 <- pi0hatMatLin0.9 <- pi0hatMatLinFinal <- 
+  pi0hatMatSpl0.8 <- pi0hatMatSpl0.9 <- pi0hatMatSplFinal <- 
+  matrix(NA, nrow=nSims, ncol=ntest)
+
+for(sim in 1:nSims)
+  {
+  ##generate p-values
+  pValues <- genPvals(pi0, shape2)
+
+  ## Get the estimates
+  pi0Est.1 <- estPi0Reg(pValues, X=tme, smooth.df=3)
+  pi0Est.2 <- estPi0Reg(pValues, X=splineMat, smooth.df=3)
+
+  pi0hatMatLin0.8[sim, ] <- pi0Est.1$pi0.lambda[,round(pi0Est.1$lambda,2)==0.8]
+  pi0hatMatLin0.9[sim, ] <- pi0Est.1$pi0.lambda[,round(pi0Est.1$lambda,2)==0.9]
+  pi0hatMatLinFinal[sim, ] <- pi0Est.1$pi0
+    
+  pi0hatMatSpl0.8[sim, ] <- pi0Est.2$pi0.lambda[,round(pi0Est.2$lambda,2)==0.8]
+  pi0hatMatSpl0.9[sim, ] <- pi0Est.2$pi0.lambda[,round(pi0Est.2$lambda,2)==0.9]
+  pi0hatMatSplFinal[sim, ] <- pi0Est.2$pi0
+} 
+
+## Get the mean values:
+pi0hatMeanLin0.8 <- colMeans(pi0hatMatLin0.8)
+pi0hatMeanLin0.9 <- colMeans(pi0hatMatLin0.9)
+pi0hatMeanLinFinal <- colMeans(pi0hatMatLinFinal)
+
+pi0hatMeanSpl0.8 <- colMeans(pi0hatMatSpl0.8)
+pi0hatMeanSpl0.9 <- colMeans(pi0hatMatSpl0.9)
+pi0hatMeanSplFinal <- colMeans(pi0hatMatSplFinal)
+
+##Get the variances:
+pi0hatVarLin0.8 <- apply(pi0hatMatLin0.8, 2, var)
+pi0hatVarLin0.9 <- apply(pi0hatMatLin0.9, 2, var)
+pi0hatVarLinFinal <- apply(pi0hatMatLinFinal, 2, var)
+
+pi0hatVarSpl0.8 <- apply(pi0hatMatSpl0.8, 2, var)
+pi0hatVarSpl0.9 <- apply(pi0hatMatSpl0.9, 2, var)
+pi0hatVarSplFinal <- apply(pi0hatMatSplFinal, 2, var)
+
+##Get the variance bounds:
+# zMat <- splineMatInt
+# S <- zMat%*%solve(t(zMat)%*%zMat)%*%t(zMat)
+# pi0hatVarBoundFitSpl <- 
+#   diag(S)/(4*(1-lambda)^2)
+# 
+# zMat <- cbind(1, tme)
+# S <- zMat%*%solve(t(zMat)%*%zMat)%*%t(zMat)
+# pi0hatVarBoundFitLin <- 
+#   diag(S)/(4*(1-lambda)^2)
+@
+
+\subsection{Plot for means}
+
+<<Fig1b, fig.width=6, fig.height=6>>=
+par(cex.axis = 1.1, cex.main=1.3)
+
+plot(pi0 ~ tme,col="black",type="l",lwd=8, lty=1,
+     xlab="", yaxt = "n",
+     ylim=c(0,1), ylab="")
+mtext(expression(x[i]), 1, line=3, cex=1.3)
+mtext(expression(paste("Mean ", hat(pi)[0](x[i])," and ", pi[0](x[i]))), 2, line=2, cex=1.3)
+points(pi0hatMeanLin0.8 ~ tme,col="orange",type="l",lwd=1, lty=2)
+points(pi0hatMeanLin0.9 ~ tme,col="orange",type="l",lwd=1, lty=2)
+points(pi0hatMeanLinFinal ~ tme,col="orange",type="l",lwd=3, lty=2)
+points(pi0hatMeanSpl0.8 ~ tme,col="blue",type="l",lwd=1, lty=2)
+points(pi0hatMeanSpl0.9 ~ tme,col="blue",type="l",lwd=1, lty=2)
+points(pi0hatMeanSplFinal ~ tme,col="blue",type="l",lwd=3, lty=2)
+
+legend("bottomright", ##x=-100, y=0.3, 
+       legend=c("Truth", "B-splines with\n3 degrees of freedom", "Simple linear regression"),
+       col=c("black", "blue", "orange"), bty="n",
+       lwd=c(8,3,3), lty=c(1,2,4),
+       cex=1.2, x.intersp=0.2, y.intersp=1.0)
+axis(side=2, at=(0:5)/5, mgp=c(3, 0.7, 0)) 
+@
+
+\subsection{Plots for variances}
+
+<<Fig2b, fig.width=6, fig.height=6>>=
+# par(cex.axis = 1.1, cex.main=1.3)
+# 
+# plot(pi0hatVarBoundFitLin ~ tme, col="red", ylim=c(0, max(pi0hatVarBoundFitLin)),
+#      lwd=3, lty=3,
+#      type="l", 
+#      xlab="", ylab="")
+# mtext(expression(x[i]), 1, line=3, cex=1.3)
+# mtext(expression(paste("Variance and upper bound of variance for ", " ", hat(pi)[0](x[i]), sep=" ")), 2, line=2, cex=1.3)
+# points(pi0hatVarFitLin ~ tme, col="black", type="l", lwd=3, lty=1)
+# legend("top", ##x=-0.4, y=0.2, 
+#        legend=c("Empirical variance", "Upper bound"),
+#        col=c("black", "red"), bty="n",
+#        lwd=c(3,3), lty=c(1,3),
+#        cex=1.2, x.intersp=0.2, y.intersp=1.0)
+@
+
+<<Fig2c, fig.width=6, fig.height=6>>=
+# par(cex.axis = 1.1, cex.main=1.3)
+# 
+# plot(pi0hatVarBoundFitSpl ~ tme, col="red", ylim=c(0, max(pi0hatVarBoundFitSpl)),
+#      lwd=3, lty=3,
+#      type="l", 
+#      xlab="", ylab="")
+# mtext(expression(x[i]), 1, line=3, cex=1.3)
+# mtext(expression(paste("Variance and upper bound of variance for ", " ", hat(pi)[0](x[i]), sep=" ")), 2, line=2, cex=1.3)
+# points(pi0hatVarFitSpl ~ tme, col="black", type="l", lwd=3, lty=1)
+# legend("top", ##x=-0.4, y=0.2, 
+#        legend=c("Empirical variance", "Upper bound"),
+#        col=c("black", "red"), bty="n",
+#        lwd=c(3,3), lty=c(1,3),
+#        cex=1.2, x.intersp=0.2, y.intersp=1.0)
+@
+
+\section{Probability of being a false positive as a sine + step function}
+
+<<sineStepTime>>=
+set.seed(1345)
+
+## Set up the time vector and the probability of being null
+tme1 <- seq(-1*pi,2*pi,length=ntest)
+tme2 <- rep(1:0, each=ntest/2)
+pi0 <- 1/4*sin(tme1) + tme2/4 + 1/2
+##pi0 <- 1/4*sin(tme1) + 0.5
+range(pi0)
+
+splineMat3 <- cbind(ns(tme1,df=3), tme2)
+splineMat20 <- cbind(ns(tme1,df=20), tme2)
+
+##save the value of pi0hat for each simulation for lambda=0.8, 0.9, final smoothed value for both fits
+pi0hatMat3.0.8 <- pi0hatMat3.0.9 <- pi0hatMat3.Final <- 
+  pi0hatMat20.0.8 <- pi0hatMat20.0.9 <- pi0hatMat20.Final <- 
+  matrix(NA, nrow=nSims, ncol=ntest)
+
+for(sim in 1:nSims)
+{
+  ##generate p-values
+  pValues <- genPvals(pi0, shape2)
+
+  ## Get the estimates
+  pi0Est.1 <- estPi0Reg(pValues, X=splineMat3, smooth.df=3)
+  pi0Est.2 <- estPi0Reg(pValues, X=splineMat20, smooth.df=3)
+
+  pi0hatMat3.0.8[sim, ] <- pi0Est.1$pi0.lambda[,round(pi0Est.1$lambda,2)==0.8]
+  pi0hatMat3.0.9[sim, ] <- pi0Est.1$pi0.lambda[,round(pi0Est.1$lambda,2)==0.9]
+  pi0hatMat3.Final[sim, ] <- pi0Est.1$pi0
+    
+  pi0hatMat20.0.8[sim, ] <- pi0Est.2$pi0.lambda[,round(pi0Est.2$lambda,2)==0.8]
+  pi0hatMat20.0.9[sim, ] <- pi0Est.2$pi0.lambda[,round(pi0Est.2$lambda,2)==0.9]
+  pi0hatMat20.Final[sim, ] <- pi0Est.2$pi0
+ } 
+
+## Get the mean values:
+pi0hatMean3.0.8 <- colMeans(pi0hatMat3.0.8)
+pi0hatMean3.0.9 <- colMeans(pi0hatMat3.0.9)
+pi0hatMean3.Final <- colMeans(pi0hatMat3.Final)
+
+pi0hatMean20.0.8 <- colMeans(pi0hatMat20.0.8)
+pi0hatMean20.0.9 <- colMeans(pi0hatMat20.0.9)
+pi0hatMean20.Final <- colMeans(pi0hatMat20.Final)
+
+##Get the variances:
+pi0hatVar3.0.8 <- apply(pi0hatMat3.0.8, 2, var)
+pi0hatVar3.0.9 <- apply(pi0hatMat3.0.9, 2, var)
+pi0hatVar3.Final <- apply(pi0hatMat3.Final, 2, var)
+
+pi0hatVar20.0.8 <- apply(pi0hatMat20.0.8, 2, var)
+pi0hatVar20.0.9 <- apply(pi0hatMat20.0.9, 2, var)
+pi0hatVar20.Final <- apply(pi0hatMat20.Final, 2, var)
+
+# ##Get the variance bounds:
+# zMat <- splineMatInt3
+# S <- zMat%*%ginv(t(zMat)%*%zMat)%*%t(zMat)
+# pi0hatVarBound3 <- 
+#   diag(S)/(4*(1-lambda)^2)
+# 
+# zMat <- splineMatInt20
+# S <- zMat%*%ginv(t(zMat)%*%zMat)%*%t(zMat)
+# pi0hatVarBound20 <- 
+#   diag(S)/(4*(1-lambda)^2)
+@
+
+\subsection{Plot for means}
+
+<<Fig1c, fig.width=6, fig.height=6>>=
+par(cex.axis = 1.1, cex.main=1.3)
+
+plot(pi0 ~ tme1,col="black",type="l",lwd=8, lty=1,
+     xlab="", yaxt = "n",
+     ylim=c(0,1), ylab="")
+mtext(expression(x[i1]), 1, line=3, cex=1.3)
+mtext(expression(paste("Mean ", hat(pi)[0](x[i])," and ", 
+                       pi[0](x[i]))), 2, line=2, cex=1.3)
+points(pi0hatMean3.0.8 ~ tme1,col="orange",type="l",lwd=1, lty=2)
+points(pi0hatMean3.0.9 ~ tme1,col="orange",type="l",lwd=1, lty=2)
+points(pi0hatMean3.Final ~ tme1,col="orange",type="l",lwd=3, lty=2)
+points(pi0hatMean20.0.8 ~ tme1,col="blue",type="l",lwd=1, lty=2)
+points(pi0hatMean20.0.9 ~ tme1,col="blue",type="l",lwd=1, lty=2)
+points(pi0hatMean20.Final ~ tme1,col="blue",type="l",lwd=3, lty=2)
+
+legend("bottomright", ##x=-100, y=0.3, 
+       legend=c("Truth", "B-splines with\n20 degrees of freedom", 
+                "B-splines with\n3 degrees of freedom"),
+       col=c("black", "blue", "orange"), bty="n",
+       lwd=c(8,3,3), lty=c(1,2,4),
+       cex=1.2, x.intersp=0.2, y.intersp=1.15)
+axis(side=2, at=(0:5)/5, mgp=c(3, 0.7, 0)) 
+@
+
+\subsection{Plots for variances}
+
+<<Fig2d, fig.width=6, fig.height=6>>=
+# par(cex.axis = 1.1, cex.main=1.3)
+# 
+# plot(pi0hatVarBound3 ~ tme1, col="red", ylim=c(0, max(pi0hatVarBound3)),
+#      lwd=3, lty=3,
+#      type="l", 
+#      xlab="", ylab="")
+# mtext(expression(x[i1]), 1, line=3, cex=1.3)
+# mtext(expression(paste("Variance and upper bound of variance for ", " ", hat(pi)[0](x[i]), sep=" ")), 2, line=2, cex=1.3)
+# points(pi0hatVar3 ~ tme1, col="black", type="l", lwd=3, lty=1)
+# legend("top", ##x=-0.4, y=0.2, 
+#        legend=c("Empirical variance", "Upper bound"),
+#        col=c("black", "red"), bty="n",
+#        lwd=c(3,3), lty=c(1,3),
+#        cex=1.2, x.intersp=0.2, y.intersp=1.0)
+@
+
+<<Fig2e, fig.width=6, fig.height=6>>=
+# par(cex.axis = 1.1, cex.main=1.3)
+# 
+# plot(pi0hatVarBound20 ~ tme1, col="red", ylim=c(0, max(pi0hatVarBound20)),
+#      lwd=3, lty=3,
+#      type="l", 
+#      xlab="", ylab="")
+# mtext(expression(x[i1]), 1, line=3, cex=1.3)
+# mtext(expression(paste("Variance and upper bound of variance for ", " ", hat(pi)[0](x[i]), sep=" ")), 2, line=2, cex=1.3)
+# points(pi0hatVar20 ~ tme1, col="black", type="l", lwd=3, lty=1)
+# legend("top", ##x=-0.4, y=0.2, 
+#        legend=c("Empirical variance", "Upper bound"),
+#        col=c("black", "red"), bty="n",
+#        lwd=c(3,3), lty=c(1,3),
+#        cex=1.2, x.intersp=0.2, y.intersp=1.0)
+@
+
+Session info:
+<<sessInf>>=
+devtools::session_info()
+@
+
+\end{document}
