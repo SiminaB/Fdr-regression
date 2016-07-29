@@ -17,7 +17,7 @@ library(MASS)
 ntest <- 1000
 
 ## Set nuber of simulations
-nSims <- 100##10000
+nSims <- 10000
 
 ##second shape parameter for beta distribution
 shape2 <- 2
