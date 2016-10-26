@@ -31,7 +31,7 @@ library(curl)
 library(Hmisc)
 ```
 
-Now load the data (first need to download the file from https://www.broadinstitute.org/collaboration/giant/index.php/GIANT\_consortium_data\_files#GWAS\_Anthropometric\_2015\_BMI):
+Now load the data (first need to download the file from https://www.broadinstitute.org/collaboration/giant/index.php/GIANT_consortium_data_files#GWAS_Anthropometric_2015_BMI):
 
 ```{r,cache=TRUE}
 ##change the directory name

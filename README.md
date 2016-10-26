@@ -4,16 +4,18 @@ This folder contains the code to fully reproduce the simulations and data analys
 "A regression framework for the proportion of true null hypotheses" by SM Boca and JT Leek.
 
 Before running the code, please make sure you install the packages swfdr and FDRreg, available at:
-https://github.com/leekgroup/swfdr
+https://github.com/leekgroup/swfdr \\
 https://github.com/jgscott/FDRreg
 
 The directory structure is as follows:
 ##BMI GIANT GWAS meta-analysis
-This directory contains the code to perform the data analysis and generate Figures 3 and 4.
+This directory contains the code to perform the data analysis and generate Figures 3 and 4, which are saved in the "Figures" subdirectory.
 The data must first be downloaded from https://www.broadinstitute.org/collaboration/giant/index.php/GIANT_consortium_data_files#GWAS_Anthropometric_2015_BMI
 It is not included here, due to file size limitations.
 
 The file 1.read_in_GIANT.Rmd reads in the data in tsv format and creates the BMI_GIANT_GWAS.RData file. Running it also generates the file 1.read_in_GIANT.pdf.
+The file 2.make_Figure_3.Rmd load BMI_GIANT_GWAS.RData and generates Figure 3 from the paper, saved in Figures/Fig3-1.pdf. Running it also generates the file 2.make_Figure_3.pdf.
+
 
 
 
