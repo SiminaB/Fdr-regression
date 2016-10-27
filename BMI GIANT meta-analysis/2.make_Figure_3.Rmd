@@ -17,7 +17,11 @@ knitr::opts_chunk$set(fig.path='Figures/')
 BiocStyle::markdown()
 ```
 
+<<<<<<< HEAD
 Load the relevant libraries
+=======
+### Load the relevant libraries
+>>>>>>> origin/master
 
 ```{r,message=FALSE}
 library(readr)
@@ -29,13 +33,21 @@ library(Hmisc)
 library(ggplot2)
 ```
 
+<<<<<<< HEAD
 Load the .RData file with the BMI GIANT GWAS meta-analysis data:
+=======
+Load the .RData file with the BMI GIANT GWAS meta-analysis data
+>>>>>>> origin/master
 
 ```{r,cache=TRUE}
 load("BMI_GIANT_GWAS.RData")
 ```
 
+<<<<<<< HEAD
 Generate histogram of p-values for all sample sizes and histogram of p-values for sample sizes < 200,000:
+=======
+Generate histogram of p-values for all sample sizes and histogram of p-values for sample sizes < 200,000.
+>>>>>>> origin/master
 
 ```{r Fig3,cache=TRUE, fig.width=9, fig.height=5}
 par(mfrow=c(1,2))
