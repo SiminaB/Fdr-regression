@@ -1,0 +1,86 @@
+---
+title: "Analysis of BMI GIANT GWAS data - Scott approach"
+author: "Simina Boca, Jeff Leek"
+date: "`r Sys.Date()`"
+output: rmarkdown::pdf_document
+vignette: >
+  %\VignetteIndexEntry{swfdr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+<!--
+%% \VignetteEngine{knitr::rmarkdown}
+-->
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.path='Figures/')
+```
+
+```{r style, echo = FALSE, results = 'asis'}
+BiocStyle::markdown()
+```
+
+Load the relevant libraries:
+
+```{r,message=FALSE}
+library(readr)
+library(dplyr)
+library(fdrtool)
+library(betareg)
+library(splines)
+library(Hmisc)
+library(ggplot2)
+library(reshape2)
+library(FDRreg)
+```
+
+Load the .RData file with the BMI GIANT GWAS meta-analysis data:
+
+```{r,cache=TRUE}
+load("BMI_GIANT_GWAS.RData")
+
+tot <- BMI_GIANT_GWAS
+```
+
+### Estimate fraction of true null hypotheses in a regression framework using the Scott approach
+
+Create the design matrix, using natural cubic splines with 5 degrees of freedom to model `N` and 3 discrete categories for the MAFs:
+
+```{r}
+X <- model.matrix(~ splines::ns(N,5) + Freq_MAF_Int_Hapmap, data = tot)[,-1]
+dim(X)
+head(X)
+```
+
+Run code to estimate the fraction of true null hypotheses within a regression framework with the design matrix specified above:
+
+```{r, cache=TRUE}
+##first get z-scores, which are needed for the Scott approach
+zScores <- tot$b/tot$se 
+
+range(zScores)
+
+hist(zScores, col="grey")
+
+##run FDRreg
+fdr <- FDRreg(zScores, X,
+              nulltype = 'empirical',
+              control=list(lambda=1))
+
+##get prior probabilities 
+pi0EstScott <- 1-fdr$priorprob
+```
+
+Save results:
+
+```{r}
+save(x=pi0EstScott, file="BMI_GIANT_GWAS_results_Scott.RData")
+```
+
+### Session Information
+
+```{r}
+devtools::session_info()
+```
+

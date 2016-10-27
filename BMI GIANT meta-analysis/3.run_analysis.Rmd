@@ -1,0 +1,78 @@
+---
+title: "Analysis of BMI GIANT GWAS data"
+author: "Simina Boca, Jeff Leek"
+date: "`r Sys.Date()`"
+output: rmarkdown::pdf_document
+vignette: >
+  %\VignetteIndexEntry{swfdr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+<!--
+%% \VignetteEngine{knitr::rmarkdown}
+-->
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.path='Figures/')
+```
+
+```{r style, echo = FALSE, results = 'asis'}
+BiocStyle::markdown()
+```
+
+Load the relevant libraries:
+
+```{r,message=FALSE}
+library(readr)
+library(dplyr)
+library(fdrtool)
+library(betareg)
+library(splines)
+library(Hmisc)
+library(ggplot2)
+library(reshape2)
+library(swfdr)
+```
+
+Load the .RData file with the BMI GIANT GWAS meta-analysis data:
+
+```{r,cache=TRUE}
+load("BMI_GIANT_GWAS.RData")
+
+tot <- BMI_GIANT_GWAS
+```
+
+### Estimate fraction of true null hypotheses in a regression framework
+
+Create the design matrix, using natural cubic splines with 5 degrees of freedom to model `N` and 3 discrete categories for the MAFs:
+
+```{r}
+X <- model.matrix(~ splines::ns(N,5) + Freq_MAF_Int_Hapmap, data = tot)[,-1]
+dim(X)
+head(X)
+```
+
+Run code to estimate the fraction of true null hypotheses within a regression framework with the design matrix specified above:
+
+```{r,cache=TRUE}
+pi0Est <- lm_pi0(pValues=tot$p, X=X, smooth.df=3)
+##caution: this should take about an hour!
+```
+
+Save results:
+
+```{r}
+fitted0.8 <- pi0Est$pi0.lambda[,pi0Est$lambda==0.8]
+fitted0.9 <- pi0Est$pi0.lambda[,round(pi0Est$lambda,2)==0.9]
+fitted.final.smooth <- pi0Est$pi0
+
+save(fitted0.8, fitted0.9, fitted.final.smooth, file="BMI_GIANT_GWAS_results.RData")
+```
+
+### Session Information
+
+```{r}
+devtools::session_info()
+```
+

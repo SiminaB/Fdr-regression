@@ -1,0 +1,69 @@
+---
+title: "Read in BMI GIANT GWAS meta-analysis data"
+author: "Simina Boca, Jeff Leek"
+date: "`r Sys.Date()`"
+output: rmarkdown::pdf_document
+vignette: >
+  %\VignetteIndexEntry{swfdr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+<!--
+%% \VignetteEngine{knitr::rmarkdown}
+-->
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.path='Figures/')
+```
+
+```{r style, echo = FALSE, results = 'asis'}
+BiocStyle::markdown()
+```
+
+Load the relevant libraries first:
+
+```{r,message=FALSE}
+library(readr)
+library(dplyr)
+library(reshape2)
+library(curl)
+library(Hmisc)
+```
+
+Now load the data (first need to download the file from https://www.broadinstitute.org/collaboration/giant/index.php/GIANT_consortium_data_files#GWAS_Anthropometric_2015_BMI):
+
+```{r,cache=TRUE}
+##change the directory name
+tot = read_tsv("../../../../Dropbox/Research/FDR projects/Prior prob regression/code/All_ancestries_SNP_gwas_mc_merge_nogc.tbl.uniq")
+dim(tot)
+```
+
+Do some basic data filtering (to remove missing values) and data cleaning (switch to minor allele from effect allele, add variable with frequency intervals):
+```{r,cache=TRUE}
+tot = filter(tot,!is.na(Freq1.Hapmap))
+dim(tot)
+##change the frequency to the minor allele frequency
+changeWhich <- tot$Freq1.Hapmap > 0.5
+tot$Freq1.Hapmap[changeWhich] <- 1-tot$Freq1.Hapmap[changeWhich]
+colnames(tot)[colnames(tot)=="Freq1.Hapmap"] <- "Freq_MAF_Hapmap"
+##also need to change the coefficient sign for these alleles
+tot$b[changeWhich] <- -tot$b[changeWhich]
+tot = mutate(tot,Freq_MAF_Int_Hapmap=cut2(Freq_MAF_Hapmap,g=3)) ##added a new variable with frequency intervals for HapMap CEU frequencies
+table(tot$Freq_MAF_Int_Hapmap)
+```
+
+Save in a data frame in a .RData file:
+
+```{r}
+BMI_GIANT_GWAS <- tot
+
+save(x=BMI_GIANT_GWAS, file="BMI_GIANT_GWAS.RData")
+```
+
+### Session Information
+
+```{r}
+devtools::session_info()
+```
+

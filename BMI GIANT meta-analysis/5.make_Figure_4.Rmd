@@ -1,0 +1,95 @@
+---
+title: "Generate plot in Figure 4"
+author: "Simina Boca, Jeff Leek"
+date: "`r Sys.Date()`"
+output: rmarkdown::pdf_document
+vignette: >
+  %\VignetteIndexEntry{swfdr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+<!--
+%% \VignetteEngine{knitr::rmarkdown}
+-->
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.path='Figures/')
+```
+
+```{r style, echo = FALSE, results = 'asis'}
+BiocStyle::markdown()
+```
+
+Load the relevant libraries:
+
+```{r,message=FALSE}
+library(ggplot2)
+library(reshape2)
+library(dplyr)
+```
+
+Load the data and the results:
+
+```{r,cache=TRUE}
+load("BMI_GIANT_GWAS.RData")
+load("BMI_GIANT_GWAS_results.RData")
+load("BMI_GIANT_GWAS_results_Scott.RData")
+
+tot <- BMI_GIANT_GWAS
+```
+
+Add the results to the data object:
+
+```{r, cache=TRUE}
+##add the estimates from Scott
+tot$Scott <- pi0EstScott
+
+##add the estimates from our approach
+##add the estimates for lambda=0.8, lambda=0.9, final smoothed value
+tot$fitted0.8 <- fitted0.8
+tot$fitted0.9 <- fitted0.9
+tot$fitted.final.smooth <- fitted.final.smooth
+```
+
+Only use random sample of 50,000 SNPs in plot:
+
+```{r, cache=TRUE}
+##get random sample of 50,000 SNPs
+set.seed(310841)
+d1 = tot %>% sample_n(5e4)
+```
+
+Create long data frame (for ggplot):
+
+```{r}
+colnames(d1)[colnames(d1)=="Scott"] <- "fitted.Scott"
+
+d3 <- melt(d1,
+           id.vars=colnames(d1)[-grep("fitted",colnames(d1))],
+           value.name = "pi0",variable.name = "lambda")
+d3$lambda <- as.character(d3$lambda)
+d3$lambda[d3$lambda=="fitted0.8"] <- "lambda=0.8"
+d3$lambda[d3$lambda=="fitted0.9"] <- "lambda=0.9"
+d3$lambda[d3$lambda=="fitted.final.smooth"] <- "final smoothed pi0(x)"
+d3$lambda[d3$lambda=="fitted.Scott"] <- "Scott"
+
+```
+
+Generate Figure 4:
+
+```{r Fig4,cache=TRUE, fig.width=6, fig.height=3}
+ggplot(d3, aes(x=N, y=pi0))+
+  geom_line(aes(col=Freq_MAF_Int_Hapmap, linetype=lambda)) +
+  ylab("Estimated proportion of nulls") +
+  guides(color=guide_legend(title="MAF in HapMap CEU population"),
+         linetype=guide_legend(title="Estimate"))
+
+```
+
+### Session Information
+
+```{r}
+devtools::session_info()
+```
+
