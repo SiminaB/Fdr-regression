@@ -29,11 +29,7 @@ library(Hmisc)
 library(ggplot2)
 ```
 
-<<<<<<< HEAD
 Load the .RData file with the BMI GIANT GWAS meta-analysis data:
-=======
-Load the .RData file with the BMI GIANT GWAS meta-analysis data
->>>>>>> origin/master
 
 ```{r,cache=TRUE}
 load("BMI_GIANT_GWAS.RData")

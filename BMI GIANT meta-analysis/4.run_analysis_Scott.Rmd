@@ -48,7 +48,7 @@ tot <- BMI_GIANT_GWAS
 Create the design matrix, using natural cubic splines with 5 degrees of freedom to model `N` and 3 discrete categories for the MAFs:
 
 ```{r}
-X <- model.matrix(~ splines::ns(N,5) + Freq_MAF_Int_Hapmap, data = tot)[,-1]
+X <- model.matrix(~ splines::ns(N,5) + as.numeric(Freq_MAF_Int_Hapmap), data = tot)[,-1]
 dim(X)
 head(X)
 ```
@@ -60,8 +60,6 @@ Run code to estimate the fraction of true null hypotheses within a regression fr
 zScores <- tot$b/tot$se 
 
 range(zScores)
-
-hist(zScores, col="grey")
 
 ##run FDRreg
 fdr <- FDRreg(zScores, X,
