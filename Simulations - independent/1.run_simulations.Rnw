@@ -1,0 +1,114 @@
+\documentclass{article}
+
+\begin{document}
+
+<<setup, include=FALSE, cache=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='Figures/', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=60)
+@
+
+<<prelims>>=
+## Load libraries
+library(splines)
+library(MASS)
+
+library(doParallel) ##to make cluster (on Windows)
+library(foreach) ##to use foreach function that does the parallel processing
+library(doRNG) ##for reproducible seeds when doing parallel processing
+
+##Source functions
+source("../functions.R")
+
+## Define the number of tests
+ntest <- 1000
+
+## Set nuber of simulations
+nSims <- 10000
+
+##second shape parameter for beta distribution
+shape2 <- 2
+@
+
+\section{Probability of being a false positive as a linear function of time}
+
+<<linearFuncTime>>=
+## Set up the time vector and the probability of being null
+tme <- seq(-1,2,length=ntest)
+pi0 <- 1/4*tme+1/2
+
+##Simulate data
+cl<-makeCluster(8) ##specify number of cores less than or equal to number of cores on your computer
+registerDoParallel(cl)
+
+set.seed(1345)
+
+pValuesSims <- foreach(sim=1:nSims) %dorng% {
+  genPvalsInd(pi0, shape2)
+}
+
+##close the cluster
+stopCluster(cl)
+
+##save results
+save(file="simResults_1.RData", 
+     list=c("pValuesSims"))
+@
+
+\section{Probability of being a false positive as a smooth function of time}
+
+<<smoothFuncTime>>=
+## Set up the time vector and the probability of being null
+tme <- seq(-1,2,length=ntest)
+pi0 <- pnorm(tme)
+
+##Simulate data
+cl<-makeCluster(8) ##specify number of cores less than or equal to number of cores on your computer
+registerDoParallel(cl)
+
+set.seed(1345)
+
+pValuesSims <- foreach(sim=1:nSims) %dorng% {
+  genPvalsInd(pi0, shape2)
+}
+
+##close the cluster
+stopCluster(cl)
+
+##save results
+save(file="simResults_2.RData", 
+     list=c("pValuesSims"))
+@
+
+\section{Probability of being a false positive as a sine + step function}
+
+<<sineStepTime>>=
+## Set up the time vector and the probability of being null
+tme1 <- seq(-1*pi,2*pi,length=ntest)
+tme2 <- rep(1:0, each=ntest/2)
+pi0 <- 1/4*sin(tme1) + tme2/4 + 1/2
+range(pi0)
+
+##Simulate data
+cl<-makeCluster(8) ##specify number of cores less than or equal to number of cores on your computer
+registerDoParallel(cl)
+
+set.seed(1345)
+
+pValuesSims <- foreach(sim=1:nSims) %dorng% {
+  genPvalsInd(pi0, shape2)
+}
+
+##close the cluster
+stopCluster(cl)
+
+save(file="simResults_3.RData", 
+     list=c("pValuesSims"))
+@
+
+Session info:
+<<sessInf>>=
+devtools::session_info()
+@
+
+\end{document}
