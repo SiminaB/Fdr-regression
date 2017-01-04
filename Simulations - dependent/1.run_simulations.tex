@@ -1,0 +1,351 @@
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{## Load libraries}
+\hlkwd{library}\hlstd{(splines)}
+\hlkwd{library}\hlstd{(MASS)}
+\hlkwd{library}\hlstd{(mvtnorm)}
+\end{alltt}
+
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning: package 'mvtnorm' was built under R version 3.3.2}}\begin{alltt}
+\hlkwd{library}\hlstd{(Matrix)} \hlcom{##for the bdiag function}
+\hlkwd{library}\hlstd{(doParallel)} \hlcom{##to make cluster (on Windows)}
+\end{alltt}
+
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning: package 'doParallel' was built under R version 3.3.2}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: foreach}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: iterators}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: parallel}}\begin{alltt}
+\hlkwd{library}\hlstd{(foreach)} \hlcom{##to use foreach function that does the parallel processing}
+\hlkwd{library}\hlstd{(doRNG)} \hlcom{##for reproducible seeds when doing parallel processing}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: rngtools}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: pkgmaker}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: registry}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# \\\#\# Attaching package: 'pkgmaker'}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# The following object is masked from 'package:base':\\\#\# \\\#\#\ \ \ \  isNamespaceLoaded}}\begin{alltt}
+\hlcom{## Define the number of tests}
+\hlstd{ntest} \hlkwb{<-} \hlnum{1000}
+
+\hlcom{## Set nuber of simulations}
+\hlstd{nSims} \hlkwb{<-} \hlnum{10000}
+
+\hlcom{##second shape parameter for beta distribution}
+\hlstd{shape2} \hlkwb{<-} \hlnum{2}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+Function to generate p-values from correlated binary data + helper function:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{##this is based on ra2ba from the bindata package, but returns a logical rather than a numeric variable (should save time as I was converting it into logical from binary)}
+\hlstd{ra2baLogic} \hlkwb{<-} \hlkwa{function} \hlstd{(}\hlkwc{x}\hlstd{)}
+\hlstd{\{}
+  \hlstd{retval} \hlkwb{<-} \hlstd{x} \hlopt{>} \hlnum{0}
+  \hlkwd{dim}\hlstd{(retval)} \hlkwb{<-} \hlkwd{dim}\hlstd{(x)}
+  \hlstd{retval}
+\hlstd{\}}
+
+\hlcom{##function to generate p-values}
+\hlstd{genPvals} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{pi0}\hlstd{,} \hlkwc{shape2}\hlstd{,} \hlkwc{Sigma}\hlstd{)}
+\hlstd{\{}
+  \hlstd{ntest} \hlkwb{<-} \hlkwd{length}\hlstd{(pi0)}
+
+  \hlstd{nullIlist} \hlkwb{<-} \hlkwd{rmvnorm}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwd{qnorm}\hlstd{(pi0), Sigma)}
+  \hlstd{nullI} \hlkwb{<-} \hlkwd{ra2baLogic}\hlstd{(nullIlist)[}\hlnum{1}\hlstd{,]}
+
+  \hlcom{##nullI <- rbinom(ntest,prob=pi0,size=1)> 0}
+
+  \hlstd{pValues} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{NA}\hlstd{,ntest)}
+  \hlstd{pValues[nullI]} \hlkwb{<-} \hlkwd{runif}\hlstd{(}\hlkwd{sum}\hlstd{(nullI))}
+  \hlstd{pValues[}\hlopt{!}\hlstd{nullI]} \hlkwb{<-} \hlkwd{rbeta}\hlstd{(}\hlkwd{sum}\hlstd{(}\hlopt{!}\hlstd{nullI),}\hlnum{1}\hlstd{,shape2)}
+
+  \hlstd{pValues}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+Create block diagonal correlation matrix:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{##create correlation matrix with 10 blocks of 100 rvs}
+\hlstd{rho} \hlkwb{<-} \hlnum{0.9}
+\hlstd{sizeBlock} \hlkwb{<-} \hlnum{100}
+\hlstd{nrBlocks} \hlkwb{<-} \hlstd{ntest}\hlopt{/}\hlstd{sizeBlock}
+
+\hlstd{block} \hlkwb{<-} \hlkwd{matrix}\hlstd{(rho, sizeBlock, sizeBlock)}
+\hlkwd{diag}\hlstd{(block)} \hlkwb{<-} \hlnum{1}
+\hlstd{blockList} \hlkwb{<-} \hlkwd{list}\hlstd{()}
+\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlstd{nrBlocks)}
+\hlstd{\{}
+  \hlstd{blockList[[i]]} \hlkwb{<-} \hlstd{block}
+\hlstd{\}}
+\hlstd{Sigma} \hlkwb{<-} \hlkwd{bdiag}\hlstd{(blockList)}
+\hlkwd{image}\hlstd{(Sigma)}
+\hlstd{Sigma} \hlkwb{<-} \hlkwd{as.matrix}\hlstd{(Sigma)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=\maxwidth]{Figures/unnamed-chunk-2-1} 
+
+}
+
+
+
+\end{knitrout}
+
+\section{Probability of being a false positive as a linear function of time}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{## Set up the time vector and the probability of being null}
+\hlstd{tme} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlopt{-}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{,}\hlkwc{length}\hlstd{=ntest)}
+\hlstd{pi0} \hlkwb{<-} \hlnum{1}\hlopt{/}\hlnum{4}\hlopt{*}\hlstd{tme}\hlopt{+}\hlnum{1}\hlopt{/}\hlnum{2}
+
+\hlstd{cl}\hlkwb{<-}\hlkwd{makeCluster}\hlstd{(}\hlnum{8}\hlstd{)} \hlcom{##specify number of cores less than or equal to number of cores on your computer}
+\hlkwd{registerDoParallel}\hlstd{(cl)}
+
+\hlkwd{set.seed}\hlstd{(}\hlnum{1345}\hlstd{)}
+
+\hlstd{pValuesSims} \hlkwb{<-} \hlkwd{foreach}\hlstd{(}\hlkwc{sim}\hlstd{=}\hlnum{1}\hlopt{:}\hlstd{nSims,} \hlkwc{.packages}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"Matrix"}\hlstd{,}\hlstr{"mvtnorm"}\hlstd{))} \hlopt{%dorng%} \hlstd{\{}
+  \hlkwd{genPvals}\hlstd{(pi0, shape2, Sigma)}
+\hlstd{\}}
+
+\hlcom{##close the cluster}
+\hlkwd{stopCluster}\hlstd{(cl)}
+
+\hlkwd{length}\hlstd{(pValuesSims)}
+\end{alltt}
+\begin{verbatim}
+## [1] 10000
+\end{verbatim}
+\begin{alltt}
+\hlkwd{length}\hlstd{(pValuesSims[[}\hlnum{1}\hlstd{]])}
+\end{alltt}
+\begin{verbatim}
+## [1] 1000
+\end{verbatim}
+\begin{alltt}
+\hlcom{##save results}
+\hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlstr{"simResults_1.RData"}\hlstd{,}
+     \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"pValuesSims"}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\section{Probability of being a false positive as a smooth function of time}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{set.seed}\hlstd{(}\hlnum{1345}\hlstd{)}
+
+\hlcom{## Set up the time vector and the probability of being null}
+\hlstd{tme} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlopt{-}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{,}\hlkwc{length}\hlstd{=ntest)}
+\hlstd{pi0} \hlkwb{<-} \hlkwd{pnorm}\hlstd{(tme)}
+
+\hlstd{splineMat} \hlkwb{<-} \hlkwd{ns}\hlstd{(tme,}\hlkwc{df}\hlstd{=}\hlnum{3}\hlstd{)}
+
+\hlstd{cl}\hlkwb{<-}\hlkwd{makeCluster}\hlstd{(}\hlnum{8}\hlstd{)} \hlcom{##specify number of cores less than or equal to number of cores on your computer}
+\hlkwd{registerDoParallel}\hlstd{(cl)}
+
+\hlkwd{set.seed}\hlstd{(}\hlnum{1345}\hlstd{)}
+
+\hlstd{pValuesSims} \hlkwb{<-} \hlkwd{foreach}\hlstd{(}\hlkwc{sim}\hlstd{=}\hlnum{1}\hlopt{:}\hlstd{nSims,} \hlkwc{.packages}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"Matrix"}\hlstd{,}\hlstr{"mvtnorm"}\hlstd{))} \hlopt{%dorng%} \hlstd{\{}
+  \hlkwd{genPvals}\hlstd{(pi0, shape2, Sigma)}
+\hlstd{\}}
+
+\hlcom{##close the cluster}
+\hlkwd{stopCluster}\hlstd{(cl)}
+
+\hlkwd{length}\hlstd{(pValuesSims)}
+\end{alltt}
+\begin{verbatim}
+## [1] 10000
+\end{verbatim}
+\begin{alltt}
+\hlkwd{length}\hlstd{(pValuesSims[[}\hlnum{1}\hlstd{]])}
+\end{alltt}
+\begin{verbatim}
+## [1] 1000
+\end{verbatim}
+\begin{alltt}
+\hlcom{##save results}
+\hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlstr{"simResults_2.RData"}\hlstd{,}
+     \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"pValuesSims"}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\section{Probability of being a false positive as a sine + step function}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{set.seed}\hlstd{(}\hlnum{1345}\hlstd{)}
+
+\hlcom{## Set up the time vector and the probability of being null}
+\hlstd{tme1} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlopt{-}\hlnum{1}\hlopt{*}\hlstd{pi,}\hlnum{2}\hlopt{*}\hlstd{pi,}\hlkwc{length}\hlstd{=ntest)}
+\hlstd{tme2} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{0}\hlstd{,} \hlkwc{each}\hlstd{=ntest}\hlopt{/}\hlnum{2}\hlstd{)}
+\hlstd{pi0} \hlkwb{<-} \hlnum{1}\hlopt{/}\hlnum{4}\hlopt{*}\hlkwd{sin}\hlstd{(tme1)} \hlopt{+} \hlstd{tme2}\hlopt{/}\hlnum{4} \hlopt{+} \hlnum{1}\hlopt{/}\hlnum{2}
+\hlkwd{range}\hlstd{(pi0)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.2500028 0.9999972
+\end{verbatim}
+\begin{alltt}
+\hlstd{splineMat3} \hlkwb{<-} \hlkwd{cbind}\hlstd{(}\hlkwd{ns}\hlstd{(tme1,}\hlkwc{df}\hlstd{=}\hlnum{3}\hlstd{), tme2)}
+\hlstd{splineMat20} \hlkwb{<-} \hlkwd{cbind}\hlstd{(}\hlkwd{ns}\hlstd{(tme1,}\hlkwc{df}\hlstd{=}\hlnum{20}\hlstd{), tme2)}
+
+\hlstd{cl}\hlkwb{<-}\hlkwd{makeCluster}\hlstd{(}\hlnum{8}\hlstd{)} \hlcom{##specify number of cores less than or equal to number of cores on your computer}
+\hlkwd{registerDoParallel}\hlstd{(cl)}
+
+\hlkwd{set.seed}\hlstd{(}\hlnum{1345}\hlstd{)}
+
+\hlstd{pValuesSims} \hlkwb{<-} \hlkwd{foreach}\hlstd{(}\hlkwc{sim}\hlstd{=}\hlnum{1}\hlopt{:}\hlstd{nSims,} \hlkwc{.packages}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"Matrix"}\hlstd{,}\hlstr{"mvtnorm"}\hlstd{))} \hlopt{%dorng%} \hlstd{\{}
+  \hlkwd{genPvals}\hlstd{(pi0, shape2, Sigma)}
+\hlstd{\}}
+
+\hlcom{##close the cluster}
+\hlkwd{stopCluster}\hlstd{(cl)}
+
+\hlkwd{length}\hlstd{(pValuesSims)}
+\end{alltt}
+\begin{verbatim}
+## [1] 10000
+\end{verbatim}
+\begin{alltt}
+\hlkwd{length}\hlstd{(pValuesSims[[}\hlnum{1}\hlstd{]])}
+\end{alltt}
+\begin{verbatim}
+## [1] 1000
+\end{verbatim}
+\begin{alltt}
+\hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlstr{"simResults_3.RData"}\hlstd{,}
+     \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"pValuesSims"}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+Session info:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{devtools}\hlopt{::}\hlkwd{session_info}\hlstd{()}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Session info -----------------------------------------------}}\begin{verbatim}
+##  setting  value                       
+##  version  R version 3.3.1 (2016-06-21)
+##  system   x86_64, mingw32             
+##  ui       RTerm                       
+##  language (EN)                        
+##  collate  English_United States.1252  
+##  tz       America/New_York            
+##  date     2017-01-01
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Packages ---------------------------------------------------}}\begin{verbatim}
+##  package    * version date       source        
+##  codetools    0.2-14  2015-07-15 CRAN (R 3.3.1)
+##  devtools     1.12.0  2016-06-24 CRAN (R 3.3.1)
+##  digest       0.6.9   2016-01-08 CRAN (R 3.3.1)
+##  doParallel * 1.0.10  2015-10-14 CRAN (R 3.3.2)
+##  doRNG      * 1.6     2014-03-07 CRAN (R 3.3.1)
+##  evaluate     0.10    2016-10-11 CRAN (R 3.3.2)
+##  foreach    * 1.4.3   2015-10-13 CRAN (R 3.3.1)
+##  highr        0.6     2016-05-09 CRAN (R 3.3.1)
+##  iterators  * 1.0.8   2015-10-13 CRAN (R 3.3.0)
+##  knitr      * 1.15.1  2016-11-22 CRAN (R 3.3.2)
+##  lattice      0.20-33 2015-07-14 CRAN (R 3.3.1)
+##  magrittr     1.5     2014-11-22 CRAN (R 3.3.1)
+##  MASS       * 7.3-45  2016-04-21 CRAN (R 3.3.1)
+##  Matrix     * 1.2-6   2016-05-02 CRAN (R 3.3.1)
+##  memoise      1.0.0   2016-01-29 CRAN (R 3.3.1)
+##  mvtnorm    * 1.0-5   2016-02-02 CRAN (R 3.3.2)
+##  pkgmaker   * 0.22    2014-05-14 CRAN (R 3.3.1)
+##  registry   * 0.3     2015-07-08 CRAN (R 3.3.1)
+##  rngtools   * 1.2.4   2014-03-06 CRAN (R 3.3.1)
+##  stringi      1.1.1   2016-05-27 CRAN (R 3.3.0)
+##  stringr      1.0.0   2015-04-30 CRAN (R 3.3.1)
+##  withr        1.0.2   2016-06-20 CRAN (R 3.3.1)
+##  xtable       1.8-2   2016-02-05 CRAN (R 3.3.1)
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\end{document}
