@@ -13,6 +13,7 @@ Note that the simulation code can be particularly computationally intensitive an
 
 The directory structure is as follows:
 
+###functions.R
 The file functions.R contains a number of R functions used in some of the Rnw files below.
 
 ##BMI GIANT GWAS meta-analysis
