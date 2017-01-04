@@ -1,0 +1,135 @@
+\documentclass{article}
+
+\begin{document}
+
+<<setup, include=FALSE, cache=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='Figures/', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=60)
+@
+
+<<prelims>>=
+## Load libraries
+library(splines)
+library(MASS)
+library(xtable)
+
+##Source functions
+source("../functions.R")
+@
+
+Consider different numbers of features $m$ and $\lambda=0.8$:
+<<>>=
+m <- c(10, 100, 1000, 10000)
+lambda <- 0.8
+
+##save the maximum variance bound for each m and each scenario
+maxSm <- matrix(NA, nrow=5, ncol=length(m))
+@
+
+\section{Probability of being a false positive as a linear function of time}
+
+Get maximum of the variance bounds for different numbers of features:
+<<>>=
+for(i in 1:length(m))
+{
+  ntest <- m[i]
+  
+  tme <- seq(-1,2,length=ntest)
+
+  maxSm[1,i] <- max(getVarBound(tme, lambda))
+}
+@
+
+\section{Probability of being a false positive as a smooth function of time}
+
+\subsection{Linear fit}
+
+Get maximum of the variance bounds for different numbers of features:
+<<>>=
+for(i in 1:length(m))
+{
+  ntest <- m[i]
+  
+  tme <- seq(-1,2,length=ntest)
+
+  maxSm[2,i] <- max(getVarBound(tme, lambda))
+}
+@
+
+\subsection{Spline fit}
+
+Get maximum of the variance bounds for different numbers of features:
+<<>>=
+for(i in 1:length(m))
+{
+  ntest <- m[i]
+  
+  tme <- seq(-1,2,length=ntest)
+  splineMat <- ns(tme, df=3)
+
+  maxSm[3,i] <- max(getVarBound(splineMat, lambda))
+}
+@
+
+\section{Probability of being a false positive as a sine + step function}
+
+\subsection{Spline fit with df=3}
+
+Get maximum of the variance bounds for different numbers of features:
+<<>>=
+for(i in 1:length(m))
+{
+  ntest <- m[i]
+  
+  tme1 <- seq(-1*pi,2*pi,length=ntest)
+  tme2 <- rep(1:0, each=ntest/2)
+
+  splineMat3 <- cbind(ns(tme1,df=3), tme2)
+
+  maxSm[4,i] <- max(getVarBound(splineMat3, lambda))
+}
+@
+
+\subsection{Spline fit with df=20}
+
+Get maximum of the variance bounds for different numbers of features. Note that an error is obtained for $m=10$ with the getVarBound function, which relies on solve, so use ginv instead:
+<<>>=
+for(i in 1:length(m))
+{
+  ntest <- m[i]
+  
+  tme1 <- seq(-1*pi,2*pi,length=ntest)
+  tme2 <- rep(1:0, each=ntest/2)
+
+  splineMat20 <- cbind(ns(tme1,df=20), tme2)
+
+  x <- try(max(getVarBound(splineMat20, lambda)))
+  if(class(x) == "numeric")
+  {
+    maxSm[5,i] <- x
+  } else {
+    print(paste("Error for i =", i, "with getVarBound, use ginv instead for matrix inverse"))
+    
+    zMat <- cbind(1, splineMat20)
+    S <- zMat%*%ginv(t(zMat)%*%zMat)%*%t(zMat)
+    maxSm[5,i] <- max(diag(S)/(4*(1-lambda)^2))    
+  }
+}
+maxSm[5,]
+@
+
+\section{Table S1}
+
+<<>>=
+colnames(maxSm) <- paste("m=",m,sep="")
+
+xtable(maxSm, digits=3)
+@
+
+Session info:
+<<sessInf>>=
+devtools::session_info()
+@
+
+\end{document}

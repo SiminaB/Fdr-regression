@@ -1,0 +1,196 @@
+\documentclass{article}
+
+\begin{document}
+
+<<setup, include=FALSE, cache=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='Figures/', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=60)
+@
+
+<<prelims>>=
+## Load libraries
+library(splines)
+library(MASS)
+
+##source functions
+source("../functions.R")
+@
+
+\section{Probability of being a false positive as a linear function of time}
+
+Load results:
+
+<<>>=
+load("simResults_pi0x_noThresh_1.RData")
+load("simResults_pi0x_Scott_1.RData")
+@
+
+\subsection{Plot for means}
+
+<<Fig1a, fig.width=8, fig.height=6>>=
+plotMeanPi0(pi0, pi0MeansVars, pi0hatScottMean, tme=tme)
+
+legend("topright", inset=c(-0.71,0), 
+       legend=c("Truth", expression(paste("SLR (", lambda, "=0.8)")), 
+                expression(paste("SLR (", lambda, "=0.9)")), 
+                "SLR (smoothed)", "SLR (Scott)"),
+       col=c("black", "orange", "orange", "orange", "blue"), bty="n",
+       lwd=c(8,2,2,3,3), lty=c(1,3,2,1,1),
+       cex=1.2, x.intersp=0.2, y.intersp=1.0)
+@
+
+\section{Probability of being a false positive as a smooth function of time}
+
+Load results:
+
+<<>>=
+load("simResults_pi0x_noThresh_2.RData")
+load("simResults_pi0x_Scott_2.RData")
+@
+
+\subsection{Plot for means}
+
+<<Fig1b, fig.width=8, fig.height=6>>=
+plotMeanPi0(pi0, pi0Lin.MeansVars, pi0hatLin.ScottMean, tme=tme)
+
+legend("topright", inset=c(-0.71,0),##x=-0.2, y=0.45,##"bottomright", ##x=-100, y=0.3, 
+       legend=c("Truth", 
+                expression(paste("SLR (", lambda, "=0.8)")),
+                expression(paste("SLR (", lambda, "=0.9)")),
+                "SLR (smoothed)",
+                "SLR (Scott)"),
+       col=c("black", 
+             rep("orange",3), 
+             "blue"), 
+       bty="n",
+       lwd=c(8,2,2,3,3), lty=c(1,3,2,1,1),
+       cex=1.2, x.intersp=0.2, y.intersp=1.0)
+@
+
+<<Fig1c, fig.width=8, fig.height=6>>=
+plotMeanPi0(pi0, pi0Spl.MeansVars, pi0hatSpl.ScottMean, tme=tme)
+
+legend("topright", inset=c(-0.71,0),##x=-0.2, y=0.45,##"bottomright", ##x=-100, y=0.3, 
+       legend=c("Truth", 
+                expression(paste("B-splines, 3 df (", lambda, "=0.8)")),
+                expression(paste("B-splines, 3 df (", lambda, "=0.9)")),
+                "B-splines, 3 df (smoothed)",
+                "B-splines, 3 df (Scott)"),
+       col=c("black", 
+             rep("orange",3),
+             "blue"), 
+       bty="n",
+       lwd=c(8,2,2,3,3), lty=c(1,3,2,1,1),
+       cex=1.2, x.intersp=0.2, y.intersp=1.0)
+@
+
+\section{Probability of being a false positive as a sine + step function}
+
+Load results:
+
+<<>>=
+load("simResults_pi0x_noThresh_3.RData")
+load("simResults_pi0x_Scott_3.RData")
+@
+
+\subsection{Plot for means}
+
+<<Fig1d, fig.width=8, fig.height=6>>=
+plotMeanPi0(pi0, pi0_3.MeansVars, pi0hat3.ScottMean, tme=tme1, TRUE)
+
+legend("topright", inset=c(-0.71,0),
+       legend=c("Truth", 
+                expression(paste("B-splines, 3 df (", lambda, "=0.8)")),
+                expression(paste("B-splines, 3 df (", lambda, "=0.9)")),
+                "B-splines, 3 df (smoothed)",
+                "B-splines, 3 df (Scott)"),
+       col=c("black", rep("orange",3), "blue"), 
+       bty="n",
+       lwd=c(8,2,2,3,3), lty=c(1,3,2,1,1),
+       cex=1.2, x.intersp=0.2, y.intersp=1.0)
+@
+
+<<Fig1e, fig.width=8, fig.height=6>>=
+plotMeanPi0(pi0, pi0_20.MeansVars, pi0hat20.ScottMean, tme=tme1, TRUE)
+
+legend("topright", inset=c(-0.71,0),
+       legend=c("Truth", 
+                expression(paste("B-splines, 20 df (", lambda, "=0.8)")),
+                expression(paste("B-splines, 20 df (", lambda, "=0.9)")),
+                "B-splines, 20 df (smoothed)",
+                "B-splines, 20 df (Scott)"),
+       col=c("black", rep("orange",3), "blue"), 
+       bty="n",
+       lwd=c(8,2,2,3,3), lty=c(1,3,2,1,1),
+       cex=1.2, x.intersp=0.2, y.intersp=1.0)
+@
+
+\subsection{Plots for variances}
+
+<<FigS1a, fig.width=6, fig.height=6>>=
+ntest <- length(pi0MeansVars$pi0hatVar0.8)
+
+tme <- seq(-1,2,length=ntest)
+
+##Get the variance bound:
+pi0hatVarBound <- getVarBound(tme, 0.8)
+##Make plot:
+plotVarBound(pi0hatVarBound, pi0MeansVars$pi0hatVar0.8, tme)
+@
+
+<<FigS1b, fig.width=6, fig.height=6>>=
+ntest <- length(pi0Lin.MeansVars$pi0hatVar0.8)
+
+tme <- seq(-1,2,length=ntest)
+
+##Get the variance bound:
+pi0hatVarBound <- getVarBound(tme, 0.8)
+##Make plot:
+plotVarBound(pi0hatVarBound, pi0Lin.MeansVars$pi0hatVar0.8, tme)
+@
+
+<<FigS1c, fig.width=6, fig.height=6>>=
+ntest <- length(pi0Spl.MeansVars$pi0hatVar0.8)
+
+tme <- seq(-1,2,length=ntest)
+splineMat <- ns(tme,df=3)
+
+##Get the variance bound:
+pi0hatVarBound <- getVarBound(splineMat, 0.8)
+##Make plot:
+plotVarBound(pi0hatVarBound, pi0Spl.MeansVars$pi0hatVar0.8, tme)
+@
+
+<<FigS1d, fig.width=6, fig.height=6>>=
+ntest <- length(pi0_3.MeansVars$pi0hatVar0.8)
+
+tme1 <- seq(-1*pi,2*pi,length=ntest)
+tme2 <- rep(1:0, each=ntest/2)
+splineMat3 <- cbind(ns(tme1,df=3), tme2)
+
+##Get the variance bound:
+pi0hatVarBound <- getVarBound(splineMat3, 0.8)
+##Make plot:
+plotVarBound(pi0hatVarBound, pi0_3.MeansVars$pi0hatVar0.8, tme1, TRUE)
+@
+
+<<FigS1e, fig.width=6, fig.height=6>>=
+ntest <- length(pi0_3.MeansVars$pi0hatVar0.8)
+
+tme1 <- seq(-1*pi,2*pi,length=ntest)
+tme2 <- rep(1:0, each=ntest/2)
+splineMat20 <- cbind(ns(tme1,df=20), tme2)
+
+##Get the variance bound:
+pi0hatVarBound <- getVarBound(splineMat20, 0.8)
+##Make plot:
+plotVarBound(pi0hatVarBound, pi0_20.MeansVars$pi0hatVar0.8, tme1, TRUE)
+@
+
+Session info:
+<<sessInf>>=
+devtools::session_info()
+@
+
+\end{document}
