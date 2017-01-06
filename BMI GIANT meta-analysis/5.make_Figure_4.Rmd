@@ -82,6 +82,18 @@ Generate Figure 4:
 ggplot(d3, aes(x=N, y=pi0))+
   geom_line(aes(col=Freq_MAF_Int_Hapmap, linetype=lambda)) +
   ylab("Estimated proportion of nulls") +
+  scale_linetype_discrete(labels = 
+                            c(expression(paste("Final smoothed ",
+                                               hat(pi)[0](x))),
+                              expression(paste(hat(pi)[0], ""^lambda,
+                                               (x), 
+                                               " for ", lambda, "=",
+                                               0.8)),
+                              expression(paste(hat(pi)[0], ""^lambda,
+                                               (x), 
+                                               " for ", lambda, "=",
+                                               0.9)),
+                              "Scott")) +
   guides(color=guide_legend(title="MAF in HapMap CEU population"),
          linetype=guide_legend(title="Estimate"))
 
