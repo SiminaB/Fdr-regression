@@ -1,0 +1,150 @@
+\documentclass{article}
+
+\begin{document}
+
+<<setup, include=FALSE, cache=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='Figures/', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=60)
+@
+
+<<prelims>>=
+## Load libraries
+library(splines)
+library(MASS)
+library(mvtnorm)
+library(Matrix) ##for the bdiag function
+
+library(doParallel) ##to make cluster (on Windows)
+library(foreach) ##to use foreach function that does the parallel processing
+library(doRNG) ##for reproducible seeds when doing parallel processing
+
+##source functions
+source("../functions.R")
+
+## Define the number of tests
+ntest <- 1000
+
+## Set nuber of simulations
+nSims <- 10000
+
+##second shape parameter for beta distribution
+shape2 <- 2
+@
+
+Create block diagonal correlation matrix:
+<<>>=
+##create correlation matrix with 10 blocks of 100 rvs
+rho <- 0.9
+sizeBlock <- 100
+nrBlocks <- ntest/sizeBlock
+
+block <- matrix(rho, sizeBlock, sizeBlock)
+diag(block) <- 1
+blockList <- list()
+for(i in 1:nrBlocks)
+{
+  blockList[[i]] <- block
+}
+Sigma <- bdiag(blockList)
+image(Sigma)
+Sigma <- as.matrix(Sigma)
+@
+
+\section{Probability of being a false positive as a linear function of time}
+
+<<linearFuncTime>>=
+## Set up the time vector and the probability of being null
+tme <- seq(-1,2,length=ntest)
+pi0 <- 1/4*tme+1/2
+
+cl<-makeCluster(8) ##specify number of cores less than or equal to number of cores on your computer
+registerDoParallel(cl)
+
+set.seed(1345)
+
+pValuesSims <- foreach(sim=1:nSims, .packages=c("Matrix","mvtnorm")) %dorng% {
+  genPvalsDep(pi0, shape2, Sigma)
+}
+
+##close the cluster
+stopCluster(cl)
+
+length(pValuesSims)
+length(pValuesSims[[1]])
+
+##save results
+save(file="simResults_1.RData", 
+     list=c("pValuesSims"))
+@
+
+\section{Probability of being a false positive as a smooth function of time}
+
+<<smoothFuncTime>>=
+set.seed(1345)
+
+## Set up the time vector and the probability of being null
+tme <- seq(-1,2,length=ntest)
+pi0 <- pnorm(tme)
+
+splineMat <- ns(tme,df=3)
+
+cl<-makeCluster(8) ##specify number of cores less than or equal to number of cores on your computer
+registerDoParallel(cl)
+
+set.seed(1345)
+
+pValuesSims <- foreach(sim=1:nSims, .packages=c("Matrix","mvtnorm")) %dorng% {
+  genPvalsDep(pi0, shape2, Sigma)
+}
+
+##close the cluster
+stopCluster(cl)
+
+length(pValuesSims)
+length(pValuesSims[[1]])
+
+##save results
+save(file="simResults_2.RData", 
+     list=c("pValuesSims"))
+@
+
+\section{Probability of being a false positive as a sine + step function}
+
+<<sineStepTime>>=
+set.seed(1345)
+
+## Set up the time vector and the probability of being null
+tme1 <- seq(-1*pi,2*pi,length=ntest)
+tme2 <- rep(1:0, each=ntest/2)
+pi0 <- 1/4*sin(tme1) + tme2/4 + 1/2
+range(pi0)
+
+splineMat3 <- cbind(ns(tme1,df=3), tme2)
+splineMat20 <- cbind(ns(tme1,df=20), tme2)
+
+cl<-makeCluster(8) ##specify number of cores less than or equal to number of cores on your computer
+registerDoParallel(cl)
+
+set.seed(1345)
+
+pValuesSims <- foreach(sim=1:nSims, .packages=c("Matrix","mvtnorm")) %dorng% {
+  genPvalsDep(pi0, shape2, Sigma)
+}
+
+##close the cluster
+stopCluster(cl)
+
+length(pValuesSims)
+length(pValuesSims[[1]])
+
+save(file="simResults_3.RData", 
+     list=c("pValuesSims"))
+@
+
+Session info:
+<<sessInf>>=
+devtools::session_info()
+@
+
+\end{document}
