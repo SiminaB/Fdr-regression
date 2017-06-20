@@ -1,0 +1,136 @@
+---
+title: "Get bootstrap CIs for our method"
+author: "Simina Boca, Jeff Leek"
+date: "`r Sys.Date()`"
+output: rmarkdown::pdf_document
+vignette: >
+  %\VignetteIndexEntry{swfdr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+<!--
+%% \VignetteEngine{knitr::rmarkdown}
+-->
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.path='Figures/')
+```
+
+```{r style, echo = FALSE, results = 'asis'}
+BiocStyle::markdown()
+```
+
+Load the relevant libraries:
+
+```{r,message=FALSE}
+library(ggplot2)
+library(reshape2)
+library(dplyr)
+##library(swfdr)
+library(devtools)
+library(doParallel) ##to make cluster (on Windows)
+library(foreach) ##to use foreach function that does the parallel processing
+library(doRNG) ##for reproducible seeds when doing parallel processing
+
+source("../functions.R")
+```
+
+Load the data and the results:
+
+```{r,cache=TRUE}
+load("BMI_GIANT_GWAS.RData")
+load("BMI_GIANT_GWAS_results_logistic.RData")
+load("BMI_GIANT_GWAS_results_Scott.RData")
+
+tot <- BMI_GIANT_GWAS
+```
+
+Add the results to the data object:
+
+```{r, cache=TRUE}
+##add the estimates from Scott
+tot$fitted.Scott <- pi0EstScott
+
+##add the estimates from our approach
+##add the estimates for lambda=0.8, lambda=0.9, final smoothed value
+tot$fitted0.8 <- fitted0.8
+tot$fitted0.9 <- fitted0.9
+tot$fitted.final.smooth <- fitted.final.smooth
+```
+
+Get range of estimates:
+
+```{r}
+range(tot$fitted.final.smooth)
+range(tot$fitted0.8)
+range(tot$fitted0.9)
+```
+
+Do bootstrapping:
+```{r}
+nrSNPs <- nrow(tot)
+X <- model.matrix(~ splines::ns(N,5) + Freq_MAF_Int_Hapmap, data = tot)[,-1]
+dim(X)
+head(X)
+##get duplicated rows in X
+##duplX <- which(duplicated(X)) -> don't think I care about this actually
+
+##the actual bootstrapping takes about 1.2 hrs for 10 iterations on desktop
+cl<-makeCluster(8) ##specify number of cores less than or equal to number of cores on your computer
+registerDoParallel(cl)
+
+set.seed(310840)
+nBoot <- 10
+##save results
+date()
+
+fittedBoot <- foreach(boot=1:nBoot, .combine="rbind") %dorng% {
+  indBoot <- sample.int(nrSNPs, size=nrSNPs, replace=TRUE);
+  totboot <- tot[indBoot,];
+  Xboot <- X[indBoot,];
+  pi0boot <- lm_pi0(pValues=totboot$p, X=Xboot, smooth.df=3)$pi0;
+  ##save only the results for the unique indices
+  ##uniqueXboot <- !duplicated(Xboot)
+  uniqueBoot <- unique(indBoot);
+  cbind(indBoot[uniqueBoot],pi0boot[uniqueBoot])
+}
+
+date()
+dim(fittedBoot)
+##close the cluster
+stopCluster(cl)
+
+save(list="fittedBoot", file="BMI_GIANT_GWAS_bootstrap_all_logistic.RData")
+
+##get 0.05, 0.95 quantiles for each index ##took about 8 minutes for full dataset being bootstrapped 8 times
+date()
+perc.05.95 <- tapply(fittedBoot[,2], fittedBoot[,1], FUN=quantile, c(0.05, 0.95))
+date()
+head(perc.05.95)
+
+##get the actual indices
+indPerc.05.95 <- names(perc.05.95)
+head(indPerc.05.95)
+class(indPerc.05.95)
+indPerc.05.95 <- as.numeric(indPerc.05.95)
+
+perc.05.95 <- matrix(unlist(perc.05.95), ncol=2, byrow=TRUE)
+
+dim(perc.05.95)
+
+quant0.05 <- perc.05.95[,1]
+quant0.95 <- perc.05.95[,2]
+
+rownames(perc.05.95) <- as.character(indPerc.05.95)
+
+##save these 
+save(list=c("perc.05.95"), file="BMI_GIANT_GWAS_bootstrap_CIs_logistic.RData")
+```
+
+### Session Information
+
+```{r}
+devtools::session_info()
+```
+

@@ -18,6 +18,9 @@ library(doParallel) ##to make cluster (on Windows)
 library(foreach) ##to use foreach function that does the parallel processing
 library(doRNG) ##for reproducible seeds when doing parallel processing
 ##don't need doRNG here, but easier to keep it in
+
+##Source functions
+source("../functions.R")
 @
 
 Function to pull out means and variances across simulations:
@@ -49,185 +52,142 @@ pullMeansVars <- function(pi0EstSim)
 }
 @
 
-\section{Probability of being a false positive as a linear function of time}
-
-Load simulations and (re)define some variables:
-
-<<linearFuncTime>>=
-load("simResults_1.RData")
-
-nSims <- length(pValuesSims)
-ntest <- length(pValuesSims[[1]])
-
-##sequence of lambdas
-lambdas <- round(seq(0.05, 0.95, 0.05),2)
-which.0.8 <- which(lambdas==0.8)
-which.0.9 <- which(lambdas==0.9)
-which.0.8
-which.0.9
-
-## Set up the time vector and the probability of being null
-tme <- seq(-1,2,length=ntest)
-pi0 <- 1/4*tme+1/2
+Simulations are performed for a variety of alternative distributions:
+<<>>=
+altsGrid <- as.matrix(expand.grid(dist=c("z","t"),nrBlocks=c(10,20),corr=c(0.2,0.5,0.9)))
+alts <- apply(altsGrid, 1, function(x){paste("alt",x[1],"large",x[2],x[3],sep="_")})
+alts
 @
+
+\section{Probability of being a false positive is flat}
 
 Perform estimation and save estimates:
 
 <<>>=
-cl<-makeCluster(8) ##specify number of cores less than or equal to number of cores on your computer
-registerDoParallel(cl)
-
-pi0EstSim <- foreach(sim = 1:nSims, .packages=c("swfdr")) %dorng% {  
-  res <- lm_pi0(pValuesSims[[sim]], lambda=lambdas, X=tme, 
-                smooth.df=3, threshold=TRUE);
-  res.pi0.lambda <- res$pi0.lambda;
-  list(res.pi0.lambda[,which.0.8], 
-       res.pi0.lambda[,which.0.9],
-       res$pi0)}
-
-##close the cluster
-stopCluster(cl)
-
-##pull out means and variances of estimates at lambda=0.8, lambda=0.9, and final estimate
-pi0MeansVars <- pullMeansVars(pi0EstSim)
-
-##save results
-save(file="simResults_pi0x_thresh_1.RData", 
-     list=c("tme", "pi0", "pi0MeansVars"))
+for(alt in alts)
+{
+  load(paste(alt,"simResults_1.RData",sep="/"))
+  
+  pi0EstSim <- estimate_pi0x_sims(pValuesSims, tme)
+  
+  ##pull out means and variances of estimates at lambda=0.8, lambda=0.9, and final estimate
+  pi0MeansVars <- pullMeansVars(pi0EstSim)
+  
+  ##save full results
+  save(file=paste(alt,"simResults_pi0x_thresh_1_full.RData",sep="/"), 
+       list=c("pi0EstSim"))
+  
+  ##save summary results
+  save(file=paste(alt,"simResults_pi0x_thresh_1.RData",sep="/"), 
+       list=c("tme", "pi0", "pi0MeansVars"))
+}
 @
 
-\section{Probability of being a false positive as a smooth function of time}
-
-Load simulations and (re)define some variables:
-
-<<smoothFuncTime>>=
-load("simResults_2.RData")
-
-nSims <- length(pValuesSims)
-ntest <- length(pValuesSims[[1]])
-
-##sequence of lambdas
-lambdas <- round(seq(0.05, 0.95, 0.05),2)
-which.0.8 <- which(lambdas==0.8)
-which.0.9 <- which(lambdas==0.9)
-which.0.8
-which.0.9
-
-## Set up the time vector and the probability of being null
-tme <- seq(-1,2,length=ntest)
-pi0 <- pnorm(tme)
-
-splineMat <- ns(tme,df=3)
-@
+\section{Probability of being a false positive is smooth in one variable}
 
 Perform estimation and save estimates:
 
 <<>>=
-cl<-makeCluster(8) ##specify number of cores less than or equal to number of cores on your computer
-registerDoParallel(cl)
+for(alt in alts)
+{
+  load(paste(alt,"simResults_2.RData",sep="/"))
+  splineMat <- ns(tme,df=3)
+    
+  ##--------linear fit-------##
+  pi0EstSim.lin <- estimate_pi0x_sims(pValuesSims, tme)
+  
+  ##pull out means and variances of estimates at lambda=0.8, lambda=0.9, and final estimate
+  pi0Lin.MeansVars <- pullMeansVars(pi0EstSim.lin)
+  
+  ##---------spline fit---------#
+  pi0EstSim.spl <- estimate_pi0x_sims(pValuesSims, splineMat)
 
-pi0EstSim.lin <- foreach(sim = 1:nSims, .packages=c("swfdr")) %dorng% {  
-  res <- lm_pi0(pValuesSims[[sim]], lambda=lambdas, X=tme, 
-                smooth.df=3, threshold=TRUE);
-  res.pi0.lambda <- res$pi0.lambda;
-  list(res.pi0.lambda[,which.0.8], 
-       res.pi0.lambda[,which.0.9],
-       res$pi0)}
-
-##close the cluster
-stopCluster(cl)
-
-cl<-makeCluster(8) ##specify number of cores less than or equal to number of cores on your computer
-registerDoParallel(cl)
-
-pi0EstSim.spl <- foreach(sim = 1:nSims, .packages=c("swfdr")) %dorng% {  
-  res <- lm_pi0(pValuesSims[[sim]], lambda=lambdas, X=splineMat, 
-                smooth.df=3, threshold=TRUE);
-  res.pi0.lambda <- res$pi0.lambda;
-  list(res.pi0.lambda[,which.0.8], 
-       res.pi0.lambda[,which.0.9],
-       res$pi0)}
-
-##close the cluster
-stopCluster(cl)
-
-##pull out means and variances of estimates at lambda=0.8, lambda=0.9, and final estimate
-pi0Lin.MeansVars <- pullMeansVars(pi0EstSim.lin)
-pi0Spl.MeansVars <- pullMeansVars(pi0EstSim.spl)
-
-##save results
-save(file="simResults_pi0x_thresh_2.RData", 
-     list=c("tme", "pi0", "pi0Lin.MeansVars", "pi0Spl.MeansVars"))
+  ##pull out means and variances of estimates at lambda=0.8, lambda=0.9, and final estimate
+  pi0Spl.MeansVars <- pullMeansVars(pi0EstSim.spl)
+  
+  ##save full results
+  save(file=paste(alt,"simResults_pi0x_thresh_2_full.RData",sep="/"), 
+       list=c("pi0EstSim.lin","pi0EstSim.spl"))
+  
+  ##save summary results
+  save(file=paste(alt,"simResults_pi0x_thresh_2.RData",sep="/"), 
+       list=c("tme", "pi0", "pi0Lin.MeansVars", "pi0Spl.MeansVars"))
+}
 @
 
-\section{Probability of being a false positive as a sine + step function}
-
-Load simulations and (re)define some variables:
-
-<<sineStepTime>>=
-load("simResults_3.RData")
-
-nSims <- length(pValuesSims)
-ntest <- length(pValuesSims[[1]])
-
-##sequence of lambdas
-lambdas <- round(seq(0.05, 0.95, 0.05),2)
-which.0.8 <- which(lambdas==0.8)
-which.0.9 <- which(lambdas==0.9)
-which.0.8
-which.0.9
-
-## Set up the time vector and the probability of being null
-tme1 <- seq(-1*pi,2*pi,length=ntest)
-tme2 <- rep(1:0, each=ntest/2)
-
-pi0 <- 1/4*sin(tme1) + tme2/4 + 1/2
-range(pi0)
-
-splineMat3 <- cbind(ns(tme1,df=3), tme2)
-splineMat20 <- cbind(ns(tme1,df=20), tme2)
-@
+\section{Probability of being a false positive is smooth in one variable within levels of second variable}
 
 Perform estimation and save estimates:
 
 <<>>=
-cl<-makeCluster(8) ##specify number of cores less than or equal to number of cores on your computer
-registerDoParallel(cl)
+for(alt in alts)
+{
+  load(paste(alt,"simResults_3.RData",sep="/"))
+  
+  m <- model.matrix(~as.character(tme2))[,-1]
+  
+  linearMat <- cbind(tme1, m) 
+  splineMat <- cbind(ns(tme1,df=3), m) 
+  
+  ##--------linear fit-------##
+  pi0EstSim.lin <- estimate_pi0x_sims(pValuesSims, linearMat)
+  
+  ##pull out means and variances of estimates at lambda=0.8, lambda=0.9, and final estimate
+  pi0Lin.MeansVars <- pullMeansVars(pi0EstSim.lin)
+  
+  ##---------spline fit---------#
+  pi0EstSim.spl <- estimate_pi0x_sims(pValuesSims, splineMat)
 
-pi0EstSim3 <- foreach(sim = 1:nSims, .packages=c("swfdr")) %dorng% {  
-  res <- lm_pi0(pValuesSims[[sim]], lambda=lambdas, X=splineMat3, 
-                smooth.df=3, threshold=TRUE);
-  res.pi0.lambda <- res$pi0.lambda;
-  list(res.pi0.lambda[,which.0.8], 
-       res.pi0.lambda[,which.0.9],
-       res$pi0)}
-
-##close the cluster
-stopCluster(cl)
-
-cl<-makeCluster(8) ##specify number of cores less than or equal to number of cores on your computer
-registerDoParallel(cl)
-
-pi0EstSim20 <- foreach(sim = 1:nSims, .packages=c("swfdr")) %dorng% {  
-  res <- lm_pi0(pValuesSims[[sim]], lambda=lambdas, X=splineMat20, 
-                smooth.df=3, threshold=TRUE);
-  res.pi0.lambda <- res$pi0.lambda;
-  list(res.pi0.lambda[,which.0.8], 
-       res.pi0.lambda[,which.0.9],
-       res$pi0)}
-
-##close the cluster
-stopCluster(cl)
-
-##pull out means and variances of estimates at lambda=0.8, lambda=0.9, and final estimate
-pi0_3.MeansVars <- pullMeansVars(pi0EstSim3)
-pi0_20.MeansVars <- pullMeansVars(pi0EstSim20)
-
-##save results
-save(file="simResults_pi0x_thresh_3.RData", 
-     list=c("tme1", "tme2", "pi0", 
-            "pi0_3.MeansVars", "pi0_20.MeansVars"))
+  ##pull out means and variances of estimates at lambda=0.8, lambda=0.9, and final estimate
+  pi0Spl.MeansVars <- pullMeansVars(pi0EstSim.spl)
+  
+  ##save full results
+  save(file=paste(alt,"simResults_pi0x_thresh_3_full.RData",sep="/"), 
+       list=c("pi0EstSim.lin","pi0EstSim.spl"))
+  
+  ##save summary results
+  save(file=paste(alt,"simResults_pi0x_thresh_3.RData",sep="/"), 
+       list=c("tme1", "tme2", "pi0", "pi0Lin.MeansVars", "pi0Spl.MeansVars"))
+}
 @
+
+\section{Probability of being a false positive is smooth in one variable within levels of second variable - lower priors}
+
+Perform estimation and save estimates:
+
+<<>>=
+
+for(alt in alts)
+{
+  load(paste(alt,"simResults_4.RData",sep="/"))
+  
+  m <- model.matrix(~as.character(tme2))[,-1]
+  
+  linearMat <- cbind(tme1, m) 
+  splineMat <- cbind(ns(tme1,df=3), m) 
+  
+  ##--------linear fit-------##
+  pi0EstSim.lin <- estimate_pi0x_sims(pValuesSims, linearMat)
+  
+  ##pull out means and variances of estimates at lambda=0.8, lambda=0.9, and final estimate
+  pi0Lin.MeansVars <- pullMeansVars(pi0EstSim.lin)
+  
+  ##---------spline fit---------#
+  pi0EstSim.spl <- estimate_pi0x_sims(pValuesSims, splineMat)
+
+  ##pull out means and variances of estimates at lambda=0.8, lambda=0.9, and final estimate
+  pi0Spl.MeansVars <- pullMeansVars(pi0EstSim.spl)
+  
+  ##save full results
+  save(file=paste(alt,"simResults_pi0x_thresh_4_full.RData",sep="/"), 
+       list=c("pi0EstSim.lin","pi0EstSim.spl"))
+  
+  ##save summary results
+  save(file=paste(alt,"simResults_pi0x_thresh_4.RData",sep="/"), 
+       list=c("tme1", "tme2", "pi0", "pi0Lin.MeansVars", "pi0Spl.MeansVars"))
+}
+@
+
 
 Session info:
 <<sessInf>>=

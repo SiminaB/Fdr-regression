@@ -1,0 +1,177 @@
+\documentclass{article}
+\usepackage[margin=0.5in]{geometry}
+
+
+\begin{document}
+
+<<include=FALSE, cache=FALSE, echo=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='Figures/', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=60,echo=FALSE)
+@
+
+<<echo=FALSE, include=FALSE>>=
+## Load libraries
+library(splines)
+library(MASS)
+library(xtable)
+library(dplyr)
+
+##Source functions
+source("../functions.R")
+@
+
+\section*{Simulations, independence}
+
+Consider 1,000 tests in each simulation, 200 simulations per scenario, nominal FDR = 5\%.
+\\
+The following 4 functions are considered for $\pi_0(x)$:
+<<echo=FALSE>>=
+ntest <- 1000
+
+par(mfrow=c(2,2))
+tme <- seq(0,1, length=ntest)
+pi0 <- rep(0.9, length=ntest)
+plot(pi0 ~ tme, ylim=c(0.3,1), xlab="x1", ylab="pi0(x1)", main="I")
+
+tme <- seq(0,1, length=ntest)
+pi0 <- fSingle(tme)
+plot(pi0 ~ tme, ylim=c(0.3,1), xlab="x1", ylab="pi0(x1)", main="II")
+
+tme1 <- seq(0,1,length=ntest)
+tme2cont <- runif(ntest,0,0.5)
+set.seed(309441)
+tme2 <- rep(NA, ntest)
+tme2[tme2cont < 0.127] <- 1
+tme2[tme2cont >= 0.127] <- 2
+tme2[tme2cont >= 0.302] <- 3
+pi0 <- f(tme1, tme2)
+##range(pi0)
+plot(pi0 ~ tme1, ylim=c(0.3,1), xlab="x1", ylab="pi0(x1,x2)", main="III")
+
+tme1 <- seq(0,1,length=ntest)
+tme2cont <- runif(ntest,0,0.5)
+set.seed(309441)
+tme2 <- rep(NA, ntest)
+tme2[tme2cont < 0.127] <- 1
+tme2[tme2cont >= 0.127] <- 2
+tme2[tme2cont >= 0.302] <- 3
+pi0 <- 0.6*f(tme1, tme2)
+##range(pi0)
+plot(pi0 ~ tme1, ylim=c(0.3,1), xlab="x1", ylab="pi0(x1,x2)", main="IV")
+@
+
+\clearpage
+
+<<echo=FALSE>>=
+##make tables for results
+tabResFDR <- expand.grid(pi0x = c("I","II","III","IV"),
+                         alts = c("Beta(1,20)",
+                                  "Norm (W.S.)",
+                                  "T (W.S.)",
+                                  "Chisq 1 df (W.S.)",
+                                  "Chisq 4 df (W.S.)"),
+                         est = c("Linear", "Spline"))
+tabResFDR <- tabResFDR[order(tabResFDR$pi0x, tabResFDR$alts),]
+##get rid of pi0x == "I" and est == "Spline"
+tabResFDR <- filter(tabResFDR, pi0x != "I" | est != "Spline")
+
+tabResFDR <- cbind(tabResFDR, matrix(NA,nrow=nrow(tabResFDR),ncol=5))
+
+colnames(tabResFDR)[4:8] <- c("BL","Scott","Scott_emp","Storey","BH")
+
+tabResFDR$pi0x <- as.character(tabResFDR$pi0x)
+
+tabResTPR <- tabResFDR
+@
+
+<<echo=FALSE, include=FALSE>>=
+##fill in tables
+##make correspondence between directory names and names in tables
+DirTabCorr <- cbind(c("alt_beta","alt_t_large","alt_z_large",
+                      "alt_chisq_large","alt_chisq_large_3_3"),
+                    c("Beta(1,20)","T (W.S.)","Norm (W.S.)",
+                      "Chisq 1 df (W.S.)","Chisq 4 df (W.S.)"))
+                    
+methods <- c("BL","Scott","Scott_emp", "Storey","BH")
+
+for(i in 1:nrow(DirTabCorr))
+{
+  Dir.i <- DirTabCorr[i,1]
+  Tab.i <- DirTabCorr[i,2]
+  
+  load(paste(Dir.i,"FDR_TPR_sims.RData",sep="/"))
+  tabResFDR[tabResFDR$pi0x == "I" & tabResFDR$alts == Tab.i,methods] <-
+    scen1[methods,"FDR"]
+  tabResFDR[(tabResFDR$pi0x == "II" & tabResFDR$alts == Tab.i) & 
+              tabResFDR$est == "Linear",methods] <-
+    scen2a[methods,"FDR"]
+  tabResFDR[(tabResFDR$pi0x == "II" & tabResFDR$alts == Tab.i) & 
+              tabResFDR$est == "Spline",methods] <-
+    scen2b[methods,"FDR"]
+  tabResFDR[(tabResFDR$pi0x == "III" & tabResFDR$alts == Tab.i) & 
+              tabResFDR$est == "Linear",methods] <-
+    scen3a[methods,"FDR"]
+  tabResFDR[(tabResFDR$pi0x == "III" & tabResFDR$alts == Tab.i) & 
+              tabResFDR$est == "Spline",methods] <-
+    scen3b[methods,"FDR"]
+  tabResFDR[(tabResFDR$pi0x == "IV" & tabResFDR$alts == Tab.i) & 
+              tabResFDR$est == "Linear",methods] <-
+    scen4a[methods,"FDR"]
+  tabResFDR[(tabResFDR$pi0x == "IV" & tabResFDR$alts == Tab.i) & 
+              tabResFDR$est == "Spline",methods] <-
+    scen4b[methods,"FDR"]
+}
+
+for(i in 1:nrow(DirTabCorr))
+{
+  Dir.i <- DirTabCorr[i,1]
+  Tab.i <- DirTabCorr[i,2]
+  
+  load(paste(Dir.i,"FDR_TPR_sims.RData",sep="/"))
+  tabResTPR[tabResTPR$pi0x == "I" & tabResTPR$alts == Tab.i,methods] <-
+    scen1[methods,"TPR"]
+  tabResTPR[(tabResTPR$pi0x == "II" & tabResTPR$alts == Tab.i) & 
+              tabResTPR$est == "Linear",methods] <-
+    scen2a[methods,"TPR"]
+  tabResTPR[(tabResTPR$pi0x == "II" & tabResTPR$alts == Tab.i) & 
+              tabResTPR$est == "Spline",methods] <-
+    scen2b[methods,"TPR"]
+  tabResTPR[(tabResTPR$pi0x == "III" & tabResTPR$alts == Tab.i) & 
+              tabResTPR$est == "Linear",methods] <-
+    scen3a[methods,"TPR"]
+  tabResTPR[(tabResTPR$pi0x == "III" & tabResTPR$alts == Tab.i) & 
+              tabResTPR$est == "Spline",methods] <-
+    scen3b[methods,"TPR"]
+  tabResTPR[(tabResTPR$pi0x == "IV" & tabResTPR$alts == Tab.i) & 
+              tabResTPR$est == "Linear",methods] <-
+    scen4a[methods,"TPR"]
+  tabResTPR[(tabResTPR$pi0x == "IV" & tabResTPR$alts == Tab.i) & 
+              tabResTPR$est == "Spline",methods] <-
+    scen4b[methods,"TPR"]
+}
+
+identical(tabResFDR[,1:3], tabResTPR[,1:3])
+tabResFDR.TPR <- cbind(tabResFDR, tabResTPR[,4:8])
+colnames(tabResFDR.TPR)[1:3] <- c("pi0(x)","Distribution under H1","Regression model")
+
+##order by second column (distribution)
+tabResFDR.TPR <- tabResFDR.TPR[order(tabResFDR.TPR[,2]),]
+
+##change everything to % 
+tabResFDR.TPR[,-(1:3)] <- sapply(tabResFDR.TPR[,-(1:3)], function(x){x*100})
+@
+  
+  Estimated false discovery rates (FDR) and true positive rates (TPR) percentages. BL = Boca-Leek. W.S. = well-separated null and alternative, P.S. = poorly separated null and alternative. For III and IV, a dummy variable was used for $x_{2}$, along with linear or spline terms for $x_1$. Used reviewer's definition of ``well-separated" and ``poorly-separated." Used both the theoretical and empirical nulls for the Scott method. For the t-test, considered 2 groups of 6 (so 2x6 = 10 df) and used the t-statistics instead of the z-statistics for the Scott method. Extended ``well-separated" and ``poorly-separated" definition to chisquared test, generating means fom the absolute value of a normal distribution with mean 9, respectively 1. For the chisquared test, 1 df corresponds to a 2x2 table, 4 df to a 3x3 table. Used the z-values obtained from back-transforming the p-values for the Scott method in this case.
+<<echo=FALSE, results='asis'>>=
+tab <- xtable(tabResFDR.TPR,align=c("l","l","l","l|","l","l","l","l","l|","l","l","l","l","l"),digits=1)
+addtorow <- list()
+addtorow$pos <- list(0,0)
+addtorow$command <- c("&&& \\multicolumn{5}{c}{FDR} & \\multicolumn{5}{c}{TPR}\\\\\n",
+                      "$\\pi_0(x)$ &  Dist. under $H_1$ & Reg. model & BL & Scott T & Scott E & Storey & BH & BL & Scott T & Scott E & Storey & BH    \\\\\n")
+print(tab[1:35, ], hline.after=c(-1, 0, 7, 14, 21, 28, 35), include.colnames=FALSE, include.rownames=FALSE,
+      add.to.row=addtorow)
+@
+
+
+\end{document}

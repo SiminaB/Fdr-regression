@@ -23,87 +23,129 @@ source("../functions.R")
 ## Define the number of tests
 ntest <- 1000
 
-## Set nuber of simulations
-nSims <- 10000
-
-##second shape parameter for beta distribution
-shape2 <- 2
+## Set number of simulations
+nSims <- 200
 @
 
-\section{Probability of being a false positive as a linear function of time}
+Do the simulations for a variety of alternative distributions:
+<<>>=
+alts <- c("alt_beta","alt_chisq_large_3_3","alt_chisq_large",
+          "alt_chisq_small_3_3","alt_chisq_small",
+          "alt_t_large","alt_t_small",
+          "alt_z_large",
+          "alt_z_small")
+@
 
-<<linearFuncTime>>=
+\section{Probability of being a false positive is flat}
+
+<<I>>=
 ## Set up the time vector and the probability of being null
-tme <- seq(-1,2,length=ntest)
-pi0 <- 1/4*tme+1/2
+tme <- seq(0,1, length=ntest)
+pi0 <- rep(0.9, length=ntest)
 
-##Simulate data
-cl<-makeCluster(8) ##specify number of cores less than or equal to number of cores on your computer
-registerDoParallel(cl)
+plot(pi0 ~ tme)
 
-set.seed(1345)
-
-pValuesSims <- foreach(sim=1:nSims) %dorng% {
-  genPvalsInd(pi0, shape2)
+for(alt in alts)
+{
+  pValuesSims <- run_sims_alt(alt, nSims, pi0)
+  
+  zValuesSims <- pValuesSims[,(2*ntest+1):(3*ntest)]
+  nullHypSims <- pValuesSims[,(ntest+1):(2*ntest)]
+  pValuesSims <- pValuesSims[,1:ntest]
+  
+  ##save results
+  save(file=paste(alt, "simResults_1.RData",sep="/"), 
+       list=c("pi0", "tme", "nullHypSims","pValuesSims","zValuesSims"))
 }
-
-##close the cluster
-stopCluster(cl)
-
-##save results
-save(file="simResults_1.RData", 
-     list=c("pValuesSims"))
 @
 
-\section{Probability of being a false positive as a smooth function of time}
+\section{Probability of being a false positive is smooth in one variable}
 
-<<smoothFuncTime>>=
+<<II>>=
 ## Set up the time vector and the probability of being null
-tme <- seq(-1,2,length=ntest)
-pi0 <- pnorm(tme)
+tme <- seq(0,1, length=ntest)
+pi0 <- fSingle(tme)
 
-##Simulate data
-cl<-makeCluster(8) ##specify number of cores less than or equal to number of cores on your computer
-registerDoParallel(cl)
+plot(pi0 ~ tme)
 
-set.seed(1345)
-
-pValuesSims <- foreach(sim=1:nSims) %dorng% {
-  genPvalsInd(pi0, shape2)
+for(alt in alts)
+{
+  pValuesSims <- run_sims_alt(alt, nSims, pi0)
+  
+  dim(pValuesSims)
+  
+  zValuesSims <- pValuesSims[,(2*ntest+1):(3*ntest)]
+  nullHypSims <- pValuesSims[,(ntest+1):(2*ntest)]
+  pValuesSims <- pValuesSims[,1:ntest]
+  
+  ##save results
+  save(file=paste(alt, "simResults_2.RData",sep="/"), 
+       list=c("pi0", "tme", "nullHypSims","pValuesSims","zValuesSims"))
 }
-
-##close the cluster
-stopCluster(cl)
-
-##save results
-save(file="simResults_2.RData", 
-     list=c("pValuesSims"))
 @
 
-\section{Probability of being a false positive as a sine + step function}
+\section{Probability of being a false positive is smooth in one variable within levels of second variable}
 
-<<sineStepTime>>=
+<<III>>=
 ## Set up the time vector and the probability of being null
-tme1 <- seq(-1*pi,2*pi,length=ntest)
-tme2 <- rep(1:0, each=ntest/2)
-pi0 <- 1/4*sin(tme1) + tme2/4 + 1/2
+tme1 <- seq(0,1,length=ntest)
+tme2cont <- runif(ntest,0,0.5)
+set.seed(309441)
+tme2 <- rep(NA, ntest)
+tme2[tme2cont < 0.127] <- 1
+tme2[tme2cont >= 0.127] <- 2
+tme2[tme2cont >= 0.302] <- 3
+pi0 <- f(tme1, tme2)
 range(pi0)
 
-##Simulate data
-cl<-makeCluster(8) ##specify number of cores less than or equal to number of cores on your computer
-registerDoParallel(cl)
+plot(pi0 ~ tme1)
 
-set.seed(1345)
-
-pValuesSims <- foreach(sim=1:nSims) %dorng% {
-  genPvalsInd(pi0, shape2)
+for(alt in alts)
+{
+  pValuesSims <- run_sims_alt(alt, nSims, pi0)
+  
+  dim(pValuesSims)
+  
+  zValuesSims <- pValuesSims[,(2*ntest+1):(3*ntest)]
+  nullHypSims <- pValuesSims[,(ntest+1):(2*ntest)]
+  pValuesSims <- pValuesSims[,1:ntest]
+  
+  ##save results
+  save(file=paste(alt, "simResults_3.RData",sep="/"), 
+       list=c("pi0", "tme1", "tme2", "nullHypSims","pValuesSims","zValuesSims"))
 }
+@
 
-##close the cluster
-stopCluster(cl)
+\section{Probability of being a false positive is smooth in one variable within levels of second variable - lower priors}
 
-save(file="simResults_3.RData", 
-     list=c("pValuesSims"))
+<<IV>>=
+## Set up the time vector and the probability of being null
+tme1 <- seq(0,1,length=ntest)
+tme2cont <- runif(ntest,0,0.5)
+set.seed(309441)
+tme2 <- rep(NA, ntest)
+tme2[tme2cont < 0.127] <- 1
+tme2[tme2cont >= 0.127] <- 2
+tme2[tme2cont >= 0.302] <- 3
+pi0 <- 0.6*f(tme1, tme2)
+range(pi0)
+
+plot(pi0 ~ tme1)
+
+for(alt in alts)
+{
+  pValuesSims <- run_sims_alt(alt, nSims, pi0)
+  
+  dim(pValuesSims)
+  
+  zValuesSims <- pValuesSims[,(2*ntest+1):(3*ntest)]
+  nullHypSims <- pValuesSims[,(ntest+1):(2*ntest)]
+  pValuesSims <- pValuesSims[,1:ntest]
+  
+  ##save results
+  save(file=paste(alt, "simResults_4.RData",sep="/"), 
+       list=c("pi0", "tme1", "tme2", "nullHypSims","pValuesSims","zValuesSims"))
+}
 @
 
 Session info:

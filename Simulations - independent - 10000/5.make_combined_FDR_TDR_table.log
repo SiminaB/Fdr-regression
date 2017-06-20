@@ -1,0 +1,231 @@
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.5.20)  15 JUN 2017 12:24
+entering extended mode
+**5.make_combined_FDR_TDR_table.tex
+
+("C:\Users\smb310\Documents\Research\FDR regression\Simulations - independent -
+ revision - 10000\5.make_combined_FDR_TDR_table.tex"
+LaTeX2e <2011/06/27>
+Babel <v3.8m> and hyphenation patterns for english, afrikaans, ancientgreek, ar
+abic, armenian, assamese, basque, bengali, bokmal, bulgarian, catalan, coptic, 
+croatian, czech, danish, dutch, esperanto, estonian, farsi, finnish, french, ga
+lician, german, german-x-2013-05-26, greek, gujarati, hindi, hungarian, iceland
+ic, indonesian, interlingua, irish, italian, kannada, kurmanji, latin, latvian,
+ lithuanian, malayalam, marathi, mongolian, mongolianlmc, monogreek, ngerman, n
+german-x-2013-05-26, nynorsk, oriya, panjabi, pinyin, polish, portuguese, roman
+ian, russian, sanskrit, serbian, slovak, slovenian, spanish, swedish, swissgerm
+an, tamil, telugu, turkish, turkmen, ukenglish, ukrainian, uppersorbian, usengl
+ishmax, welsh, loaded.
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\article.cls"
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\size10.clo"
+File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\graphicx.sty"
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\keyval.sty"
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks14
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\graphics.sty"
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\trig.sty"
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\00miktex\graphics.cfg"
+File: graphics.cfg 2007/01/18 v1.5 graphics configuration of teTeX/TeXLive
+)
+Package graphics Info: Driver file: pdftex.def on input line 91.
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\pdftex-def\pdftex.def"
+File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\infwarerr.sty"
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/error messages (HO)
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\ltxcmds.sty"
+Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
+)
+\Gread@gobject=\count87
+))
+\Gin@req@height=\dimen103
+\Gin@req@width=\dimen104
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\color.sty"
+Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\00miktex\color.cfg"
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package color Info: Driver file: pdftex.def on input line 130.
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\framed\framed.sty"
+Package: framed 2011/10/22 v 0.96: framed or shaded text with page breaks
+\OuterFrameSep=\skip43
+\fb@frw=\dimen105
+\fb@frh=\dimen106
+\FrameRule=\dimen107
+\FrameSep=\dimen108
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\alltt.sty"
+Package: alltt 1997/06/16 v2.0g defines alltt environment
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\geometry\geometry.sty"
+Package: geometry 2010/09/12 v5.6 Page Geometry
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\ifpdf.sty"
+Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in PDF mode is detected.
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\ifvtex.sty"
+Package: ifvtex 2010/03/01 v1.5 Detect VTeX and its facilities (HO)
+Package ifvtex Info: VTeX not detected.
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\ifxetex\ifxetex.sty"
+Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
+)
+\Gm@cnth=\count88
+\Gm@cntv=\count89
+\c@Gm@tempcnt=\count90
+\Gm@bindingoffset=\dimen109
+\Gm@wd@mp=\dimen110
+\Gm@odd@mp=\dimen111
+\Gm@even@mp=\dimen112
+\Gm@layoutwidth=\dimen113
+\Gm@layoutheight=\dimen114
+\Gm@layouthoffset=\dimen115
+\Gm@layoutvoffset=\dimen116
+\Gm@dimlist=\toks15
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\geometry\geometry.cfg"))
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\upquote\upquote.sty"
+Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
+tim
+)
+("C:\Users\smb310\Documents\Research\FDR regression\Simulations - independent -
+ revision - 10000\5.make_combined_FDR_TDR_table.aux")
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count91
+\scratchdimen=\dimen117
+\scratchbox=\box26
+\nofMPsegments=\count92
+\nofMParguments=\count93
+\everyMPshowfont=\toks16
+\MPscratchCnt=\count94
+\MPscratchDim=\dimen118
+\MPnumerator=\count95
+\makeMPintoPDFobject=\count96
+\everyMPtoPDFconversion=\toks17
+)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+*geometry* verbose mode - [ preamble ] result:
+* driver: pdftex
+* paper: <default>
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(72.26999pt, 469.75502pt, 72.26999pt)
+* v-part:(T,H,B)=(72.26999pt, 650.43001pt, 72.26999pt)
+* \paperwidth=614.295pt
+* \paperheight=794.96999pt
+* \textwidth=469.75502pt
+* \textheight=650.43001pt
+* \oddsidemargin=0.0pt
+* \evensidemargin=0.0pt
+* \topmargin=-37.0pt
+* \headheight=12.0pt
+* \headsep=25.0pt
+* \topskip=10.0pt
+* \footskip=30.0pt
+* \marginparwidth=65.0pt
+* \marginparsep=11.0pt
+* \columnsep=10.0pt
+* \skip\footins=9.0pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 64.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 64.
+Package color Info: Redefining color shadecolor on input line 66.
+<Figures/unnamed-chunk-3-1.pdf, id=1, 505.89pt x 505.89pt>
+File: Figures/unnamed-chunk-3-1.pdf Graphic file (type pdf)
+
+<use Figures/unnamed-chunk-3-1.pdf>
+Package pdftex.def Info: Figures/unnamed-chunk-3-1.pdf used on input line 68.
+(pdftex.def)             Requested size: 469.75502pt x 469.76265pt.
+ [1
+
+{C:/Users/smb310/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map} <C:/Users/s
+mb310/Documents/Research/FDR regression/Simulations - independent - revision - 
+10000/Figures/unnamed-chunk-3-1.pdf>]
+Overfull \hbox (32.64069pt too wide) in paragraph at lines 87--133
+ [][] 
+ []
+
+[2
+
+]
+Overfull \hbox (32.64069pt too wide) in paragraph at lines 143--181
+ [][] 
+ []
+
+[3
+
+]
+("C:\Users\smb310\Documents\Research\FDR regression\Simulations - independent -
+ revision - 10000\5.make_combined_FDR_TDR_table.aux") ) 
+Here is how much of TeX's memory you used:
+ 1747 strings out of 493921
+ 25045 string characters out of 3144873
+ 101642 words of memory out of 3000000
+ 5057 multiletter control sequences out of 15000+200000
+ 4245 words of font info for 16 fonts, out of 3000000 for 9000
+ 841 hyphenation exceptions out of 8191
+ 27i,10n,32p,664b,219s stack positions out of 5000i,500n,10000p,200000b,50000s
+<C:/Program Files (x86)/
+MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Program Files (x86)/Mi
+KTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Program Files (x86)/MiKT
+eX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program Files (x86)/MiKTeX 
+2.9/fonts/type1/public/amsfonts/cm/cmr7.pfb>
+Output written on 5.make_combined_FDR_TDR_table.pdf (3 pages, 255196 bytes).
+PDF statistics:
+ 35 PDF objects out of 1000 (max. 8388607)
+ 0 named destinations out of 1000 (max. 500000)
+ 6 words of extra memory for PDF output out of 10000 (max. 10000000)
+

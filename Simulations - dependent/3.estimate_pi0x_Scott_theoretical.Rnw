@@ -1,0 +1,208 @@
+\documentclass{article}
+
+\begin{document}
+
+<<setup, include=FALSE, cache=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='Figures/', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=60)
+@
+
+<<prelims>>=
+## Load libraries
+library(splines)
+library(MASS)
+library(FDRreg)
+library(curl)
+
+library(doParallel) ##to make cluster (on Windows)
+library(foreach) ##to use foreach function that does the parallel processing
+library(doRNG) ##for reproducible seeds when doing parallel processing
+
+##Source functions
+source("../functions.R")
+@
+
+Define nulltype for Scott method:
+<<>>=
+nulltype <- "theoretical"
+@
+
+Simulations are performed for a variety of alternative distributions:
+<<>>=
+altsGrid <- as.matrix(expand.grid(dist=c("z","t"),nrBlocks=c(10,20),corr=c(0.2,0.5,0.9)))
+alts <- apply(altsGrid, 1, function(x){paste("alt",x[1],"large",x[2],x[3],sep="_")})
+alts
+@
+
+\section{Probability of being a false positive is flat}
+
+Perform estimation and save estimates:
+
+<<>>=
+for(alt in alts)
+{
+  load(paste(alt,"simResults_1.RData",sep="/"))
+  ntest <- ncol(zValuesSims)
+
+  pi0hatScottMat <- estimate_Scott_sims(zValuesSims, tme, nulltype)
+
+  pi0hatScottMean <- colMeans(pi0hatScottMat[,1:ntest])
+  pi0hatScottVar <- apply(pi0hatScottMat[,1:ntest],2,var)
+  
+  pi0hat.ScottMat <- pi0hatScottMat[,1:ntest]
+  FDR.ScottMat <- pi0hatScottMat[,(ntest+1):(2*ntest)]
+  
+  ##save full results
+  save(file=paste(alt,"simResults_pi0x_Scott_1_full.RData",sep="/"), 
+       list=c("pi0hat.ScottMat", "FDR.ScottMat"))
+  
+  ##save summary results
+  save(file=paste(alt,"simResults_pi0x_Scott_1.RData",sep="/"), 
+       list=c("tme", "pi0", 
+            "pi0hatScottMean","pi0hatScottVar"))
+}
+@
+
+\section{Probability of being a false positive is smooth in one variable}
+
+Perform estimation and save estimates:
+
+<<>>=
+for(alt in alts)
+{
+  load(paste(alt,"simResults_2.RData",sep="/"))
+  ntest <- ncol(zValuesSims)
+  
+  splineMat <- ns(tme,df=3)
+
+  ##--------linear fit-------##
+  pi0hatScottMatFitLin <- estimate_Scott_sims(zValuesSims, tme, nulltype)
+  
+  pi0hatLin.ScottMean <- colMeans(pi0hatScottMatFitLin[,1:ntest])
+  pi0hatLin.ScottVar <- apply(pi0hatScottMatFitLin[,1:ntest],2,var)
+
+  pi0hat.Lin.ScottMat <- pi0hatScottMatFitLin[,1:ntest]
+  FDR.Lin.ScottMat <- pi0hatScottMatFitLin[,(ntest+1):(2*ntest)]
+    
+  ##---------spline fit---------#
+  pi0hatScottMatFitSpl <- estimate_Scott_sims(zValuesSims, splineMat, nulltype)
+  
+  pi0hatSpl.ScottMean <- colMeans(pi0hatScottMatFitSpl[,1:ntest])
+  pi0hatSpl.ScottVar <- apply(pi0hatScottMatFitSpl[,1:ntest],2,var)
+  
+  pi0hat.Spl.ScottMat <- pi0hatScottMatFitSpl[,1:ntest]
+  FDR.Spl.ScottMat <- pi0hatScottMatFitSpl[,(ntest+1):(2*ntest)]
+  
+  ##save full results
+  save(file=paste(alt,"simResults_pi0x_Scott_2_full.RData",sep="/"), 
+       list=c("pi0hat.Lin.ScottMat", "FDR.Lin.ScottMat",
+              "pi0hat.Spl.ScottMat", "FDR.Spl.ScottMat"))
+  
+  ##save summary results
+  save(file=paste(alt,"simResults_pi0x_Scott_2.RData",sep="/"), 
+       list=c("tme", "pi0", 
+              "pi0hatLin.ScottMean", "pi0hatLin.ScottVar",
+              "pi0hatSpl.ScottMean", "pi0hatSpl.ScottVar"))
+}
+@
+
+\section{Probability of being a false positive is smooth in one variable within levels of second variable}
+
+Perform estimation and save estimates:
+
+<<>>=
+for(alt in alts)
+{
+  load(paste(alt,"simResults_3.RData",sep="/"))
+  ntest <- ncol(zValuesSims)
+
+  m <- model.matrix(~as.character(tme2))[,-1]
+  
+  linearMat <- cbind(tme1, m) 
+  splineMat <- cbind(ns(tme1,df=3), m) 
+  
+  ##--------linear fit-------##
+  pi0hatScottMatFitLin <- estimate_Scott_sims(zValuesSims, linearMat, nulltype)
+  
+  pi0hatLin.ScottMean <- colMeans(pi0hatScottMatFitLin[,1:ntest])
+  pi0hatLin.ScottVar <- apply(pi0hatScottMatFitLin[,1:ntest],2,var)
+
+  pi0hat.Lin.ScottMat <- pi0hatScottMatFitLin[,1:ntest]
+  FDR.Lin.ScottMat <- pi0hatScottMatFitLin[,(ntest+1):(2*ntest)]
+    
+  ##---------spline fit---------#
+  pi0hatScottMatFitSpl <- estimate_Scott_sims(zValuesSims, splineMat, nulltype)
+  
+  pi0hatSpl.ScottMean <- colMeans(pi0hatScottMatFitSpl[,1:ntest])
+  pi0hatSpl.ScottVar <- apply(pi0hatScottMatFitSpl[,1:ntest],2,var)
+  
+  pi0hat.Spl.ScottMat <- pi0hatScottMatFitSpl[,1:ntest]
+  FDR.Spl.ScottMat <- pi0hatScottMatFitSpl[,(ntest+1):(2*ntest)]
+  
+  ##save full results
+  save(file=paste(alt,"simResults_pi0x_Scott_3_full.RData",sep="/"), 
+       list=c("pi0hat.Lin.ScottMat", "FDR.Lin.ScottMat",
+              "pi0hat.Spl.ScottMat", "FDR.Spl.ScottMat"))
+  
+  ##save summary results
+  save(file=paste(alt,"simResults_pi0x_Scott_3.RData",sep="/"), 
+       list=c("tme1", "tme2", "pi0", 
+              "pi0hatLin.ScottMean", "pi0hatLin.ScottVar",
+              "pi0hatSpl.ScottMean", "pi0hatSpl.ScottVar"))
+}
+@
+
+\section{Probability of being a false positive is smooth in one variable within levels of second variable - lower priors}
+
+Perform estimation and save estimates:
+
+<<>>=
+for(alt in alts)
+{
+  load(paste(alt,"simResults_4.RData",sep="/"))
+  ntest <- ncol(zValuesSims)
+  
+  m <- model.matrix(~as.character(tme2))[,-1]
+  
+  linearMat <- cbind(tme1, m) 
+  splineMat <- cbind(ns(tme1,df=3), m) 
+  
+  ##--------linear fit-------##
+  pi0hatScottMatFitLin <- estimate_Scott_sims(zValuesSims, linearMat, nulltype)
+  
+  pi0hatLin.ScottMean <- colMeans(pi0hatScottMatFitLin[,1:ntest])
+  pi0hatLin.ScottVar <- apply(pi0hatScottMatFitLin[,1:ntest],2,var)
+
+  pi0hat.Lin.ScottMat <- pi0hatScottMatFitLin[,1:ntest]
+  FDR.Lin.ScottMat <- pi0hatScottMatFitLin[,(ntest+1):(2*ntest)]
+    
+  ##---------spline fit---------#
+  pi0hatScottMatFitSpl <- estimate_Scott_sims(zValuesSims, splineMat, nulltype)
+  
+  pi0hatSpl.ScottMean <- colMeans(pi0hatScottMatFitSpl[,1:ntest])
+  pi0hatSpl.ScottVar <- apply(pi0hatScottMatFitSpl[,1:ntest],2,var)
+  
+  pi0hat.Spl.ScottMat <- pi0hatScottMatFitSpl[,1:ntest]
+  FDR.Spl.ScottMat <- pi0hatScottMatFitSpl[,(ntest+1):(2*ntest)]
+  
+  ##save full results
+  save(file=paste(alt,"simResults_pi0x_Scott_4_full.RData",sep="/"), 
+       list=c("pi0hat.Lin.ScottMat", "FDR.Lin.ScottMat",
+              "pi0hat.Spl.ScottMat", "FDR.Spl.ScottMat"))
+  
+  ##save summary results
+  save(file=paste(alt,"simResults_pi0x_Scott_4.RData",sep="/"), 
+       list=c("tme1", "tme2", "pi0", 
+              "pi0hatLin.ScottMean", "pi0hatLin.ScottVar",
+              "pi0hatSpl.ScottMean", "pi0hatSpl.ScottVar"))
+}
+@
+
+
+Session info:
+<<sessInf>>=
+devtools::session_info()
+@
+
+\end{document}

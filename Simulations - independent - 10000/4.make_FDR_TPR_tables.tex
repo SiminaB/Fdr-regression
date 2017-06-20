@@ -1,0 +1,682 @@
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{## Load libraries}
+\hlkwd{library}\hlstd{(splines)}
+\hlkwd{library}\hlstd{(MASS)}
+\hlkwd{library}\hlstd{(xtable)}
+\hlkwd{library}\hlstd{(qvalue)}
+
+\hlcom{##Source functions}
+\hlkwd{source}\hlstd{(}\hlstr{"../functions.R"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+Simulations are performed for a variety of alternative distributions:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{alts} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"alt_beta"}\hlstd{,}\hlstr{"alt_chisq_large_3_3"}\hlstd{,}\hlstr{"alt_chisq_large"}\hlstd{,}
+          \hlstr{"alt_chisq_small_3_3"}\hlstd{,}\hlstr{"alt_chisq_small"}\hlstd{,}
+          \hlstr{"alt_t_large"}\hlstd{,}\hlstr{"alt_t_small"}\hlstd{,}
+          \hlstr{"alt_z_large"}\hlstd{,}
+          \hlstr{"alt_z_small"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+Make FDR-TPR table:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwa{for}\hlstd{(alt} \hlkwa{in} \hlstd{alts)}
+\hlstd{\{}
+  \hlcom{##For each simulation, get the FDR-TPR table: (BL = Boca-Leek method)}
+  \hlstd{scen1} \hlkwb{<-} \hlstd{scen2a} \hlkwb{<-} \hlstd{scen2b} \hlkwb{<-} \hlstd{scen3a} \hlkwb{<-} \hlstd{scen3b} \hlkwb{<-} \hlkwa{NULL}
+
+  \hlcom{##-------------------Set 1----------------##}
+
+  \hlcom{##Load p-values and $\textbackslash{}pi_0(x)$ estimates for the simulations:}
+  \hlkwa{for}\hlstd{(l} \hlkwa{in} \hlkwd{listSimRes}\hlstd{(alt,} \hlnum{1}\hlstd{))}
+  \hlstd{\{}
+    \hlkwd{load}\hlstd{(l)}
+  \hlstd{\}}
+
+  \hlcom{##Get BH and Storey q-values for each simulation:}
+  \hlstd{qValuesSimsBH} \hlkwb{<-} \hlkwd{getQValuesSimsBH}\hlstd{(pValuesSims)}
+  \hlstd{qValuesSimsStorey} \hlkwb{<-} \hlkwd{getQValuesSimsStorey}\hlstd{(pValuesSims)}
+
+  \hlcom{##Get estimated FDR for each simulation for the final estimates}
+  \hlstd{FDRreg} \hlkwb{<-} \hlkwd{getFDRregSims}\hlstd{(pi0EstSim, qValuesSimsBH)}
+
+  \hlcom{##get FDR-TPR table}
+  \hlstd{scen1} \hlkwb{<-} \hlkwd{estFDR.TPR}\hlstd{(}\hlkwc{FDR.BL} \hlstd{= FDRreg,}
+                      \hlkwc{FDR.BH} \hlstd{= qValuesSimsBH,} \hlkwc{FDR.Storey} \hlstd{= qValuesSimsStorey,}
+                      \hlkwc{FDR.Scott} \hlstd{= FDR.ScottMat,} \hlkwc{FDR.Scott_emp} \hlstd{= FDR.ScottMat_emp, nullHypSims)}
+
+  \hlcom{##-------------------Set 2----------------##}
+
+  \hlcom{##Load p-values and $\textbackslash{}pi_0(x)$ estimates for the simulations:}
+  \hlkwa{for}\hlstd{(l} \hlkwa{in} \hlkwd{listSimRes}\hlstd{(alt,} \hlnum{2}\hlstd{))}
+  \hlstd{\{}
+    \hlkwd{load}\hlstd{(l)}
+  \hlstd{\}}
+
+  \hlcom{##Get BH and Storey q-values for each simulation:}
+  \hlstd{qValuesSimsBH} \hlkwb{<-} \hlkwd{getQValuesSimsBH}\hlstd{(pValuesSims)}
+  \hlstd{qValuesSimsStorey} \hlkwb{<-} \hlkwd{getQValuesSimsStorey}\hlstd{(pValuesSims)}
+
+  \hlcom{##--------Linear fit-------##}
+
+  \hlcom{##Get estimated FDR for each simulation for the final estimates}
+  \hlstd{FDRreg} \hlkwb{<-} \hlkwd{getFDRregSims}\hlstd{(pi0EstSim.lin, qValuesSimsBH)}
+
+  \hlcom{##get FDR-TPR table}
+  \hlstd{scen2a} \hlkwb{<-} \hlkwd{estFDR.TPR}\hlstd{(}\hlkwc{FDR.BL} \hlstd{= FDRreg,}
+                       \hlkwc{FDR.BH} \hlstd{= qValuesSimsBH,} \hlkwc{FDR.Storey} \hlstd{= qValuesSimsStorey,}
+                       \hlkwc{FDR.Scott} \hlstd{= FDR.Lin.ScottMat,} \hlkwc{FDR.Scott_emp} \hlstd{= FDR.Lin.ScottMat_emp, nullHypSims)}
+
+  \hlcom{##--------Spline fit-------##}
+
+  \hlcom{##Get estimated FDR for each simulation for the final estimates}
+  \hlstd{FDRreg} \hlkwb{<-} \hlkwd{getFDRregSims}\hlstd{(pi0EstSim.spl, qValuesSimsBH)}
+
+  \hlcom{##get FDR-TPR table}
+  \hlstd{scen2b} \hlkwb{<-} \hlkwd{estFDR.TPR}\hlstd{(}\hlkwc{FDR.BL} \hlstd{= FDRreg,}
+                       \hlkwc{FDR.BH} \hlstd{= qValuesSimsBH,} \hlkwc{FDR.Storey} \hlstd{= qValuesSimsStorey,}
+                       \hlkwc{FDR.Scott} \hlstd{= FDR.Spl.ScottMat,} \hlkwc{FDR.Scott_emp} \hlstd{= FDR.Spl.ScottMat_emp, nullHypSims)}
+
+  \hlcom{##-------------------Set 3----------------##}
+
+  \hlcom{##Load p-values and $\textbackslash{}pi_0(x)$ estimates for the simulations:}
+  \hlkwa{for}\hlstd{(l} \hlkwa{in} \hlkwd{listSimRes}\hlstd{(alt,} \hlnum{3}\hlstd{))}
+  \hlstd{\{}
+    \hlkwd{load}\hlstd{(l)}
+  \hlstd{\}}
+
+  \hlcom{##Get BH and Storey q-values for each simulation:}
+  \hlstd{qValuesSimsBH} \hlkwb{<-} \hlkwd{getQValuesSimsBH}\hlstd{(pValuesSims)}
+  \hlstd{qValuesSimsStorey} \hlkwb{<-} \hlkwd{getQValuesSimsStorey}\hlstd{(pValuesSims)}
+
+  \hlcom{##--------Linear fit-------##}
+
+  \hlcom{##Get estimated FDR for each simulation for the final estimates}
+  \hlstd{FDRreg} \hlkwb{<-} \hlkwd{getFDRregSims}\hlstd{(pi0EstSim.lin, qValuesSimsBH)}
+
+  \hlcom{##get FDR-TPR table}
+  \hlstd{scen3a} \hlkwb{<-} \hlkwd{estFDR.TPR}\hlstd{(}\hlkwc{FDR.BL} \hlstd{= FDRreg,}
+                       \hlkwc{FDR.BH} \hlstd{= qValuesSimsBH,} \hlkwc{FDR.Storey} \hlstd{= qValuesSimsStorey,}
+                       \hlkwc{FDR.Scott} \hlstd{= FDR.Lin.ScottMat,} \hlkwc{FDR.Scott_emp} \hlstd{= FDR.Lin.ScottMat_emp, nullHypSims)}
+
+  \hlcom{##--------Spline fit-------##}
+
+  \hlcom{##Get estimated FDR for each simulation for the final estimates}
+  \hlstd{FDRreg} \hlkwb{<-} \hlkwd{getFDRregSims}\hlstd{(pi0EstSim.spl, qValuesSimsBH)}
+
+  \hlcom{##get FDR-TPR table}
+  \hlstd{scen3b} \hlkwb{<-} \hlkwd{estFDR.TPR}\hlstd{(}\hlkwc{FDR.BL} \hlstd{= FDRreg,}
+                       \hlkwc{FDR.BH} \hlstd{= qValuesSimsBH,} \hlkwc{FDR.Storey} \hlstd{= qValuesSimsStorey,}
+                       \hlkwc{FDR.Scott} \hlstd{= FDR.Spl.ScottMat,} \hlkwc{FDR.Scott_emp} \hlstd{= FDR.Spl.ScottMat_emp, nullHypSims)}
+
+  \hlcom{##-------------------Set 4----------------##}
+
+  \hlcom{##Load p-values and $\textbackslash{}pi_0(x)$ estimates for the simulations:}
+  \hlkwa{for}\hlstd{(l} \hlkwa{in} \hlkwd{listSimRes}\hlstd{(alt,} \hlnum{4}\hlstd{))}
+  \hlstd{\{}
+    \hlkwd{load}\hlstd{(l)}
+  \hlstd{\}}
+
+  \hlcom{##Get BH and Storey q-values for each simulation:}
+  \hlstd{qValuesSimsBH} \hlkwb{<-} \hlkwd{getQValuesSimsBH}\hlstd{(pValuesSims)}
+  \hlstd{qValuesSimsStorey} \hlkwb{<-} \hlkwd{getQValuesSimsStorey}\hlstd{(pValuesSims)}
+
+  \hlcom{##--------Linear fit-------##}
+
+  \hlcom{##Get estimated FDR for each simulation:}
+  \hlcom{##first pull out just the final estimates}
+  \hlstd{pi0_final} \hlkwb{<-} \hlkwd{lapply}\hlstd{(pi0EstSim.lin,} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)\{x[[}\hlnum{3}\hlstd{]]\})}
+
+  \hlstd{FDRreg} \hlkwb{<-} \hlkwd{t}\hlstd{(}\hlkwd{mapply}\hlstd{(}\hlkwa{function}\hlstd{(}\hlkwc{q}\hlstd{,}\hlkwc{pi0}\hlstd{)\{q}\hlopt{*}\hlstd{pi0\},} \hlkwd{data.frame}\hlstd{(}\hlkwd{t}\hlstd{(qValuesSimsBH)), pi0_final,} \hlkwc{SIMPLIFY}\hlstd{=}\hlnum{TRUE}\hlstd{))}
+
+  \hlcom{##get FDR-TPR table}
+  \hlstd{scen4a} \hlkwb{<-} \hlkwd{estFDR.TPR}\hlstd{(}\hlkwc{FDR.BL} \hlstd{= FDRreg,}
+                       \hlkwc{FDR.BH} \hlstd{= qValuesSimsBH,} \hlkwc{FDR.Storey} \hlstd{= qValuesSimsStorey,}
+                       \hlkwc{FDR.Scott} \hlstd{= FDR.Lin.ScottMat,} \hlkwc{FDR.Scott_emp} \hlstd{= FDR.Lin.ScottMat_emp, nullHypSims)}
+
+  \hlcom{##--------Spline fit-------##}
+
+  \hlcom{##Get estimated FDR for each simulation:}
+  \hlcom{##first pull out just the final estimates}
+  \hlstd{pi0_final} \hlkwb{<-} \hlkwd{lapply}\hlstd{(pi0EstSim.spl,} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)\{x[[}\hlnum{3}\hlstd{]]\})}
+
+  \hlstd{FDRreg} \hlkwb{<-} \hlkwd{t}\hlstd{(}\hlkwd{mapply}\hlstd{(}\hlkwa{function}\hlstd{(}\hlkwc{q}\hlstd{,}\hlkwc{pi0}\hlstd{)\{q}\hlopt{*}\hlstd{pi0\},} \hlkwd{data.frame}\hlstd{(}\hlkwd{t}\hlstd{(qValuesSimsBH)), pi0_final,} \hlkwc{SIMPLIFY}\hlstd{=}\hlnum{TRUE}\hlstd{))}
+
+  \hlcom{##get FDR-TPR table}
+  \hlstd{scen4b} \hlkwb{<-} \hlkwd{estFDR.TPR}\hlstd{(}\hlkwc{FDR.BL} \hlstd{= FDRreg,}
+                       \hlkwc{FDR.BH} \hlstd{= qValuesSimsBH,} \hlkwc{FDR.Storey} \hlstd{= qValuesSimsStorey,}
+                       \hlkwc{FDR.Scott} \hlstd{= FDR.Spl.ScottMat,} \hlkwc{FDR.Scott_emp} \hlstd{= FDR.Spl.ScottMat_emp, nullHypSims)}
+
+  \hlkwd{print}\hlstd{(}\hlstr{""}\hlstd{)}
+  \hlkwd{print}\hlstd{(alt)}
+  \hlkwd{print}\hlstd{(scen1)}
+  \hlkwd{print}\hlstd{(scen2a)}
+  \hlkwd{print}\hlstd{(scen2b)}
+  \hlkwd{print}\hlstd{(scen3a)}
+  \hlkwd{print}\hlstd{(scen3b)}
+  \hlkwd{print}\hlstd{(scen4a)}
+  \hlkwd{print}\hlstd{(scen4b)}
+
+  \hlkwd{save}\hlstd{(}\hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"scen1"}\hlstd{,}\hlstr{"scen2a"}\hlstd{,}\hlstr{"scen2b"}\hlstd{,}\hlstr{"scen3a"}\hlstd{,}\hlstr{"scen3b"}\hlstd{,}\hlstr{"scen4a"}\hlstd{,}\hlstr{"scen4b"}\hlstd{),}
+       \hlkwc{file}\hlstd{=}\hlkwd{paste}\hlstd{(alt,}\hlstr{"FDR_TPR_sims.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{))}
+\hlstd{\}}
+\end{alltt}
+\begin{verbatim}
+## [1] ""
+## [1] "alt_beta"
+##                  FDR          TPR
+## BL        0.03700000 0.0001801052
+## Scott     0.90014850 1.0000000000
+## Scott_emp 0.90016181 1.0000000000
+## Storey    0.03700000 0.0001801052
+## BH        0.03616667 0.0001551536
+##                  FDR          TPR
+## BL        0.03083333 0.0002035583
+## Scott     0.92587700 1.0000000000
+## Scott_emp 0.92587700 1.0000000000
+## Storey    0.03083333 0.0001565015
+## BH        0.03000000 0.0001565015
+##                  FDR          TPR
+## BL        0.03083333 0.0002237986
+## Scott     0.92587700 1.0000000000
+## Scott_emp 0.92587700 1.0000000000
+## Storey    0.03083333 0.0001565015
+## BH        0.03000000 0.0001565015
+##                 FDR          TPR
+## BL        0.0400000 0.0001256615
+## Scott     0.9486415 1.0000000000
+## Scott_emp 0.9486404 1.0000000000
+## Storey    0.0350000 0.0001155809
+## BH        0.0350000 0.0001052928
+##                 FDR          TPR
+## BL        0.0450000 0.0001360565
+## Scott     0.9486415 1.0000000000
+## Scott_emp 0.9486404 1.0000000000
+## Storey    0.0350000 0.0001155809
+## BH        0.0350000 0.0001052928
+##                  FDR          TPR
+## BL        0.04398119 0.0122282933
+## Scott     0.56870950 1.0000000000
+## Scott_emp         NA           NA
+## Storey    0.04766879 0.0050416009
+## BH        0.02459040 0.0003102373
+##                  FDR          TPR
+## BL        0.05013933 0.0199943022
+## Scott     0.56870950 1.0000000000
+## Scott_emp         NA           NA
+## Storey    0.04766879 0.0050416009
+## BH        0.02459040 0.0003102373
+## [1] ""
+## [1] "alt_chisq_large_3_3"
+##                  FDR       TPR
+## BL        0.05038802 0.2974263
+## Scott     0.90014850 1.0000000
+## Scott_emp 0.90014850 1.0000000
+## Storey    0.05043161 0.2974229
+## BH        0.04532031 0.2874058
+##                  FDR       TPR
+## BL        0.04910648 0.2800230
+## Scott     0.92587700 1.0000000
+## Scott_emp 0.92587700 1.0000000
+## Storey    0.04994228 0.2708622
+## BH        0.04687084 0.2649899
+##                  FDR       TPR
+## BL        0.04868581 0.2838509
+## Scott     0.92587700 1.0000000
+## Scott_emp 0.92587700 1.0000000
+## Storey    0.04994228 0.2708622
+## BH        0.04687084 0.2649899
+##                  FDR       TPR
+## BL        0.05249217 0.2426240
+## Scott     0.94864150 1.0000000
+## Scott_emp 0.94864150 1.0000000
+## Storey    0.05198538 0.2359225
+## BH        0.04961398 0.2321865
+##                  FDR       TPR
+## BL        0.05231222 0.2442294
+## Scott     0.94864150 1.0000000
+## Scott_emp 0.94864150 1.0000000
+## Storey    0.05198538 0.2359225
+## BH        0.04961398 0.2321865
+##                  FDR       TPR
+## BL        0.04720523 0.5182180
+## Scott     0.56870950 1.0000000
+## Scott_emp 0.57075714 1.0000000
+## Storey    0.04694086 0.5167668
+## BH        0.02841505 0.4475972
+##                  FDR       TPR
+## BL        0.04735480 0.5187015
+## Scott     0.56870950 1.0000000
+## Scott_emp 0.57075714 1.0000000
+## Storey    0.04694086 0.5167668
+## BH        0.02841505 0.4475972
+## [1] ""
+## [1] "alt_chisq_large"
+##                  FDR       TPR
+## BL        0.04992740 0.5065315
+## Scott     0.90014850 1.0000000
+## Scott_emp 0.90014850 1.0000000
+## Storey    0.04982659 0.5064742
+## BH        0.04507402 0.4956380
+##                  FDR       TPR
+## BL        0.04892529 0.4820037
+## Scott     0.92587700 1.0000000
+## Scott_emp 0.92587700 1.0000000
+## Storey    0.04960789 0.4717792
+## BH        0.04569686 0.4635510
+##                  FDR       TPR
+## BL        0.04847870 0.4858638
+## Scott     0.92587700 1.0000000
+## Scott_emp 0.92587700 1.0000000
+## Storey    0.04960789 0.4717792
+## BH        0.04569686 0.4635510
+##                  FDR       TPR
+## BL        0.05014062 0.4395577
+## Scott     0.94864150 1.0000000
+## Scott_emp 0.94864150 1.0000000
+## Storey    0.04997196 0.4321289
+## BH        0.04782477 0.4269699
+##                  FDR       TPR
+## BL        0.05037074 0.4417391
+## Scott     0.94864150 1.0000000
+## Scott_emp 0.94864150 1.0000000
+## Storey    0.04997196 0.4321289
+## BH        0.04782477 0.4269699
+##                  FDR       TPR
+## BL        0.04773427 0.7113716
+## Scott     0.56870950 1.0000000
+## Scott_emp         NA        NA
+## Storey    0.04758025 0.7101354
+## BH        0.02844283 0.6515505
+##                  FDR       TPR
+## BL        0.04793122 0.7117650
+## Scott     0.56870950 1.0000000
+## Scott_emp         NA        NA
+## Storey    0.04758025 0.7101354
+## BH        0.02844283 0.6515505
+## [1] ""
+## [1] "alt_chisq_small_3_3"
+##                  FDR         TPR
+## BL        0.05588352 0.004374358
+## Scott     0.90014850 1.000000000
+## Scott_emp 0.90013166 1.000000000
+## Storey    0.05644930 0.004364696
+## BH        0.05568821 0.004258809
+##                  FDR         TPR
+## BL        0.05896284 0.003786449
+## Scott     0.92587700 1.000000000
+## Scott_emp 0.92591616 1.000000000
+## Storey    0.06412951 0.003686268
+## BH        0.06329618 0.003610690
+##                  FDR         TPR
+## BL        0.05983189 0.003879890
+## Scott     0.92587700 1.000000000
+## Scott_emp 0.92591616 1.000000000
+## Storey    0.06412951 0.003686268
+## BH        0.06329618 0.003610690
+##                  FDR         TPR
+## BL        0.06390079 0.003364668
+## Scott     0.94864150 1.000000000
+## Scott_emp 0.94862814 1.000000000
+## Storey    0.06681746 0.003286853
+## BH        0.06688690 0.003235488
+##                  FDR         TPR
+## BL        0.06348413 0.003384324
+## Scott     0.94864150 1.000000000
+## Scott_emp 0.94862814 1.000000000
+## Storey    0.06681746 0.003286853
+## BH        0.06688690 0.003235488
+##                  FDR        TPR
+## BL        0.03648377 0.01570084
+## Scott     0.56870950 1.00000000
+## Scott_emp 0.56868434 1.00000000
+## Storey    0.03600993 0.01558154
+## BH        0.02954534 0.01292525
+##                  FDR        TPR
+## BL        0.03661985 0.01575204
+## Scott     0.56870950 1.00000000
+## Scott_emp 0.56868434 1.00000000
+## Storey    0.03600993 0.01558154
+## BH        0.02954534 0.01292525
+## [1] ""
+## [1] "alt_chisq_small"
+##                  FDR        TPR
+## BL        0.04675710 0.02310579
+## Scott     0.90014850 1.00000000
+## Scott_emp 0.90015455 1.00000000
+## Storey    0.04640441 0.02299092
+## BH        0.04323486 0.02215884
+##                  FDR        TPR
+## BL        0.05160792 0.01912256
+## Scott     0.92587700 1.00000000
+## Scott_emp 0.92588838 1.00000000
+## Storey    0.05194276 0.01862739
+## BH        0.05123292 0.01821753
+##                  FDR        TPR
+## BL        0.05200295 0.01940442
+## Scott     0.92587700 1.00000000
+## Scott_emp 0.92588838 1.00000000
+## Storey    0.05194276 0.01862739
+## BH        0.05123292 0.01821753
+##                  FDR        TPR
+## BL        0.04856758 0.01534389
+## Scott     0.94864150 1.00000000
+## Scott_emp 0.94865685 1.00000000
+## Storey    0.04826934 0.01473764
+## BH        0.04830979 0.01457395
+##                  FDR        TPR
+## BL        0.04836514 0.01556766
+## Scott     0.94864150 1.00000000
+## Scott_emp 0.94865685 1.00000000
+## Storey    0.04826934 0.01473764
+## BH        0.04830979 0.01457395
+##                  FDR        TPR
+## BL        0.03562998 0.07186136
+## Scott     0.56870950 1.00000000
+## Scott_emp 0.56869849 1.00000000
+## Storey    0.03593538 0.07158702
+## BH        0.02926360 0.06111337
+##                  FDR        TPR
+## BL        0.03603455 0.07195040
+## Scott     0.56870950 1.00000000
+## Scott_emp 0.56869849 1.00000000
+## Storey    0.03593538 0.07158702
+## BH        0.02926360 0.06111337
+## [1] ""
+## [1] "alt_t_large"
+##                  FDR       TPR
+## BL        0.05156920 0.1413328
+## Scott     0.21679671 0.5533824
+## Scott_emp 0.20788838 0.5322975
+## Storey    0.05121535 0.1410240
+## BH        0.04662848 0.1262586
+##                  FDR       TPR
+## BL        0.04558570 0.1147426
+## Scott     0.19981528 0.6569400
+## Scott_emp 0.19936003 0.6536347
+## Storey    0.04917543 0.1024570
+## BH        0.04485754 0.0924984
+##                  FDR       TPR
+## BL        0.04453287 0.1204800
+## Scott     0.20190300 0.6574039
+## Scott_emp 0.20148230 0.6542250
+## Storey    0.04917543 0.1024570
+## BH        0.04485754 0.0924984
+##                  FDR        TPR
+## BL        0.04927168 0.06773425
+## Scott     0.24681300 0.62460353
+## Scott_emp 0.26803101 0.63730172
+## Storey    0.05217810 0.05971629
+## BH        0.05211931 0.05492284
+##                  FDR        TPR
+## BL        0.04832136 0.07005785
+## Scott     0.24797626 0.62612967
+## Scott_emp 0.26928622 0.63907431
+## Storey    0.05217810 0.05971629
+## BH        0.05211931 0.05492284
+##                  FDR       TPR
+## BL        0.04813761 0.5182922
+## Scott     0.09326501 0.7284492
+## Scott_emp 0.01222393 0.2850707
+## Storey    0.04787731 0.5164582
+## BH        0.02891815 0.4019615
+##                  FDR       TPR
+## BL        0.04814676 0.5189370
+## Scott     0.09331981 0.7286028
+## Scott_emp 0.01229413 0.2856909
+## Storey    0.04787731 0.5164582
+## BH        0.02891815 0.4019615
+## [1] ""
+## [1] "alt_t_small"
+##                  FDR          TPR
+## BL        0.05908333 0.0002976598
+## Scott     0.45893701 0.0823723693
+## Scott_emp 0.46207348 0.0843754947
+## Storey    0.05908333 0.0002976598
+## BH        0.05541667 0.0002730119
+##                 FDR          TPR
+## BL        0.0787500 0.0003075512
+## Scott     0.4521543 0.1041067228
+## Scott_emp 0.4755499 0.1065859670
+## Storey    0.0787500 0.0002873627
+## BH        0.0787500 0.0002873627
+##                 FDR          TPR
+## BL        0.0787500 0.0003406773
+## Scott     0.4448529 0.1073669015
+## Scott_emp 0.4698458 0.1095127177
+## Storey    0.0787500 0.0002873627
+## BH        0.0787500 0.0002873627
+##                 FDR          TPR
+## BL        0.0812500 0.0003495909
+## Scott     0.5596357 0.0909046758
+## Scott_emp 0.5872793 0.0968826080
+## Storey    0.0812500 0.0003391307
+## BH        0.0812500 0.0003391307
+##                 FDR          TPR
+## BL        0.0812500 0.0003391307
+## Scott     0.5556546 0.0926080382
+## Scott_emp 0.5822775 0.0990048380
+## Storey    0.0812500 0.0003391307
+## BH        0.0812500 0.0003391307
+##                  FDR         TPR
+## BL        0.03667280 0.003062926
+## Scott     0.15113673 0.137568917
+## Scott_emp 0.09503206 0.064570231
+## Storey    0.03634225 0.003003643
+## BH        0.02929753 0.001736907
+##                  FDR         TPR
+## BL        0.03612316 0.003091762
+## Scott     0.15129686 0.137680075
+## Scott_emp 0.09485720 0.064694333
+## Storey    0.03634225 0.003003643
+## BH        0.02929753 0.001736907
+## [1] ""
+## [1] "alt_z_large"
+##                  FDR       TPR
+## BL        0.04975513 0.5064633
+## Scott     0.04994533 0.5063831
+## Scott_emp 0.05887183 0.5209223
+## Storey    0.04954030 0.5065332
+## BH        0.04491480 0.4957233
+##                  FDR       TPR
+## BL        0.04925271 0.4841525
+## Scott     0.05241358 0.6388865
+## Scott_emp 0.05298246 0.6289395
+## Storey    0.04925485 0.4730709
+## BH        0.04617947 0.4660183
+##                  FDR       TPR
+## BL        0.04907004 0.4882848
+## Scott     0.05196910 0.6397282
+## Scott_emp 0.05264251 0.6295905
+## Storey    0.04925485 0.4730709
+## BH        0.04617947 0.4660183
+##                  FDR       TPR
+## BL        0.04918503 0.4417890
+## Scott     0.05248772 0.6023499
+## Scott_emp 0.05464651 0.5930179
+## Storey    0.04907765 0.4346142
+## BH        0.04666994 0.4296511
+##                  FDR       TPR
+## BL        0.04917346 0.4440387
+## Scott     0.05218686 0.6061170
+## Scott_emp 0.05430511 0.5965718
+## Storey    0.04907765 0.4346142
+## BH        0.04666994 0.4296511
+##                  FDR       TPR
+## BL        0.04774741 0.7129065
+## Scott     0.04959447 0.7180685
+## Scott_emp 0.02297804 0.6217568
+## Storey    0.04752174 0.7118180
+## BH        0.02844312 0.6531338
+##                  FDR       TPR
+## BL        0.04788445 0.7132579
+## Scott     0.04961257 0.7183181
+## Scott_emp 0.02298978 0.6220703
+## Storey    0.04752174 0.7118180
+## BH        0.02844312 0.6531338
+## [1] ""
+## [1] "alt_z_small"
+##                  FDR        TPR
+## BL        0.04486098 0.02275498
+## Scott     0.04181064 0.02182907
+## Scott_emp 0.03203863 0.01589514
+## Storey    0.04421373 0.02270703
+## BH        0.04282583 0.02177593
+##                  FDR        TPR
+## BL        0.04882152 0.01999052
+## Scott     0.04091324 0.04702477
+## Scott_emp 0.03728488 0.04155173
+## Storey    0.04962363 0.01940610
+## BH        0.04817092 0.01904258
+##                  FDR        TPR
+## BL        0.04868542 0.02023837
+## Scott     0.04166507 0.05009867
+## Scott_emp 0.03829508 0.04363148
+## Storey    0.04962363 0.01940610
+## BH        0.04817092 0.01904258
+##                  FDR        TPR
+## BL        0.04687381 0.01587448
+## Scott     0.04201984 0.03616332
+## Scott_emp 0.04856121 0.03356878
+## Storey    0.04824859 0.01545078
+## BH        0.04668075 0.01515060
+##                  FDR        TPR
+## BL        0.04338471 0.01610611
+## Scott     0.04204644 0.03750369
+## Scott_emp 0.04870215 0.03469725
+## Storey    0.04824859 0.01545078
+## BH        0.04668075 0.01515060
+##                   FDR        TPR
+## BL        0.035943462 0.07244075
+## Scott     0.039218383 0.07809887
+## Scott_emp 0.005162502 0.01789073
+## Storey    0.035856909 0.07225321
+## BH        0.028526820 0.06169256
+##                   FDR        TPR
+## BL        0.036039835 0.07261939
+## Scott     0.039458323 0.07821824
+## Scott_emp 0.004775125 0.01799370
+## Storey    0.035856909 0.07225321
+## BH        0.028526820 0.06169256
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+Session info:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{devtools}\hlopt{::}\hlkwd{session_info}\hlstd{()}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Session info -----------------------------------------------}}\begin{verbatim}
+##  setting  value                       
+##  version  R version 3.3.1 (2016-06-21)
+##  system   x86_64, mingw32             
+##  ui       RTerm                       
+##  language (EN)                        
+##  collate  English_United States.1252  
+##  tz       America/New_York            
+##  date     2017-06-14
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Packages ---------------------------------------------------}}\begin{verbatim}
+##  package    * version date       source        
+##  assertthat   0.1     2013-12-06 CRAN (R 3.3.1)
+##  colorspace   1.2-6   2015-03-11 CRAN (R 3.3.1)
+##  devtools     1.12.0  2016-06-24 CRAN (R 3.3.3)
+##  digest       0.6.9   2016-01-08 CRAN (R 3.3.1)
+##  evaluate     0.10    2016-10-11 CRAN (R 3.3.1)
+##  ggplot2      2.2.1   2016-12-30 CRAN (R 3.3.3)
+##  gtable       0.2.0   2016-02-26 CRAN (R 3.3.1)
+##  highr        0.6     2016-05-09 CRAN (R 3.3.1)
+##  knitr      * 1.15.1  2016-11-22 CRAN (R 3.3.1)
+##  lazyeval     0.2.0   2016-06-12 CRAN (R 3.3.1)
+##  magrittr     1.5     2014-11-22 CRAN (R 3.3.1)
+##  MASS       * 7.3-45  2016-04-21 CRAN (R 3.3.1)
+##  memoise      1.0.0   2016-01-29 CRAN (R 3.3.1)
+##  munsell      0.4.3   2016-02-13 CRAN (R 3.3.1)
+##  plyr         1.8.4   2016-06-08 CRAN (R 3.3.1)
+##  qvalue     * 2.4.2   2016-05-16 Bioconductor  
+##  Rcpp         0.12.10 2017-03-19 CRAN (R 3.3.3)
+##  reshape2     1.4.1   2014-12-06 CRAN (R 3.3.1)
+##  scales       0.4.1   2016-11-09 CRAN (R 3.3.3)
+##  stringi      1.1.1   2016-05-27 CRAN (R 3.3.0)
+##  stringr      1.0.0   2015-04-30 CRAN (R 3.3.1)
+##  tibble       1.2     2016-08-26 CRAN (R 3.3.2)
+##  withr        1.0.2   2016-06-20 CRAN (R 3.3.1)
+##  xtable     * 1.8-2   2016-02-05 CRAN (R 3.3.1)
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\end{document}

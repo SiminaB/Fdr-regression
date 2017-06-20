@@ -43,6 +43,8 @@ Do some basic data filtering (to remove missing values) and data cleaning (switc
 ```{r,cache=TRUE}
 tot = filter(tot,!is.na(Freq1.Hapmap))
 dim(tot)
+##get distribution of sample size for the SNP associations
+quantile(tot$N)
 ##change the frequency to the minor allele frequency
 changeWhich <- tot$Freq1.Hapmap > 0.5
 tot$Freq1.Hapmap[changeWhich] <- 1-tot$Freq1.Hapmap[changeWhich]
@@ -51,6 +53,8 @@ colnames(tot)[colnames(tot)=="Freq1.Hapmap"] <- "Freq_MAF_Hapmap"
 tot$b[changeWhich] <- -tot$b[changeWhich]
 tot = mutate(tot,Freq_MAF_Int_Hapmap=cut2(Freq_MAF_Hapmap,g=3)) ##added a new variable with frequency intervals for HapMap CEU frequencies
 table(tot$Freq_MAF_Int_Hapmap)
+##also get the distributions of MAFs
+quantile(tot$Freq_MAF_Hapmap)
 ```
 
 Save in a data frame in a .RData file:

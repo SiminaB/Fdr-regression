@@ -27,34 +27,58 @@ Load the relevant libraries:
 library(ggplot2)
 library(reshape2)
 library(dplyr)
+library(scales)
+library(qvalue)
+library(xtable)
 ```
 
-Load the data and the results:
+Load the data and the results and add them to the data object:
 
-```{r,cache=TRUE}
+```{r}
 load("BMI_GIANT_GWAS.RData")
-load("BMI_GIANT_GWAS_results.RData")
-load("BMI_GIANT_GWAS_results_Scott.RData")
 
 tot <- BMI_GIANT_GWAS
-```
 
-Add the results to the data object:
+load("BMI_GIANT_GWAS_results_logistic.RData")
 
-```{r, cache=TRUE}
-##add the estimates from Scott
-tot$Scott <- pi0EstScott
-
-##add the estimates from our approach
-##add the estimates for lambda=0.8, lambda=0.9, final smoothed value
 tot$fitted0.8 <- fitted0.8
 tot$fitted0.9 <- fitted0.9
 tot$fitted.final.smooth <- fitted.final.smooth
+
+load("BMI_GIANT_GWAS_results_Scott_theoretical.RData")
+
+tot$ScottT <- pi0EstScott
+
+load("BMI_GIANT_GWAS_results_Scott.RData")
+
+tot$ScottE <- pi0EstScott
+
+load("BMI_GIANT_GWAS_bootstrap_CIs_logistic.RData")
+
+dim(tot)
+dim(perc.05.95)
+head(tot)
+head(perc.05.95)
+head(rownames(perc.05.95))
+identical(as.integer(rownames(perc.05.95)),1:nrow(perc.05.95))
+
+tot$lower.CI <- perc.05.95[,1]
+tot$upper.CI <- perc.05.95[,2]
+
+
+```
+
+Get range of estimates:
+
+```{r}
+range(tot$fitted.final.smooth)
+range(tot$fitted0.8)
+range(tot$fitted0.9)
 ```
 
 Only use random sample of 50,000 SNPs in plot:
 
-```{r, cache=TRUE}
+```{r}
 ##get random sample of 50,000 SNPs
 set.seed(310841)
 d1 = tot %>% sample_n(5e4)
@@ -63,7 +87,8 @@ d1 = tot %>% sample_n(5e4)
 Create long data frame (for ggplot):
 
 ```{r}
-colnames(d1)[colnames(d1)=="Scott"] <- "fitted.Scott"
+colnames(d1)[colnames(d1)=="ScottT"] <- "fitted.ScottT"
+colnames(d1)[colnames(d1)=="ScottE"] <- "fitted.ScottE"
 
 d3 <- melt(d1,
            id.vars=colnames(d1)[-grep("fitted",colnames(d1))],
@@ -72,32 +97,147 @@ d3$lambda <- as.character(d3$lambda)
 d3$lambda[d3$lambda=="fitted0.8"] <- "lambda=0.8"
 d3$lambda[d3$lambda=="fitted0.9"] <- "lambda=0.9"
 d3$lambda[d3$lambda=="fitted.final.smooth"] <- "final smoothed pi0(x)"
-d3$lambda[d3$lambda=="fitted.Scott"] <- "Scott"
+d3$lambda[d3$lambda=="fitted.ScottT"] <- "Scott theoretical"
+d3$lambda[d3$lambda=="fitted.ScottE"] <- "Scott empirical"
 
+d3$Freq_MAF_Int_Hapmap <- paste("MAF in", d3$Freq_MAF_Int_Hapmap)
+
+head(d3)
+```
+
+Function to change the way labels are displayed:
+
+```{r}
+display_thousands <- function(l) {
+  ##divide by 1000
+  ll <- l/1000
+  ##add k afterwards
+  lll <- paste(ll,"k",sep="")
+  
+  lll
+}
 ```
 
 Generate Figure 4:
 
-```{r Fig4,cache=TRUE, fig.width=6, fig.height=3}
+```{r Fig4,cache=TRUE, fig.width=10, fig.height=3}
 ggplot(d3, aes(x=N, y=pi0))+
-  geom_line(aes(col=Freq_MAF_Int_Hapmap, linetype=lambda)) +
+  geom_vline(xintercept=median(tot$N),colour="grey50")+
+  geom_ribbon(aes(ymin=lower.CI, ymax=upper.CI, group=Freq_MAF_Int_Hapmap),fill="grey50")+
+  geom_line(aes(linetype=lambda)) +
+  facet_grid(. ~ Freq_MAF_Int_Hapmap) +
+  scale_x_continuous(labels=comma) +
   ylab("Estimated proportion of nulls") +
-  scale_linetype_discrete(labels = 
+  scale_linetype_discrete(labels =
                             c(expression(paste("Final smoothed ",
                                                hat(pi)[0](x))),
                               expression(paste(hat(pi)[0], ""^lambda,
-                                               (x), 
+                                               (x),
                                                " for ", lambda, "=",
                                                0.8)),
                               expression(paste(hat(pi)[0], ""^lambda,
-                                               (x), 
+                                               (x),
                                                " for ", lambda, "=",
                                                0.9)),
-                              "Scott")) +
-  guides(color=guide_legend(title="MAF in HapMap CEU population"),
-         linetype=guide_legend(title="Estimate"))
+                              "Scott empirical",
+                              "Scott theoretical")) +
+  theme(axis.line = element_line(colour = "black"),
+        plot.title = element_text(size = 16, hjust = 0.5),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(),
+        legend.key = element_blank(),
+        legend.text.align = 0,
+        legend.title=element_text(size=13),
+        legend.text=element_text(size=12),
+        strip.background = element_blank(),
+        strip.text.x = element_text(size = 12),
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10))+
+        ##axis.line.x = element_line(color="black", size = 0.5), ##this is to show axes - bug in this version of ggplot2
+        ##axis.line.y = element_line(color="black", size = 0.5)) +
+  guides(linetype=guide_legend(title="Estimate"))
 
 ```
+
+Get FDR for our method:
+
+```{r}
+##first get BH q-values
+qValsBH <- p.adjust(tot$p, method="BH")
+##also get Storey q-values
+qValsStorey <- qvalue(tot$p)$qvalues
+##what is their difference
+head(qValsStorey/qValsBH)
+
+qValsReg <- qValsBH*tot$fitted.final.smooth
+
+tot$qValsBH <- qValsBH
+tot$qValsStorey <- qValsStorey
+tot$qValsReg <- qValsReg
+
+sum(tot$qValsBH < 0.05)
+sum(tot$qValsStorey < 0.05)
+sum(tot$qValsReg < 0.05)
+sum(FDRScott_emp < 0.05)
+sum(FDRScott_theo < 0.05)
+
+mean(tot$qValsBH < 0.05)
+mean(tot$qValsStorey < 0.05)
+mean(tot$qValsReg < 0.05)
+mean(FDRScott_emp < 0.05)
+mean(FDRScott_theo < 0.05)
+
+set.seed(310841)
+d1 = tot %>% sample_n(5e4)
+
+par(mfrow=c(1,2))
+plot(d1$qValsReg ~ d1$qValsStorey, xlim=c(0,1), ylim=c(0,1))
+abline(a=0,b=1, col="red", lwd=2)
+plot(d1$qValsReg ~ d1$qValsBH, xlim=c(0,1), ylim=c(0,1))
+abline(a=0,b=1, col="red", lwd=2)
+
+```
+
+Make nice table for summary results:
+```{r}
+xtable(data.frame(BL = sum(tot$qValsReg <= 0.05),
+                  Scott_T = sum(FDRScott_theo <= 0.05),
+                  Scott_E = sum(FDRScott_emp <= 0.05),
+                  Storey = sum(tot$qValsStorey <= 0.05),
+                  BH = sum(tot$qValsBH <= 0.05)))
+```
+
+How many are in common between all the methods?
+```{r, results='asis'}
+length(Reduce(intersect, list(which(tot$qValsReg <= 0.05), 
+                              which(FDRScott_theo <= 0.05), 
+                              which(FDRScott_emp <= 0.05),
+                              which(tot$qValsStorey <= 0.05), 
+                              which(tot$qValsBH <= 0.05))))
+
+length(Reduce(intersect, list(which(tot$qValsReg <= 0.05), 
+                              which(tot$qValsStorey <= 0.05), 
+                              which(tot$qValsBH <= 0.05))))
+
+length(Reduce(intersect, list(which(tot$qValsStorey <= 0.05), 
+                              which(tot$qValsReg <= 0.05))))
+
+length(Reduce(intersect, list(which(FDRScott_theo <= 0.05), 
+                              which(tot$qValsReg <= 0.05))))
+
+length(Reduce(intersect, list(which(FDRScott_theo <= 0.05), 
+                              which(FDRScott_emp <= 0.05),
+                              which(tot$qValsBH <= 0.05))))
+
+length(Reduce(intersect, list(which(FDRScott_emp <= 0.05),
+                              which(tot$qValsBH <= 0.05))))
+
+length(Reduce(intersect, list(which(FDRScott_theo <= 0.05), 
+                              which(tot$qValsBH <= 0.05))))
+```
+
 
 ### Session Information
 

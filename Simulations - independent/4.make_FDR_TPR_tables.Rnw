@@ -1,0 +1,181 @@
+\documentclass{article}
+
+\begin{document}
+
+<<setup, include=FALSE, cache=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='Figures/', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=60)
+@
+
+<<prelims>>=
+## Load libraries
+library(splines)
+library(MASS)
+library(xtable)
+library(qvalue)
+
+##Source functions
+source("../functions.R")
+@
+
+Simulations are performed for a variety of alternative distributions:
+<<>>=
+alts <- c("alt_beta","alt_chisq_large_3_3","alt_chisq_large",
+          "alt_chisq_small_3_3","alt_chisq_small",
+          "alt_t_large","alt_t_small",
+          "alt_z_large",
+          "alt_z_small")
+@
+
+Make FDR-TPR table:
+
+<<>>=
+for(alt in alts)
+{
+  ##For each simulation, get the FDR-TPR table: (BL = Boca-Leek method)
+  scen1 <- scen2a <- scen2b <- scen3a <- scen3b <- NULL
+  
+  ##-------------------Set 1----------------##
+  
+  ##Load p-values and $\pi_0(x)$ estimates for the simulations:
+  for(l in listSimRes(alt, 1))
+  {
+    load(l)
+  }
+
+  ##Get BH and Storey q-values for each simulation:
+  qValuesSimsBH <- getQValuesSimsBH(pValuesSims)
+  qValuesSimsStorey <- getQValuesSimsStorey(pValuesSims)
+
+  ##Get estimated FDR for each simulation for the final estimates
+  FDRreg <- getFDRregSims(pi0EstSim, qValuesSimsBH)
+  
+  ##get FDR-TPR table
+  scen1 <- estFDR.TPR(FDR.BL = FDRreg, 
+                      FDR.BH = qValuesSimsBH, FDR.Storey = qValuesSimsStorey, 
+                      FDR.Scott = FDR.ScottMat, FDR.Scott_emp = FDR.ScottMat_emp, nullHypSims)
+  
+  ##-------------------Set 2----------------##
+
+  ##Load p-values and $\pi_0(x)$ estimates for the simulations:
+  for(l in listSimRes(alt, 2))
+  {
+    load(l)
+  }
+  
+  ##Get BH and Storey q-values for each simulation:
+  qValuesSimsBH <- getQValuesSimsBH(pValuesSims)
+  qValuesSimsStorey <- getQValuesSimsStorey(pValuesSims)
+
+  ##--------Linear fit-------##
+  
+  ##Get estimated FDR for each simulation for the final estimates
+  FDRreg <- getFDRregSims(pi0EstSim.lin, qValuesSimsBH)
+  
+  ##get FDR-TPR table
+  scen2a <- estFDR.TPR(FDR.BL = FDRreg, 
+                       FDR.BH = qValuesSimsBH, FDR.Storey = qValuesSimsStorey, 
+                       FDR.Scott = FDR.Lin.ScottMat, FDR.Scott_emp = FDR.Lin.ScottMat_emp, nullHypSims)
+  
+  ##--------Spline fit-------##
+
+  ##Get estimated FDR for each simulation for the final estimates
+  FDRreg <- getFDRregSims(pi0EstSim.spl, qValuesSimsBH)
+  
+  ##get FDR-TPR table
+  scen2b <- estFDR.TPR(FDR.BL = FDRreg, 
+                       FDR.BH = qValuesSimsBH, FDR.Storey = qValuesSimsStorey, 
+                       FDR.Scott = FDR.Spl.ScottMat, FDR.Scott_emp = FDR.Spl.ScottMat_emp, nullHypSims)
+  
+  ##-------------------Set 3----------------##
+
+  ##Load p-values and $\pi_0(x)$ estimates for the simulations:
+  for(l in listSimRes(alt, 3))
+  {
+    load(l)
+  }
+  
+  ##Get BH and Storey q-values for each simulation:
+  qValuesSimsBH <- getQValuesSimsBH(pValuesSims)
+  qValuesSimsStorey <- getQValuesSimsStorey(pValuesSims)
+
+  ##--------Linear fit-------##
+  
+  ##Get estimated FDR for each simulation for the final estimates
+  FDRreg <- getFDRregSims(pi0EstSim.lin, qValuesSimsBH)
+  
+  ##get FDR-TPR table
+  scen3a <- estFDR.TPR(FDR.BL = FDRreg, 
+                       FDR.BH = qValuesSimsBH, FDR.Storey = qValuesSimsStorey, 
+                       FDR.Scott = FDR.Lin.ScottMat, FDR.Scott_emp = FDR.Lin.ScottMat_emp, nullHypSims)
+  
+  ##--------Spline fit-------##
+
+  ##Get estimated FDR for each simulation for the final estimates
+  FDRreg <- getFDRregSims(pi0EstSim.spl, qValuesSimsBH)
+  
+  ##get FDR-TPR table
+  scen3b <- estFDR.TPR(FDR.BL = FDRreg, 
+                       FDR.BH = qValuesSimsBH, FDR.Storey = qValuesSimsStorey, 
+                       FDR.Scott = FDR.Spl.ScottMat, FDR.Scott_emp = FDR.Spl.ScottMat_emp, nullHypSims)  
+  
+  ##-------------------Set 4----------------##
+  
+  ##Load p-values and $\pi_0(x)$ estimates for the simulations:
+  for(l in listSimRes(alt, 4))
+  {
+    load(l)
+  }
+  
+  ##Get BH and Storey q-values for each simulation:
+  qValuesSimsBH <- getQValuesSimsBH(pValuesSims)
+  qValuesSimsStorey <- getQValuesSimsStorey(pValuesSims)
+  
+  ##--------Linear fit-------##
+  
+  ##Get estimated FDR for each simulation:
+  ##first pull out just the final estimates
+  pi0_final <- lapply(pi0EstSim.lin, function(x){x[[3]]})
+
+  FDRreg <- t(mapply(function(q,pi0){q*pi0}, data.frame(t(qValuesSimsBH)), pi0_final, SIMPLIFY=TRUE))
+  
+  ##get FDR-TPR table
+  scen4a <- estFDR.TPR(FDR.BL = FDRreg, 
+                       FDR.BH = qValuesSimsBH, FDR.Storey = qValuesSimsStorey, 
+                       FDR.Scott = FDR.Lin.ScottMat, FDR.Scott_emp = FDR.Lin.ScottMat_emp, nullHypSims)
+  
+  ##--------Spline fit-------##
+
+  ##Get estimated FDR for each simulation:
+  ##first pull out just the final estimates
+  pi0_final <- lapply(pi0EstSim.spl, function(x){x[[3]]})
+
+  FDRreg <- t(mapply(function(q,pi0){q*pi0}, data.frame(t(qValuesSimsBH)), pi0_final, SIMPLIFY=TRUE))
+  
+  ##get FDR-TPR table
+  scen4b <- estFDR.TPR(FDR.BL = FDRreg, 
+                       FDR.BH = qValuesSimsBH, FDR.Storey = qValuesSimsStorey, 
+                       FDR.Scott = FDR.Spl.ScottMat, FDR.Scott_emp = FDR.Spl.ScottMat_emp, nullHypSims)
+  
+  print("")
+  print(alt)
+  print(scen1)
+  print(scen2a)
+  print(scen2b)
+  print(scen3a)
+  print(scen3b)
+  print(scen4a)
+  print(scen4b)
+  
+  save(list=c("scen1","scen2a","scen2b","scen3a","scen3b","scen4a","scen4b"),
+       file=paste(alt,"FDR_TPR_sims.RData",sep="/"))
+}
+@
+
+Session info:
+<<sessInf>>=
+devtools::session_info()
+@
+
+\end{document}

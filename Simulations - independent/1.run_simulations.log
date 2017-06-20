@@ -1,0 +1,227 @@
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.5.20)  13 JUN 2017 10:47
+entering extended mode
+**1.run_simulations.tex
+
+("C:\Users\smb310\Documents\Research\FDR regression\Simulations - independent -
+ revision\1.run_simulations.tex"
+LaTeX2e <2011/06/27>
+Babel <v3.8m> and hyphenation patterns for english, afrikaans, ancientgreek, ar
+abic, armenian, assamese, basque, bengali, bokmal, bulgarian, catalan, coptic, 
+croatian, czech, danish, dutch, esperanto, estonian, farsi, finnish, french, ga
+lician, german, german-x-2013-05-26, greek, gujarati, hindi, hungarian, iceland
+ic, indonesian, interlingua, irish, italian, kannada, kurmanji, latin, latvian,
+ lithuanian, malayalam, marathi, mongolian, mongolianlmc, monogreek, ngerman, n
+german-x-2013-05-26, nynorsk, oriya, panjabi, pinyin, polish, portuguese, roman
+ian, russian, sanskrit, serbian, slovak, slovenian, spanish, swedish, swissgerm
+an, tamil, telugu, turkish, turkmen, ukenglish, ukrainian, uppersorbian, usengl
+ishmax, welsh, loaded.
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\article.cls"
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\size10.clo"
+File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\graphicx.sty"
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\keyval.sty"
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks14
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\graphics.sty"
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\trig.sty"
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\00miktex\graphics.cfg"
+File: graphics.cfg 2007/01/18 v1.5 graphics configuration of teTeX/TeXLive
+)
+Package graphics Info: Driver file: pdftex.def on input line 91.
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\pdftex-def\pdftex.def"
+File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\infwarerr.sty"
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/error messages (HO)
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\ltxcmds.sty"
+Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
+)
+\Gread@gobject=\count87
+))
+\Gin@req@height=\dimen103
+\Gin@req@width=\dimen104
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\color.sty"
+Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\00miktex\color.cfg"
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package color Info: Driver file: pdftex.def on input line 130.
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\framed\framed.sty"
+Package: framed 2011/10/22 v 0.96: framed or shaded text with page breaks
+\OuterFrameSep=\skip43
+\fb@frw=\dimen105
+\fb@frh=\dimen106
+\FrameRule=\dimen107
+\FrameSep=\dimen108
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\alltt.sty"
+Package: alltt 1997/06/16 v2.0g defines alltt environment
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\upquote\upquote.sty"
+Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
+tim
+)
+("C:\Users\smb310\Documents\Research\FDR regression\Simulations - independent -
+ revision\1.run_simulations.aux")
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count88
+\scratchdimen=\dimen109
+\scratchbox=\box26
+\nofMPsegments=\count89
+\nofMParguments=\count90
+\everyMPshowfont=\toks15
+\MPscratchCnt=\count91
+\MPscratchDim=\dimen110
+\MPnumerator=\count92
+\makeMPintoPDFobject=\count93
+\everyMPtoPDFconversion=\toks16
+)
+Package color Info: Redefining color shadecolor on input line 58.
+LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10> not available
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 61.
+
+Overfull \hbox (55.73264pt too wide) in paragraph at lines 73--73
+[][]\OT1/cmtt/m/n/10 library[][](foreach)[] []\OT1/cmtt/m/it/10 ##to use foreac
+h function that does the parallel processing[][] 
+ []
+
+
+Overfull \hbox (24.23291pt too wide) in paragraph at lines 74--74
+[][]\OT1/cmtt/m/n/10 library[][](doRNG)[] []\OT1/cmtt/m/it/10 ##for reproducibl
+e seeds when doing parallel processing[][] 
+ []
+
+Package color Info: Redefining color shadecolor on input line 101.
+Package color Info: Redefining color shadecolor on input line 115.
+LaTeX Font Info:    Try loading font information for OMS+cmtt on input line 124
+.
+(C:/PROGRA~1/R/R-34~1.0/share/texmf/tex/latex\omscmtt.fd
+File: omscmtt.fd 
+)
+LaTeX Font Info:    Font shape `OMS/cmtt/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 124.
+
+Overfull \hbox (27.74675pt too wide) in paragraph at lines 133--133
+[]       []\OT1/cmtt/m/n/10 list[][]=[][]c[][]([][]"pi0"[][],[] []"tme"[][],[] 
+[]"nullHypSims"[][],[][]"pValuesSims"[][],[][]"zValuesSims"[][]))[][] 
+ []
+
+[1
+
+{C:/Users/smb310/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
+<Figures/I-1.pdf, id=9, 505.89pt x 505.89pt>
+File: Figures/I-1.pdf Graphic file (type pdf)
+ <use Figures/I-1.pdf>
+Package pdftex.def Info: Figures/I-1.pdf used on input line 138.
+(pdftex.def)             Requested size: 345.0pt x 345.00414pt.
+Package color Info: Redefining color shadecolor on input line 149.
+ [2 <C:/Users/smb310/Documents/Research/FDR regression/Simulations - independen
+t - revision/Figures/I-1.pdf>]
+Overfull \hbox (27.74675pt too wide) in paragraph at lines 169--169
+[]       []\OT1/cmtt/m/n/10 list[][]=[][]c[][]([][]"pi0"[][],[] []"tme"[][],[] 
+[]"nullHypSims"[][],[][]"pValuesSims"[][],[][]"zValuesSims"[][]))[][] 
+ []
+
+<Figures/II-1.pdf, id=19, 505.89pt x 505.89pt>
+File: Figures/II-1.pdf Graphic file (type pdf)
+ <use Figures/II-1.pdf>
+Package pdftex.def Info: Figures/II-1.pdf used on input line 174.
+(pdftex.def)             Requested size: 345.0pt x 345.00414pt.
+ [3]
+Package color Info: Redefining color shadecolor on input line 185.
+
+Overfull \hbox (74.99634pt too wide) in paragraph at lines 216--216
+[]       []\OT1/cmtt/m/n/10 list[][]=[][]c[][]([][]"pi0"[][],[] []"tme1"[][],[]
+ []"tme2"[][],[] []"nullHypSims"[][],[][]"pValuesSims"[][],[][]"zValuesSims"[][
+]))[][] 
+ []
+
+[4 <C:/Users/smb310/Documents/Research/FDR regression/Simulations - independent
+ - revision/Figures/II-1.pdf>] <Figures/III-1.pdf, id=31, 505.89pt x 505.89pt>
+File: Figures/III-1.pdf Graphic file (type pdf)
+
+<use Figures/III-1.pdf>
+Package pdftex.def Info: Figures/III-1.pdf used on input line 221.
+(pdftex.def)             Requested size: 345.0pt x 345.00414pt.
+ [5]
+Package color Info: Redefining color shadecolor on input line 232.
+
+Overfull \hbox (74.99634pt too wide) in paragraph at lines 263--263
+[]       []\OT1/cmtt/m/n/10 list[][]=[][]c[][]([][]"pi0"[][],[] []"tme1"[][],[]
+ []"tme2"[][],[] []"nullHypSims"[][],[][]"pValuesSims"[][],[][]"zValuesSims"[][
+]))[][] 
+ []
+
+[6 <C:/Users/smb310/Documents/Research/FDR regression/Simulations - independent
+ - revision/Figures/III-1.pdf>] <Figures/IV-1.pdf, id=43, 505.89pt x 505.89pt>
+File: Figures/IV-1.pdf Graphic file (type pdf)
+
+<use Figures/IV-1.pdf>
+Package pdftex.def Info: Figures/IV-1.pdf used on input line 268.
+(pdftex.def)             Requested size: 345.0pt x 345.00414pt.
+ [7]
+Package color Info: Redefining color shadecolor on input line 278.
+ [8 <C:/Users/smb310/Documents/Research/FDR regression/Simulations - independen
+t - revision/Figures/IV-1.pdf>] [9]
+("C:\Users\smb310\Documents\Research\FDR regression\Simulations - independent -
+ revision\1.run_simulations.aux") ) 
+Here is how much of TeX's memory you used:
+ 1290 strings out of 493921
+ 18044 string characters out of 3144873
+ 72078 words of memory out of 3000000
+ 4607 multiletter control sequences out of 15000+200000
+ 4581 words of font info for 18 fonts, out of 3000000 for 9000
+ 841 hyphenation exceptions out of 8191
+ 27i,6n,19p,295b,280s stack positions out of 5000i,500n,10000p,200000b,50000s
+<C:/Program Files (x86)/MiKTeX 2.9/fonts/typ
+e1/public/amsfonts/cm/cmbx12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1
+/public/amsfonts/cm/cmitt10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/
+public/amsfonts/cm/cmr10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/pub
+lic/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/publi
+c/amsfonts/cm/cmtt10.pfb>
+Output written on 1.run_simulations.pdf (9 pages, 291532 bytes).
+PDF statistics:
+ 76 PDF objects out of 1000 (max. 8388607)
+ 0 named destinations out of 1000 (max. 500000)
+ 21 words of extra memory for PDF output out of 10000 (max. 10000000)
+

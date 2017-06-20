@@ -68,12 +68,15 @@ fdr <- FDRreg(zScores, X,
 
 ##get prior probabilities 
 pi0EstScott <- 1-fdr$priorprob
+
+##get FDR
+FDRScott_emp <- fdr$FDR
 ```
 
 Save results:
 
 ```{r}
-save(x=pi0EstScott, file="BMI_GIANT_GWAS_results_Scott.RData")
+save(list=c("pi0EstScott","FDRScott_emp"), file="BMI_GIANT_GWAS_results_Scott.RData")
 ```
 
 ### Session Information

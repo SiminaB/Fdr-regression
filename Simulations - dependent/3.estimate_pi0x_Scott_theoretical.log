@@ -1,0 +1,305 @@
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.5.20)  1 JUN 2017 16:52
+entering extended mode
+**3.estimate_pi0x_Scott_theoretical.tex
+
+("C:\Users\smb310\Documents\Research\FDR regression\Simulations - dependent - r
+evision\3.estimate_pi0x_Scott_theoretical.tex"
+LaTeX2e <2011/06/27>
+Babel <v3.8m> and hyphenation patterns for english, afrikaans, ancientgreek, ar
+abic, armenian, assamese, basque, bengali, bokmal, bulgarian, catalan, coptic, 
+croatian, czech, danish, dutch, esperanto, estonian, farsi, finnish, french, ga
+lician, german, german-x-2013-05-26, greek, gujarati, hindi, hungarian, iceland
+ic, indonesian, interlingua, irish, italian, kannada, kurmanji, latin, latvian,
+ lithuanian, malayalam, marathi, mongolian, mongolianlmc, monogreek, ngerman, n
+german-x-2013-05-26, nynorsk, oriya, panjabi, pinyin, polish, portuguese, roman
+ian, russian, sanskrit, serbian, slovak, slovenian, spanish, swedish, swissgerm
+an, tamil, telugu, turkish, turkmen, ukenglish, ukrainian, uppersorbian, usengl
+ishmax, welsh, loaded.
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\article.cls"
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\size10.clo"
+File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\graphicx.sty"
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\keyval.sty"
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks14
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\graphics.sty"
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\trig.sty"
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\00miktex\graphics.cfg"
+File: graphics.cfg 2007/01/18 v1.5 graphics configuration of teTeX/TeXLive
+)
+Package graphics Info: Driver file: pdftex.def on input line 91.
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\pdftex-def\pdftex.def"
+File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\infwarerr.sty"
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/error messages (HO)
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\ltxcmds.sty"
+Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
+)
+\Gread@gobject=\count87
+))
+\Gin@req@height=\dimen103
+\Gin@req@width=\dimen104
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\color.sty"
+Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\00miktex\color.cfg"
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package color Info: Driver file: pdftex.def on input line 130.
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\framed\framed.sty"
+Package: framed 2011/10/22 v 0.96: framed or shaded text with page breaks
+\OuterFrameSep=\skip43
+\fb@frw=\dimen105
+\fb@frh=\dimen106
+\FrameRule=\dimen107
+\FrameSep=\dimen108
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\alltt.sty"
+Package: alltt 1997/06/16 v2.0g defines alltt environment
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\upquote\upquote.sty"
+Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
+tim
+)
+("C:\Users\smb310\Documents\Research\FDR regression\Simulations - dependent - r
+evision\3.estimate_pi0x_Scott_theoretical.aux")
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count88
+\scratchdimen=\dimen109
+\scratchbox=\box26
+\nofMPsegments=\count89
+\nofMParguments=\count90
+\everyMPshowfont=\toks15
+\MPscratchCnt=\count91
+\MPscratchDim=\dimen110
+\MPnumerator=\count92
+\makeMPintoPDFobject=\count93
+\everyMPtoPDFconversion=\toks16
+)
+Package color Info: Redefining color shadecolor on input line 58.
+LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10> not available
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 61.
+
+Overfull \hbox (55.73264pt too wide) in paragraph at lines 95--95
+[][]\OT1/cmtt/m/n/10 library[][](foreach)[] []\OT1/cmtt/m/it/10 ##to use foreac
+h function that does the parallel processing[][] 
+ []
+
+
+Overfull \hbox (24.23291pt too wide) in paragraph at lines 96--96
+[][]\OT1/cmtt/m/n/10 library[][](doRNG)[] []\OT1/cmtt/m/it/10 ##for reproducibl
+e seeds when doing parallel processing[][] 
+ []
+
+Package color Info: Redefining color shadecolor on input line 123.
+[1
+
+{C:/Users/smb310/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
+Package color Info: Redefining color shadecolor on input line 132.
+
+Overfull \hbox (122.24593pt too wide) in paragraph at lines 134--134
+[][]\OT1/cmtt/m/n/10 altsGrid[] []<-[] []as.matrix[][]([][]expand.grid[][]([][]
+dist[][]=[][]c[][]([][]"z"[][],[][]"t"[][]),[][]nrBlocks[][]=[][]c[][]([][]10[]
+[],[][]20[][]),[][]corr[][]=[][]c[][]([][]0.2[][],[][]0.5[][],[][]0.9[][])))[][
+] 
+ []
+
+LaTeX Font Info:    Try loading font information for OMS+cmtt on input line 135
+.
+(C:/PROGRA~1/R/R-33~1.1/share/texmf/tex/latex\omscmtt.fd
+File: omscmtt.fd 
+)
+LaTeX Font Info:    Font shape `OMS/cmtt/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 135.
+
+Overfull \hbox (95.49628pt too wide) in paragraph at lines 135--135
+[][]\OT1/cmtt/m/n/10 alts[] []<-[] []apply[][](altsGrid,[] []1[][],[] []functio
+n[][]([][]x[][])\OMS/cmsy/m/n/10 f[][]\OT1/cmtt/m/n/10 paste[][]([][]"alt"[][],
+x[[][]1[][]],[][]"large"[][],x[[][]2[][]],x[[][]3[][]],[][]sep[][]=[][]"_"[][])
+\OMS/cmsy/m/n/10 g\OT1/cmtt/m/n/10 )[][] 
+ []
+
+Package color Info: Redefining color shadecolor on input line 154.
+
+Overfull \hbox (6.74693pt too wide) in paragraph at lines 161--161
+[]  []\OT1/cmtt/m/n/10 pi0hatScottMat[] []<-[] []estimate_Scott_sims[][](zValue
+sSims, tme, nulltype)[][] 
+ []
+
+
+Overfull \hbox (11.99689pt too wide) in paragraph at lines 170--170
+[]  []\OT1/cmtt/m/n/10 save[][]([][]file[][]=[][]paste[][](alt,[][]"simResults_
+pi0x_Scott_1_full.RData"[][],[][]sep[][]=[][]"/"[][]),[][] 
+ []
+
+Package color Info: Redefining color shadecolor on input line 187.
+[2]
+Overfull \hbox (38.24666pt too wide) in paragraph at lines 197--197
+[]  []\OT1/cmtt/m/n/10 pi0hatScottMatFitLin[] []<-[] []estimate_Scott_sims[][](
+zValuesSims, tme, nulltype)[][] 
+ []
+
+
+Overfull \hbox (6.74693pt too wide) in paragraph at lines 200--200
+[]  []\OT1/cmtt/m/n/10 pi0hatLin.ScottVar[] []<-[] []apply[][](pi0hatScottMatFi
+tLin[,[][]1[][]:[][]ntest],[][]2[][],var)[][] 
+ []
+
+
+Overfull \hbox (69.74638pt too wide) in paragraph at lines 206--206
+[]  []\OT1/cmtt/m/n/10 pi0hatScottMatFitSpl[] []<-[] []estimate_Scott_sims[][](
+zValuesSims, splineMat, nulltype)[][] 
+ []
+
+
+Overfull \hbox (6.74693pt too wide) in paragraph at lines 209--209
+[]  []\OT1/cmtt/m/n/10 pi0hatSpl.ScottVar[] []<-[] []apply[][](pi0hatScottMatFi
+tSpl[,[][]1[][]:[][]ntest],[][]2[][],var)[][] 
+ []
+
+
+Overfull \hbox (11.99689pt too wide) in paragraph at lines 215--215
+[]  []\OT1/cmtt/m/n/10 save[][]([][]file[][]=[][]paste[][](alt,[][]"simResults_
+pi0x_Scott_2_full.RData"[][],[][]sep[][]=[][]"/"[][]),[][] 
+ []
+
+Package color Info: Redefining color shadecolor on input line 234.
+[3]
+Overfull \hbox (69.74638pt too wide) in paragraph at lines 247--247
+[]  []\OT1/cmtt/m/n/10 pi0hatScottMatFitLin[] []<-[] []estimate_Scott_sims[][](
+zValuesSims, linearMat, nulltype)[][] 
+ []
+
+
+Overfull \hbox (6.74693pt too wide) in paragraph at lines 250--250
+[]  []\OT1/cmtt/m/n/10 pi0hatLin.ScottVar[] []<-[] []apply[][](pi0hatScottMatFi
+tLin[,[][]1[][]:[][]ntest],[][]2[][],var)[][] 
+ []
+
+
+Overfull \hbox (69.74638pt too wide) in paragraph at lines 256--256
+[]  []\OT1/cmtt/m/n/10 pi0hatScottMatFitSpl[] []<-[] []estimate_Scott_sims[][](
+zValuesSims, splineMat, nulltype)[][] 
+ []
+
+
+Overfull \hbox (6.74693pt too wide) in paragraph at lines 259--259
+[]  []\OT1/cmtt/m/n/10 pi0hatSpl.ScottVar[] []<-[] []apply[][](pi0hatScottMatFi
+tSpl[,[][]1[][]:[][]ntest],[][]2[][],var)[][] 
+ []
+
+
+Overfull \hbox (11.99689pt too wide) in paragraph at lines 265--265
+[]  []\OT1/cmtt/m/n/10 save[][]([][]file[][]=[][]paste[][](alt,[][]"simResults_
+pi0x_Scott_3_full.RData"[][],[][]sep[][]=[][]"/"[][]),[][] 
+ []
+
+Package color Info: Redefining color shadecolor on input line 284.
+[4]
+Overfull \hbox (69.74638pt too wide) in paragraph at lines 297--297
+[]  []\OT1/cmtt/m/n/10 pi0hatScottMatFitLin[] []<-[] []estimate_Scott_sims[][](
+zValuesSims, linearMat, nulltype)[][] 
+ []
+
+
+Overfull \hbox (6.74693pt too wide) in paragraph at lines 300--300
+[]  []\OT1/cmtt/m/n/10 pi0hatLin.ScottVar[] []<-[] []apply[][](pi0hatScottMatFi
+tLin[,[][]1[][]:[][]ntest],[][]2[][],var)[][] 
+ []
+
+
+Overfull \hbox (69.74638pt too wide) in paragraph at lines 306--306
+[]  []\OT1/cmtt/m/n/10 pi0hatScottMatFitSpl[] []<-[] []estimate_Scott_sims[][](
+zValuesSims, splineMat, nulltype)[][] 
+ []
+
+
+Overfull \hbox (6.74693pt too wide) in paragraph at lines 309--309
+[]  []\OT1/cmtt/m/n/10 pi0hatSpl.ScottVar[] []<-[] []apply[][](pi0hatScottMatFi
+tSpl[,[][]1[][]:[][]ntest],[][]2[][],var)[][] 
+ []
+
+
+Overfull \hbox (11.99689pt too wide) in paragraph at lines 315--315
+[]  []\OT1/cmtt/m/n/10 save[][]([][]file[][]=[][]paste[][](alt,[][]"simResults_
+pi0x_Scott_4_full.RData"[][],[][]sep[][]=[][]"/"[][]),[][] 
+ []
+
+
+Overfull \vbox (0.14719pt too high) detected at line 326
+ []
+
+[5]
+Package color Info: Redefining color shadecolor on input line 332.
+ [6]
+Underfull \vbox (badness 10000) detected at line 444
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 444
+ []
+
+[7] [8]
+("C:\Users\smb310\Documents\Research\FDR regression\Simulations - dependent - r
+evision\3.estimate_pi0x_Scott_theoretical.aux") ) 
+Here is how much of TeX's memory you used:
+ 1268 strings out of 493921
+ 17814 string characters out of 3144873
+ 79078 words of memory out of 3000000
+ 4591 multiletter control sequences out of 15000+200000
+ 4581 words of font info for 18 fonts, out of 3000000 for 9000
+ 841 hyphenation exceptions out of 8191
+ 27i,5n,19p,402b,276s stack positions out of 5000i,500n,10000p,200000b,50000s
+<C:/Program Files (x86)/MiKTeX
+ 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Program Files (x86)/MiKTeX 2
+.9/fonts/type1/public/amsfonts/cm/cmitt10.pfb><C:/Program Files (x86)/MiKTeX 2.
+9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program Files (x86)/MiKTeX 2.9/f
+onts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fon
+ts/type1/public/amsfonts/cm/cmtt10.pfb>
+Output written on 3.estimate_pi0x_Scott_theoretical.pdf (8 pages, 79499 bytes).
+
+PDF statistics:
+ 49 PDF objects out of 1000 (max. 8388607)
+ 0 named destinations out of 1000 (max. 500000)
+ 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+

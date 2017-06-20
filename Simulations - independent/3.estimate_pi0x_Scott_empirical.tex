@@ -1,0 +1,541 @@
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{## Load libraries}
+\hlkwd{library}\hlstd{(splines)}
+\hlkwd{library}\hlstd{(MASS)}
+\hlkwd{library}\hlstd{(FDRreg)}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: fda}}
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning: package 'fda' was built under R version 3.3.3}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: Matrix}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# \\\#\# Attaching package: 'fda'}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# The following object is masked from 'package:graphics':\\\#\# \\\#\#\ \ \ \  matplot}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: BayesLogit}}
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning: package 'BayesLogit' was built under R version 3.3.2}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: mvtnorm}}
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning: package 'mvtnorm' was built under R version 3.3.2}}\begin{alltt}
+\hlkwd{library}\hlstd{(curl)}
+
+\hlkwd{library}\hlstd{(doParallel)} \hlcom{##to make cluster (on Windows)}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: foreach}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: iterators}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: parallel}}\begin{alltt}
+\hlkwd{library}\hlstd{(foreach)} \hlcom{##to use foreach function that does the parallel processing}
+\hlkwd{library}\hlstd{(doRNG)} \hlcom{##for reproducible seeds when doing parallel processing}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: rngtools}}
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning: package 'rngtools' was built under R version 3.3.2}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: pkgmaker}}
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning: package 'pkgmaker' was built under R version 3.3.2}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: registry}}
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning: package 'registry' was built under R version 3.3.2}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# \\\#\# Attaching package: 'pkgmaker'}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# The following object is masked from 'package:base':\\\#\# \\\#\#\ \ \ \  isNamespaceLoaded}}\begin{alltt}
+\hlcom{##Source functions}
+\hlkwd{source}\hlstd{(}\hlstr{"../functions.R"}\hlstd{)}
+
+\hlkwd{options}\hlstd{(}\hlkwc{warn}\hlstd{=}\hlnum{1}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+Define nulltype for Scott method:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{nulltype} \hlkwb{<-} \hlstr{"empirical"}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+Simulations are performed for a variety of alternative distributions:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{alts} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"alt_beta"}\hlstd{,}\hlstr{"alt_chisq_large_3_3"}\hlstd{,}\hlstr{"alt_chisq_large"}\hlstd{,}
+          \hlstr{"alt_chisq_small_3_3"}\hlstd{,}\hlstr{"alt_chisq_small"}\hlstd{,}
+          \hlstr{"alt_t_large"}\hlstd{,}\hlstr{"alt_t_small"}\hlstd{,}
+          \hlstr{"alt_z_large"}\hlstd{,}
+          \hlstr{"alt_z_small"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\section{Probability of being a false positive is flat}
+
+Perform estimation and save estimates:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwa{for}\hlstd{(alt} \hlkwa{in} \hlstd{alts)}
+\hlstd{\{}
+  \hlkwd{print}\hlstd{(alt)}
+
+  \hlkwd{load}\hlstd{(}\hlkwd{paste}\hlstd{(alt,}\hlstr{"simResults_1.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{))}
+  \hlstd{ntest} \hlkwb{<-} \hlkwd{ncol}\hlstd{(zValuesSims)}
+
+  \hlstd{pi0hatScottMat_emp} \hlkwb{<-} \hlkwd{estimate_Scott_sims}\hlstd{(zValuesSims, tme, nulltype)}
+
+  \hlstd{pi0hatScottMean_emp} \hlkwb{<-} \hlkwd{colMeans}\hlstd{(pi0hatScottMat_emp[,}\hlnum{1}\hlopt{:}\hlstd{ntest])}
+  \hlstd{pi0hatScottVar_emp} \hlkwb{<-} \hlkwd{apply}\hlstd{(pi0hatScottMat_emp[,}\hlnum{1}\hlopt{:}\hlstd{ntest],}\hlnum{2}\hlstd{,var)}
+
+  \hlstd{pi0hat.ScottMat_emp} \hlkwb{<-} \hlstd{pi0hatScottMat_emp[,}\hlnum{1}\hlopt{:}\hlstd{ntest]}
+  \hlstd{FDR.ScottMat_emp} \hlkwb{<-} \hlstd{pi0hatScottMat_emp[,(ntest}\hlopt{+}\hlnum{1}\hlstd{)}\hlopt{:}\hlstd{(}\hlnum{2}\hlopt{*}\hlstd{ntest)]}
+
+  \hlcom{##save full results}
+  \hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlkwd{paste}\hlstd{(alt,}\hlstr{"simResults_pi0x_Scott_emp_1_full.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{),}
+       \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"pi0hat.ScottMat_emp"}\hlstd{,} \hlstr{"FDR.ScottMat_emp"}\hlstd{))}
+
+  \hlcom{##save summary results}
+  \hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlkwd{paste}\hlstd{(alt,}\hlstr{"simResults_pi0x_Scott_emp_1.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{),}
+       \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"tme"}\hlstd{,} \hlstr{"pi0"}\hlstd{,}
+            \hlstr{"pi0hatScottMean_emp"}\hlstd{,}\hlstr{"pi0hatScottVar_emp"}\hlstd{))}
+\hlstd{\}}
+\end{alltt}
+\begin{verbatim}
+## [1] "alt_beta"
+## [1] "alt_chisq_large_3_3"
+\end{verbatim}
+
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning in apply(as.matrix(pi0hatScottMat), 2, as.numeric): NAs introduced by coercion}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in apply(as.matrix(pi0hatScottMat), 2, as.numeric): (list) object cannot be coerced to type 'double'}}\end{kframe}
+\end{knitrout}
+
+\section{Probability of being a false positive is smooth in one variable}
+
+Perform estimation and save estimates:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwa{for}\hlstd{(alt} \hlkwa{in} \hlstd{alts)}
+\hlstd{\{}
+  \hlkwd{print}\hlstd{(alt)}
+
+  \hlkwd{load}\hlstd{(}\hlkwd{paste}\hlstd{(alt,}\hlstr{"simResults_2.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{))}
+  \hlstd{ntest} \hlkwb{<-} \hlkwd{ncol}\hlstd{(zValuesSims)}
+
+  \hlcom{##--------linear fit-------##}
+  \hlkwd{print}\hlstd{(}\hlstr{"linear"}\hlstd{)}
+  \hlstd{pi0hatScottMat_empFitLin} \hlkwb{<-} \hlkwd{estimate_Scott_sims}\hlstd{(zValuesSims, tme, nulltype)}
+
+  \hlstd{pi0hatLin.ScottMean_emp} \hlkwb{<-} \hlkwd{colMeans}\hlstd{(pi0hatScottMat_empFitLin[,}\hlnum{1}\hlopt{:}\hlstd{ntest])}
+  \hlstd{pi0hatLin.ScottVar_emp} \hlkwb{<-} \hlkwd{apply}\hlstd{(pi0hatScottMat_empFitLin[,}\hlnum{1}\hlopt{:}\hlstd{ntest],}\hlnum{2}\hlstd{,var)}
+
+  \hlstd{pi0hat.Lin.ScottMat_emp} \hlkwb{<-} \hlstd{pi0hatScottMat_empFitLin[,}\hlnum{1}\hlopt{:}\hlstd{ntest]}
+  \hlstd{FDR.Lin.ScottMat_emp} \hlkwb{<-} \hlstd{pi0hatScottMat_empFitLin[,(ntest}\hlopt{+}\hlnum{1}\hlstd{)}\hlopt{:}\hlstd{(}\hlnum{2}\hlopt{*}\hlstd{ntest)]}
+
+  \hlcom{##---------spline fit---------#}
+  \hlkwd{print}\hlstd{(}\hlstr{"spline"}\hlstd{)}
+  \hlstd{splineMat} \hlkwb{<-} \hlkwd{ns}\hlstd{(tme,}\hlkwc{df}\hlstd{=}\hlnum{3}\hlstd{)}
+
+  \hlstd{pi0hatScottMat_empFitSpl} \hlkwb{<-} \hlkwd{estimate_Scott_sims}\hlstd{(zValuesSims, splineMat, nulltype)}
+
+  \hlstd{pi0hatSpl.ScottMean_emp} \hlkwb{<-} \hlkwd{colMeans}\hlstd{(pi0hatScottMat_empFitSpl[,}\hlnum{1}\hlopt{:}\hlstd{ntest])}
+  \hlstd{pi0hatSpl.ScottVar_emp} \hlkwb{<-} \hlkwd{apply}\hlstd{(pi0hatScottMat_empFitSpl[,}\hlnum{1}\hlopt{:}\hlstd{ntest],}\hlnum{2}\hlstd{,var)}
+
+  \hlstd{pi0hat.Spl.ScottMat_emp} \hlkwb{<-} \hlstd{pi0hatScottMat_empFitSpl[,}\hlnum{1}\hlopt{:}\hlstd{ntest]}
+  \hlstd{FDR.Spl.ScottMat_emp} \hlkwb{<-} \hlstd{pi0hatScottMat_empFitSpl[,(ntest}\hlopt{+}\hlnum{1}\hlstd{)}\hlopt{:}\hlstd{(}\hlnum{2}\hlopt{*}\hlstd{ntest)]}
+
+  \hlcom{##save full results}
+  \hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlkwd{paste}\hlstd{(alt,}\hlstr{"simResults_pi0x_Scott_emp_2_full.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{),}
+       \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"pi0hat.Lin.ScottMat_emp"}\hlstd{,} \hlstr{"FDR.Lin.ScottMat_emp"}\hlstd{,}
+              \hlstr{"pi0hat.Spl.ScottMat_emp"}\hlstd{,} \hlstr{"FDR.Spl.ScottMat_emp"}\hlstd{))}
+
+  \hlcom{##save summary results}
+  \hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlkwd{paste}\hlstd{(alt,}\hlstr{"simResults_pi0x_Scott_emp_2.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{),}
+       \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"tme"}\hlstd{,} \hlstr{"pi0"}\hlstd{,}
+              \hlstr{"pi0hatLin.ScottMean_emp"}\hlstd{,} \hlstr{"pi0hatLin.ScottVar_emp"}\hlstd{,}
+              \hlstr{"pi0hatSpl.ScottMean_emp"}\hlstd{,} \hlstr{"pi0hatSpl.ScottVar_emp"}\hlstd{))}
+\hlstd{\}}
+\end{alltt}
+\begin{verbatim}
+## [1] "alt_beta"
+## [1] "linear"
+## [1] "spline"
+## [1] "alt_chisq_large_3_3"
+## [1] "linear"
+## [1] "spline"
+## [1] "alt_chisq_large"
+## [1] "linear"
+\end{verbatim}
+
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning in apply(as.matrix(pi0hatScottMat), 2, as.numeric): NAs introduced by coercion}}
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning in apply(as.matrix(pi0hatScottMat), 2, as.numeric): NAs introduced by coercion}}
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning in apply(as.matrix(pi0hatScottMat), 2, as.numeric): NAs introduced by coercion}}
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning in apply(as.matrix(pi0hatScottMat), 2, as.numeric): NAs introduced by coercion}}
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning in apply(as.matrix(pi0hatScottMat), 2, as.numeric): NAs introduced by coercion}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in apply(as.matrix(pi0hatScottMat), 2, as.numeric): (list) object cannot be coerced to type 'double'}}\end{kframe}
+\end{knitrout}
+
+\section{Probability of being a false positive is smooth in one variable within levels of second variable}
+
+Perform estimation and save estimates:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwa{for}\hlstd{(alt} \hlkwa{in} \hlstd{alts)}
+\hlstd{\{}
+  \hlkwd{print}\hlstd{(alt)}
+
+  \hlkwd{load}\hlstd{(}\hlkwd{paste}\hlstd{(alt,}\hlstr{"simResults_3.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{))}
+  \hlstd{ntest} \hlkwb{<-} \hlkwd{ncol}\hlstd{(zValuesSims)}
+
+  \hlstd{m} \hlkwb{<-} \hlkwd{model.matrix}\hlstd{(}\hlopt{~}\hlkwd{as.character}\hlstd{(tme2))[,}\hlopt{-}\hlnum{1}\hlstd{]}
+
+  \hlstd{linearMat} \hlkwb{<-} \hlkwd{cbind}\hlstd{(tme1, m)}
+  \hlstd{splineMat} \hlkwb{<-} \hlkwd{cbind}\hlstd{(}\hlkwd{ns}\hlstd{(tme1,}\hlkwc{df}\hlstd{=}\hlnum{3}\hlstd{), m)}
+
+  \hlcom{##--------linear fit-------##}
+  \hlkwd{print}\hlstd{(}\hlstr{"linear"}\hlstd{)}
+  \hlstd{pi0hatScottMat_empFitLin} \hlkwb{<-} \hlkwd{estimate_Scott_sims}\hlstd{(zValuesSims, linearMat, nulltype)}
+
+  \hlstd{pi0hatLin.ScottMean_emp} \hlkwb{<-} \hlkwd{colMeans}\hlstd{(pi0hatScottMat_empFitLin[,}\hlnum{1}\hlopt{:}\hlstd{ntest])}
+  \hlstd{pi0hatLin.ScottVar_emp} \hlkwb{<-} \hlkwd{apply}\hlstd{(pi0hatScottMat_empFitLin[,}\hlnum{1}\hlopt{:}\hlstd{ntest],}\hlnum{2}\hlstd{,var)}
+
+  \hlstd{pi0hat.Lin.ScottMat_emp} \hlkwb{<-} \hlstd{pi0hatScottMat_empFitLin[,}\hlnum{1}\hlopt{:}\hlstd{ntest]}
+  \hlstd{FDR.Lin.ScottMat_emp} \hlkwb{<-} \hlstd{pi0hatScottMat_empFitLin[,(ntest}\hlopt{+}\hlnum{1}\hlstd{)}\hlopt{:}\hlstd{(}\hlnum{2}\hlopt{*}\hlstd{ntest)]}
+
+  \hlcom{##---------spline fit---------#}
+  \hlkwd{print}\hlstd{(}\hlstr{"spline"}\hlstd{)}
+  \hlstd{pi0hatScottMat_empFitSpl} \hlkwb{<-} \hlkwd{estimate_Scott_sims}\hlstd{(zValuesSims, splineMat, nulltype)}
+
+  \hlstd{pi0hatSpl.ScottMean_emp} \hlkwb{<-} \hlkwd{colMeans}\hlstd{(pi0hatScottMat_empFitSpl[,}\hlnum{1}\hlopt{:}\hlstd{ntest])}
+  \hlstd{pi0hatSpl.ScottVar_emp} \hlkwb{<-} \hlkwd{apply}\hlstd{(pi0hatScottMat_empFitSpl[,}\hlnum{1}\hlopt{:}\hlstd{ntest],}\hlnum{2}\hlstd{,var)}
+
+  \hlstd{pi0hat.Spl.ScottMat_emp} \hlkwb{<-} \hlstd{pi0hatScottMat_empFitSpl[,}\hlnum{1}\hlopt{:}\hlstd{ntest]}
+  \hlstd{FDR.Spl.ScottMat_emp} \hlkwb{<-} \hlstd{pi0hatScottMat_empFitSpl[,(ntest}\hlopt{+}\hlnum{1}\hlstd{)}\hlopt{:}\hlstd{(}\hlnum{2}\hlopt{*}\hlstd{ntest)]}
+
+  \hlcom{##save full results}
+  \hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlkwd{paste}\hlstd{(alt,}\hlstr{"simResults_pi0x_Scott_emp_3_full.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{),}
+       \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"pi0hat.Lin.ScottMat_emp"}\hlstd{,} \hlstr{"FDR.Lin.ScottMat_emp"}\hlstd{,}
+              \hlstr{"pi0hat.Spl.ScottMat_emp"}\hlstd{,} \hlstr{"FDR.Spl.ScottMat_emp"}\hlstd{))}
+
+  \hlcom{##save summary results}
+  \hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlkwd{paste}\hlstd{(alt,}\hlstr{"simResults_pi0x_Scott_emp_3.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{),}
+       \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"tme"}\hlstd{,} \hlstr{"pi0"}\hlstd{,}
+              \hlstr{"pi0hatLin.ScottMean_emp"}\hlstd{,} \hlstr{"pi0hatLin.ScottVar_emp"}\hlstd{,}
+              \hlstr{"pi0hatSpl.ScottMean_emp"}\hlstd{,} \hlstr{"pi0hatSpl.ScottVar_emp"}\hlstd{))}
+\hlstd{\}}
+\end{alltt}
+\begin{verbatim}
+## [1] "alt_beta"
+## [1] "linear"
+## [1] "spline"
+## [1] "alt_chisq_large_3_3"
+## [1] "linear"
+## [1] "spline"
+## [1] "alt_chisq_large"
+## [1] "linear"
+## [1] "spline"
+## [1] "alt_chisq_small_3_3"
+## [1] "linear"
+## [1] "spline"
+## [1] "alt_chisq_small"
+## [1] "linear"
+## [1] "spline"
+## [1] "alt_t_large"
+## [1] "linear"
+## [1] "spline"
+## [1] "alt_t_small"
+## [1] "linear"
+## [1] "spline"
+## [1] "alt_z_large"
+## [1] "linear"
+## [1] "spline"
+## [1] "alt_z_small"
+## [1] "linear"
+## [1] "spline"
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\section{Probability of being a false positive is smooth in one variable within levels of second variable - lower priors}
+
+Perform estimation and save estimates:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwa{for}\hlstd{(alt} \hlkwa{in} \hlstd{alts)}
+\hlstd{\{}
+  \hlkwd{print}\hlstd{(alt)}
+
+  \hlkwd{load}\hlstd{(}\hlkwd{paste}\hlstd{(alt,}\hlstr{"simResults_4.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{))}
+  \hlstd{ntest} \hlkwb{<-} \hlkwd{ncol}\hlstd{(zValuesSims)}
+
+  \hlstd{m} \hlkwb{<-} \hlkwd{model.matrix}\hlstd{(}\hlopt{~}\hlkwd{as.character}\hlstd{(tme2))[,}\hlopt{-}\hlnum{1}\hlstd{]}
+
+  \hlstd{linearMat} \hlkwb{<-} \hlkwd{cbind}\hlstd{(tme1, m)}
+  \hlstd{splineMat} \hlkwb{<-} \hlkwd{cbind}\hlstd{(}\hlkwd{ns}\hlstd{(tme1,}\hlkwc{df}\hlstd{=}\hlnum{3}\hlstd{), m)}
+
+  \hlcom{##--------linear fit-------##}
+  \hlkwd{print}\hlstd{(}\hlstr{"linear"}\hlstd{)}
+  \hlstd{pi0hatScottMat_empFitLin} \hlkwb{<-} \hlkwd{estimate_Scott_sims}\hlstd{(zValuesSims, linearMat, nulltype)}
+
+  \hlcom{##if only have 2 columns, make everything NULL (this means there was an error in every simulation)}
+  \hlkwa{if}\hlstd{(}\hlkwd{ncol}\hlstd{(pi0hatScottMat_empFitLin)} \hlopt{>} \hlnum{2}\hlstd{)}
+  \hlstd{\{}
+    \hlstd{pi0hatLin.ScottMean_emp} \hlkwb{<-} \hlkwd{colMeans}\hlstd{(pi0hatScottMat_empFitLin[,}\hlnum{1}\hlopt{:}\hlstd{ntest])}
+    \hlstd{pi0hatLin.ScottVar_emp} \hlkwb{<-} \hlkwd{apply}\hlstd{(pi0hatScottMat_empFitLin[,}\hlnum{1}\hlopt{:}\hlstd{ntest],}\hlnum{2}\hlstd{,var)}
+
+    \hlstd{pi0hat.Lin.ScottMat_emp} \hlkwb{<-} \hlstd{pi0hatScottMat_empFitLin[,}\hlnum{1}\hlopt{:}\hlstd{ntest]}
+    \hlstd{FDR.Lin.ScottMat_emp} \hlkwb{<-} \hlstd{pi0hatScottMat_empFitLin[,(ntest}\hlopt{+}\hlnum{1}\hlstd{)}\hlopt{:}\hlstd{(}\hlnum{2}\hlopt{*}\hlstd{ntest)]}
+  \hlstd{\}} \hlkwa{else} \hlstd{\{}
+    \hlstd{pi0hatLin.ScottMean_emp} \hlkwb{<-} \hlstd{pi0hatLin.ScottVar_emp} \hlkwb{<-}
+      \hlstd{pi0hat.Lin.ScottMat_emp} \hlkwb{<-} \hlstd{FDR.Lin.ScottMat_emp} \hlkwb{<-} \hlkwa{NULL}
+  \hlstd{\}}
+
+  \hlcom{##---------spline fit---------#}
+  \hlkwd{print}\hlstd{(}\hlstr{"spline"}\hlstd{)}
+  \hlstd{pi0hatScottMat_empFitSpl} \hlkwb{<-} \hlkwd{estimate_Scott_sims}\hlstd{(zValuesSims, splineMat, nulltype)}
+
+  \hlcom{##if only have 2 columns, make everything NULL (this means there was an error in every simulation)}
+  \hlkwa{if}\hlstd{(}\hlkwd{ncol}\hlstd{(pi0hatScottMat_empFitLin)} \hlopt{>} \hlnum{2}\hlstd{)}
+  \hlstd{\{}
+    \hlstd{pi0hatSpl.ScottMean_emp} \hlkwb{<-} \hlkwd{colMeans}\hlstd{(pi0hatScottMat_empFitSpl[,}\hlnum{1}\hlopt{:}\hlstd{ntest])}
+    \hlstd{pi0hatSpl.ScottVar_emp} \hlkwb{<-} \hlkwd{apply}\hlstd{(pi0hatScottMat_empFitSpl[,}\hlnum{1}\hlopt{:}\hlstd{ntest],}\hlnum{2}\hlstd{,var)}
+
+    \hlstd{pi0hat.Spl.ScottMat_emp} \hlkwb{<-} \hlstd{pi0hatScottMat_empFitSpl[,}\hlnum{1}\hlopt{:}\hlstd{ntest]}
+    \hlstd{FDR.Spl.ScottMat_emp} \hlkwb{<-} \hlstd{pi0hatScottMat_empFitSpl[,(ntest}\hlopt{+}\hlnum{1}\hlstd{)}\hlopt{:}\hlstd{(}\hlnum{2}\hlopt{*}\hlstd{ntest)]}
+  \hlstd{\}} \hlkwa{else} \hlstd{\{}
+    \hlstd{pi0hatSpl.ScottMean_emp} \hlkwb{<-} \hlstd{pi0hatSpl.ScottVar_emp} \hlkwb{<-}
+      \hlstd{pi0hat.Spl.ScottMat_emp} \hlkwb{<-} \hlstd{FDR.Spl.ScottMat_emp} \hlkwb{<-} \hlkwa{NULL}
+  \hlstd{\}}
+
+  \hlcom{##save full results}
+  \hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlkwd{paste}\hlstd{(alt,}\hlstr{"simResults_pi0x_Scott_emp_4_full.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{),}
+       \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"pi0hat.Lin.ScottMat_emp"}\hlstd{,} \hlstr{"FDR.Lin.ScottMat_emp"}\hlstd{,}
+              \hlstr{"pi0hat.Spl.ScottMat_emp"}\hlstd{,} \hlstr{"FDR.Spl.ScottMat_emp"}\hlstd{))}
+
+  \hlcom{##save summary results}
+  \hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlkwd{paste}\hlstd{(alt,}\hlstr{"simResults_pi0x_Scott_emp_4.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{),}
+       \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"tme"}\hlstd{,} \hlstr{"pi0"}\hlstd{,}
+              \hlstr{"pi0hatLin.ScottMean_emp"}\hlstd{,} \hlstr{"pi0hatLin.ScottVar_emp"}\hlstd{,}
+              \hlstr{"pi0hatSpl.ScottMean_emp"}\hlstd{,} \hlstr{"pi0hatSpl.ScottVar_emp"}\hlstd{))}
+\hlstd{\}}
+\end{alltt}
+\begin{verbatim}
+## [1] "alt_beta"
+## [1] "linear"
+## [1] "spline"
+## [1] "alt_chisq_large_3_3"
+## [1] "linear"
+\end{verbatim}
+
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning in apply(as.matrix(pi0hatScottMat), 2, as.numeric): NAs introduced by coercion}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in apply(as.matrix(pi0hatScottMat), 2, as.numeric): (list) object cannot be coerced to type 'double'}}\end{kframe}
+\end{knitrout}
+
+
+Session info:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{devtools}\hlopt{::}\hlkwd{session_info}\hlstd{()}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Session info -----------------------------------------------}}\begin{verbatim}
+##  setting  value                       
+##  version  R version 3.3.1 (2016-06-21)
+##  system   x86_64, mingw32             
+##  ui       RTerm                       
+##  language (EN)                        
+##  collate  English_United States.1252  
+##  tz       America/New_York            
+##  date     2017-06-13
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Packages ---------------------------------------------------}}\begin{verbatim}
+##  package    * version date      
+##  assertthat   0.1     2013-12-06
+##  BayesLogit * 0.6     2016-10-20
+##  codetools    0.2-14  2015-07-15
+##  colorspace   1.2-6   2015-03-11
+##  curl       * 0.9.7   2016-04-10
+##  DBI          0.4-1   2016-05-08
+##  devtools     1.12.0  2016-06-24
+##  digest       0.6.9   2016-01-08
+##  doParallel * 1.0.10  2015-10-14
+##  doRNG      * 1.6     2014-03-07
+##  dplyr        0.4.3   2015-09-01
+##  evaluate     0.10    2016-10-11
+##  fda        * 2.4.4   2014-12-16
+##  FDRreg     * 0.2-1   2017-05-03
+##  foreach    * 1.4.3   2015-10-13
+##  ggdendro     0.1-20  2016-04-27
+##  ggplot2      2.2.1   2016-12-30
+##  gridExtra    2.2.1   2016-02-29
+##  gtable       0.2.0   2016-02-26
+##  highr        0.6     2016-05-09
+##  iterators  * 1.0.8   2015-10-13
+##  knitr      * 1.15.1  2016-11-22
+##  lattice      0.20-33 2015-07-14
+##  lazyeval     0.2.0   2016-06-12
+##  magrittr     1.5     2014-11-22
+##  MASS       * 7.3-45  2016-04-21
+##  Matrix     * 1.2-6   2016-05-02
+##  memoise      1.0.0   2016-01-29
+##  mosaic       0.14.4  2016-07-29
+##  mosaicData   0.14.0  2016-06-17
+##  munsell      0.4.3   2016-02-13
+##  mvtnorm    * 1.0-6   2017-03-02
+##  pkgmaker   * 0.22    2014-05-14
+##  plyr         1.8.4   2016-06-08
+##  R6           2.1.2   2016-01-26
+##  Rcpp         0.12.10 2017-03-19
+##  registry   * 0.3     2015-07-08
+##  rngtools   * 1.2.4   2014-03-06
+##  scales       0.4.1   2016-11-09
+##  stringi      1.1.1   2016-05-27
+##  stringr      1.0.0   2015-04-30
+##  tibble       1.2     2016-08-26
+##  tidyr        0.5.1   2016-06-14
+##  withr        1.0.2   2016-06-20
+##  xtable       1.8-2   2016-02-05
+##  source                         
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.2)                 
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.3)                 
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.3)                 
+##  Github (jgscott/FDRreg@8025d1a)
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.3)                 
+##  CRAN (R 3.3.3)                 
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.0)                 
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.3)                 
+##  CRAN (R 3.3.3)                 
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.2)                 
+##  CRAN (R 3.3.2)                 
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.3)                 
+##  CRAN (R 3.3.2)                 
+##  CRAN (R 3.3.2)                 
+##  CRAN (R 3.3.3)                 
+##  CRAN (R 3.3.0)                 
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.2)                 
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.1)                 
+##  CRAN (R 3.3.1)
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\end{document}

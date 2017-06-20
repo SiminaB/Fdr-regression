@@ -1,0 +1,354 @@
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{## Load libraries}
+\hlkwd{library}\hlstd{(splines)}
+\hlkwd{library}\hlstd{(MASS)}
+\hlkwd{library}\hlstd{(swfdr)}
+
+\hlkwd{library}\hlstd{(doParallel)} \hlcom{##to make cluster (on Windows)}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: foreach}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: iterators}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: parallel}}\begin{alltt}
+\hlkwd{library}\hlstd{(foreach)} \hlcom{##to use foreach function that does the parallel processing}
+\hlkwd{library}\hlstd{(doRNG)} \hlcom{##for reproducible seeds when doing parallel processing}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: rngtools}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: pkgmaker}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: registry}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# \\\#\# Attaching package: 'pkgmaker'}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# The following object is masked from 'package:base':\\\#\# \\\#\#\ \ \ \  isNamespaceLoaded}}\begin{alltt}
+\hlcom{##don't need doRNG here, but easier to keep it in}
+
+\hlcom{##Source functions}
+\hlkwd{source}\hlstd{(}\hlstr{"../functions.R"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+Function to pull out means and variances across simulations:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{pullMeansVars} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{pi0EstSim}\hlstd{)}
+\hlstd{\{}
+  \hlcom{##pull out estimates at lambda=0.8, lambda=0.9, and final estimate}
+  \hlstd{pi0hat0.8} \hlkwb{<-} \hlkwd{sapply}\hlstd{(pi0EstSim,} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)\{x[[}\hlnum{1}\hlstd{]]\})}
+  \hlstd{pi0hat0.9} \hlkwb{<-} \hlkwd{sapply}\hlstd{(pi0EstSim,} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)\{x[[}\hlnum{2}\hlstd{]]\})}
+  \hlstd{pi0hatFinal} \hlkwb{<-} \hlkwd{sapply}\hlstd{(pi0EstSim,} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)\{x[[}\hlnum{3}\hlstd{]]\})}
+
+  \hlcom{##get means across simulations}
+  \hlstd{pi0hatMean0.8} \hlkwb{<-} \hlkwd{rowMeans}\hlstd{(pi0hat0.8)}
+  \hlstd{pi0hatMean0.9} \hlkwb{<-} \hlkwd{rowMeans}\hlstd{(pi0hat0.9)}
+  \hlstd{pi0hatMeanFinal} \hlkwb{<-} \hlkwd{rowMeans}\hlstd{(pi0hatFinal)}
+
+  \hlcom{##also get variances across simulations}
+  \hlstd{pi0hatVar0.8} \hlkwb{<-} \hlkwd{apply}\hlstd{(pi0hat0.8,}\hlnum{1}\hlstd{,var)}
+  \hlstd{pi0hatVar0.9} \hlkwb{<-} \hlkwd{apply}\hlstd{(pi0hat0.9,}\hlnum{1}\hlstd{,var)}
+  \hlstd{pi0hatVarFinal} \hlkwb{<-} \hlkwd{apply}\hlstd{(pi0hatFinal,}\hlnum{1}\hlstd{,var)}
+
+  \hlkwd{return}\hlstd{(}\hlkwd{list}\hlstd{(}\hlkwc{pi0hatMean0.8}\hlstd{=pi0hatMean0.8,}
+              \hlkwc{pi0hatMean0.9}\hlstd{=pi0hatMean0.9,}
+              \hlkwc{pi0hatMeanFinal}\hlstd{=pi0hatMeanFinal,}
+              \hlkwc{pi0hatVar0.8}\hlstd{=pi0hatVar0.8,}
+              \hlkwc{pi0hatVar0.9}\hlstd{=pi0hatVar0.9,}
+              \hlkwc{pi0hatVarFinal}\hlstd{=pi0hatVarFinal))}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+Simulations are performed for a variety of alternative distributions:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{altsGrid} \hlkwb{<-} \hlkwd{as.matrix}\hlstd{(}\hlkwd{expand.grid}\hlstd{(}\hlkwc{dist}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"z"}\hlstd{,}\hlstr{"t"}\hlstd{),}\hlkwc{nrBlocks}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{10}\hlstd{,}\hlnum{20}\hlstd{),}\hlkwc{corr}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0.2}\hlstd{,}\hlnum{0.5}\hlstd{,}\hlnum{0.9}\hlstd{)))}
+\hlstd{alts} \hlkwb{<-} \hlkwd{apply}\hlstd{(altsGrid,} \hlnum{1}\hlstd{,} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)\{}\hlkwd{paste}\hlstd{(}\hlstr{"alt"}\hlstd{,x[}\hlnum{1}\hlstd{],}\hlstr{"large"}\hlstd{,x[}\hlnum{2}\hlstd{],x[}\hlnum{3}\hlstd{],}\hlkwc{sep}\hlstd{=}\hlstr{"_"}\hlstd{)\})}
+\hlstd{alts}
+\end{alltt}
+\begin{verbatim}
+##  [1] "alt_z_large_10_0.2" "alt_t_large_10_0.2"
+##  [3] "alt_z_large_20_0.2" "alt_t_large_20_0.2"
+##  [5] "alt_z_large_10_0.5" "alt_t_large_10_0.5"
+##  [7] "alt_z_large_20_0.5" "alt_t_large_20_0.5"
+##  [9] "alt_z_large_10_0.9" "alt_t_large_10_0.9"
+## [11] "alt_z_large_20_0.9" "alt_t_large_20_0.9"
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\section{Probability of being a false positive is flat}
+
+Perform estimation and save estimates:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwa{for}\hlstd{(alt} \hlkwa{in} \hlstd{alts)}
+\hlstd{\{}
+  \hlkwd{load}\hlstd{(}\hlkwd{paste}\hlstd{(alt,}\hlstr{"simResults_1.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{))}
+
+  \hlstd{pi0EstSim} \hlkwb{<-} \hlkwd{estimate_pi0x_sims}\hlstd{(pValuesSims, tme)}
+
+  \hlcom{##pull out means and variances of estimates at lambda=0.8, lambda=0.9, and final estimate}
+  \hlstd{pi0MeansVars} \hlkwb{<-} \hlkwd{pullMeansVars}\hlstd{(pi0EstSim)}
+
+  \hlcom{##save full results}
+  \hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlkwd{paste}\hlstd{(alt,}\hlstr{"simResults_pi0x_thresh_1_full.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{),}
+       \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"pi0EstSim"}\hlstd{))}
+
+  \hlcom{##save summary results}
+  \hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlkwd{paste}\hlstd{(alt,}\hlstr{"simResults_pi0x_thresh_1.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{),}
+       \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"tme"}\hlstd{,} \hlstr{"pi0"}\hlstd{,} \hlstr{"pi0MeansVars"}\hlstd{))}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\section{Probability of being a false positive is smooth in one variable}
+
+Perform estimation and save estimates:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwa{for}\hlstd{(alt} \hlkwa{in} \hlstd{alts)}
+\hlstd{\{}
+  \hlkwd{load}\hlstd{(}\hlkwd{paste}\hlstd{(alt,}\hlstr{"simResults_2.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{))}
+  \hlstd{splineMat} \hlkwb{<-} \hlkwd{ns}\hlstd{(tme,}\hlkwc{df}\hlstd{=}\hlnum{3}\hlstd{)}
+
+  \hlcom{##--------linear fit-------##}
+  \hlstd{pi0EstSim.lin} \hlkwb{<-} \hlkwd{estimate_pi0x_sims}\hlstd{(pValuesSims, tme)}
+
+  \hlcom{##pull out means and variances of estimates at lambda=0.8, lambda=0.9, and final estimate}
+  \hlstd{pi0Lin.MeansVars} \hlkwb{<-} \hlkwd{pullMeansVars}\hlstd{(pi0EstSim.lin)}
+
+  \hlcom{##---------spline fit---------#}
+  \hlstd{pi0EstSim.spl} \hlkwb{<-} \hlkwd{estimate_pi0x_sims}\hlstd{(pValuesSims, splineMat)}
+
+  \hlcom{##pull out means and variances of estimates at lambda=0.8, lambda=0.9, and final estimate}
+  \hlstd{pi0Spl.MeansVars} \hlkwb{<-} \hlkwd{pullMeansVars}\hlstd{(pi0EstSim.spl)}
+
+  \hlcom{##save full results}
+  \hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlkwd{paste}\hlstd{(alt,}\hlstr{"simResults_pi0x_thresh_2_full.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{),}
+       \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"pi0EstSim.lin"}\hlstd{,}\hlstr{"pi0EstSim.spl"}\hlstd{))}
+
+  \hlcom{##save summary results}
+  \hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlkwd{paste}\hlstd{(alt,}\hlstr{"simResults_pi0x_thresh_2.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{),}
+       \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"tme"}\hlstd{,} \hlstr{"pi0"}\hlstd{,} \hlstr{"pi0Lin.MeansVars"}\hlstd{,} \hlstr{"pi0Spl.MeansVars"}\hlstd{))}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\section{Probability of being a false positive is smooth in one variable within levels of second variable}
+
+Perform estimation and save estimates:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwa{for}\hlstd{(alt} \hlkwa{in} \hlstd{alts)}
+\hlstd{\{}
+  \hlkwd{load}\hlstd{(}\hlkwd{paste}\hlstd{(alt,}\hlstr{"simResults_3.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{))}
+
+  \hlstd{m} \hlkwb{<-} \hlkwd{model.matrix}\hlstd{(}\hlopt{~}\hlkwd{as.character}\hlstd{(tme2))[,}\hlopt{-}\hlnum{1}\hlstd{]}
+
+  \hlstd{linearMat} \hlkwb{<-} \hlkwd{cbind}\hlstd{(tme1, m)}
+  \hlstd{splineMat} \hlkwb{<-} \hlkwd{cbind}\hlstd{(}\hlkwd{ns}\hlstd{(tme1,}\hlkwc{df}\hlstd{=}\hlnum{3}\hlstd{), m)}
+
+  \hlcom{##--------linear fit-------##}
+  \hlstd{pi0EstSim.lin} \hlkwb{<-} \hlkwd{estimate_pi0x_sims}\hlstd{(pValuesSims, linearMat)}
+
+  \hlcom{##pull out means and variances of estimates at lambda=0.8, lambda=0.9, and final estimate}
+  \hlstd{pi0Lin.MeansVars} \hlkwb{<-} \hlkwd{pullMeansVars}\hlstd{(pi0EstSim.lin)}
+
+  \hlcom{##---------spline fit---------#}
+  \hlstd{pi0EstSim.spl} \hlkwb{<-} \hlkwd{estimate_pi0x_sims}\hlstd{(pValuesSims, splineMat)}
+
+  \hlcom{##pull out means and variances of estimates at lambda=0.8, lambda=0.9, and final estimate}
+  \hlstd{pi0Spl.MeansVars} \hlkwb{<-} \hlkwd{pullMeansVars}\hlstd{(pi0EstSim.spl)}
+
+  \hlcom{##save full results}
+  \hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlkwd{paste}\hlstd{(alt,}\hlstr{"simResults_pi0x_thresh_3_full.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{),}
+       \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"pi0EstSim.lin"}\hlstd{,}\hlstr{"pi0EstSim.spl"}\hlstd{))}
+
+  \hlcom{##save summary results}
+  \hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlkwd{paste}\hlstd{(alt,}\hlstr{"simResults_pi0x_thresh_3.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{),}
+       \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"tme1"}\hlstd{,} \hlstr{"tme2"}\hlstd{,} \hlstr{"pi0"}\hlstd{,} \hlstr{"pi0Lin.MeansVars"}\hlstd{,} \hlstr{"pi0Spl.MeansVars"}\hlstd{))}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\section{Probability of being a false positive is smooth in one variable within levels of second variable - lower priors}
+
+Perform estimation and save estimates:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwa{for}\hlstd{(alt} \hlkwa{in} \hlstd{alts)}
+\hlstd{\{}
+  \hlkwd{load}\hlstd{(}\hlkwd{paste}\hlstd{(alt,}\hlstr{"simResults_4.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{))}
+
+  \hlstd{m} \hlkwb{<-} \hlkwd{model.matrix}\hlstd{(}\hlopt{~}\hlkwd{as.character}\hlstd{(tme2))[,}\hlopt{-}\hlnum{1}\hlstd{]}
+
+  \hlstd{linearMat} \hlkwb{<-} \hlkwd{cbind}\hlstd{(tme1, m)}
+  \hlstd{splineMat} \hlkwb{<-} \hlkwd{cbind}\hlstd{(}\hlkwd{ns}\hlstd{(tme1,}\hlkwc{df}\hlstd{=}\hlnum{3}\hlstd{), m)}
+
+  \hlcom{##--------linear fit-------##}
+  \hlstd{pi0EstSim.lin} \hlkwb{<-} \hlkwd{estimate_pi0x_sims}\hlstd{(pValuesSims, linearMat)}
+
+  \hlcom{##pull out means and variances of estimates at lambda=0.8, lambda=0.9, and final estimate}
+  \hlstd{pi0Lin.MeansVars} \hlkwb{<-} \hlkwd{pullMeansVars}\hlstd{(pi0EstSim.lin)}
+
+  \hlcom{##---------spline fit---------#}
+  \hlstd{pi0EstSim.spl} \hlkwb{<-} \hlkwd{estimate_pi0x_sims}\hlstd{(pValuesSims, splineMat)}
+
+  \hlcom{##pull out means and variances of estimates at lambda=0.8, lambda=0.9, and final estimate}
+  \hlstd{pi0Spl.MeansVars} \hlkwb{<-} \hlkwd{pullMeansVars}\hlstd{(pi0EstSim.spl)}
+
+  \hlcom{##save full results}
+  \hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlkwd{paste}\hlstd{(alt,}\hlstr{"simResults_pi0x_thresh_4_full.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{),}
+       \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"pi0EstSim.lin"}\hlstd{,}\hlstr{"pi0EstSim.spl"}\hlstd{))}
+
+  \hlcom{##save summary results}
+  \hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlkwd{paste}\hlstd{(alt,}\hlstr{"simResults_pi0x_thresh_4.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{),}
+       \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"tme1"}\hlstd{,} \hlstr{"tme2"}\hlstd{,} \hlstr{"pi0"}\hlstd{,} \hlstr{"pi0Lin.MeansVars"}\hlstd{,} \hlstr{"pi0Spl.MeansVars"}\hlstd{))}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+Session info:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{devtools}\hlopt{::}\hlkwd{session_info}\hlstd{()}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Session info -----------------------------------------------}}\begin{verbatim}
+##  setting  value                       
+##  version  R version 3.4.0 (2017-04-21)
+##  system   x86_64, mingw32             
+##  ui       RTerm                       
+##  language (EN)                        
+##  collate  English_United States.1252  
+##  tz       America/New_York            
+##  date     2017-06-01
+\end{verbatim}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Packages ---------------------------------------------------}}\begin{verbatim}
+##  package    * version date       source        
+##  assertthat   0.2.0   2017-04-11 CRAN (R 3.4.0)
+##  codetools    0.2-15  2016-10-05 CRAN (R 3.4.0)
+##  colorspace   1.3-2   2016-12-14 CRAN (R 3.4.0)
+##  DBI          0.6-1   2017-04-01 CRAN (R 3.4.0)
+##  devtools     1.12.0  2016-12-05 CRAN (R 3.4.0)
+##  digest       0.6.12  2017-01-27 CRAN (R 3.4.0)
+##  doParallel * 1.0.10  2015-10-14 CRAN (R 3.4.0)
+##  doRNG      * 1.6.6   2017-04-10 CRAN (R 3.4.0)
+##  dplyr        0.5.0   2016-06-24 CRAN (R 3.4.0)
+##  evaluate     0.10    2016-10-11 CRAN (R 3.4.0)
+##  foreach    * 1.4.3   2015-10-13 CRAN (R 3.4.0)
+##  ggplot2      2.2.1   2016-12-30 CRAN (R 3.4.0)
+##  gtable       0.2.0   2016-02-26 CRAN (R 3.4.0)
+##  highr        0.6     2016-05-09 CRAN (R 3.4.0)
+##  iterators  * 1.0.8   2015-10-13 CRAN (R 3.4.0)
+##  knitr      * 1.15.1  2016-11-22 CRAN (R 3.4.0)
+##  lazyeval     0.2.0   2016-06-12 CRAN (R 3.4.0)
+##  magrittr     1.5     2014-11-22 CRAN (R 3.4.0)
+##  MASS       * 7.3-47  2017-02-26 CRAN (R 3.4.0)
+##  memoise      1.1.0   2017-04-21 CRAN (R 3.4.0)
+##  munsell      0.4.3   2016-02-13 CRAN (R 3.4.0)
+##  pkgmaker   * 0.22    2014-05-14 CRAN (R 3.4.0)
+##  plyr         1.8.4   2016-06-08 CRAN (R 3.4.0)
+##  R6           2.2.0   2016-10-05 CRAN (R 3.4.0)
+##  Rcpp         0.12.10 2017-03-19 CRAN (R 3.4.0)
+##  registry   * 0.3     2015-07-08 CRAN (R 3.4.0)
+##  reshape2     1.4.2   2016-10-22 CRAN (R 3.4.0)
+##  rngtools   * 1.2.4   2014-03-06 CRAN (R 3.4.0)
+##  scales       0.4.1   2016-11-09 CRAN (R 3.4.0)
+##  stringi      1.1.5   2017-04-07 CRAN (R 3.4.0)
+##  stringr      1.2.0   2017-02-18 CRAN (R 3.4.0)
+##  swfdr      * 1.0.0   2017-04-25 Bioconductor  
+##  tibble       1.3.0   2017-04-01 CRAN (R 3.4.0)
+##  withr        1.0.2   2016-06-20 CRAN (R 3.4.0)
+##  xtable       1.8-2   2016-02-05 CRAN (R 3.4.0)
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\end{document}

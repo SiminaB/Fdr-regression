@@ -60,17 +60,13 @@
 \hlcom{## Load libraries}
 \hlkwd{library}\hlstd{(splines)}
 \hlkwd{library}\hlstd{(MASS)}
-\hlkwd{library}\hlstd{(mvtnorm)}
-\end{alltt}
 
+\hlkwd{library}\hlstd{(mnormt)} \hlcom{## for multivariate normal and t distributions}
+\hlkwd{library}\hlstd{(Matrix)} \hlcom{##for the bdiag function to create block-diagonal matrices}
 
-{\ttfamily\noindent\color{warningcolor}{\#\# Warning: package 'mvtnorm' was built under R version 3.3.2}}\begin{alltt}
-\hlkwd{library}\hlstd{(Matrix)} \hlcom{##for the bdiag function}
 \hlkwd{library}\hlstd{(doParallel)} \hlcom{##to make cluster (on Windows)}
 \end{alltt}
 
-
-{\ttfamily\noindent\color{warningcolor}{\#\# Warning: package 'doParallel' was built under R version 3.3.2}}
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: foreach}}
 
@@ -91,73 +87,64 @@
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# \\\#\# Attaching package: 'pkgmaker'}}
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# The following object is masked from 'package:base':\\\#\# \\\#\#\ \ \ \  isNamespaceLoaded}}\begin{alltt}
+\hlcom{##Source functions}
+\hlkwd{source}\hlstd{(}\hlstr{"../functions.R"}\hlstd{)}
+
 \hlcom{## Define the number of tests}
 \hlstd{ntest} \hlkwb{<-} \hlnum{1000}
 
-\hlcom{## Set nuber of simulations}
-\hlstd{nSims} \hlkwb{<-} \hlnum{10000}
-
-\hlcom{##second shape parameter for beta distribution}
-\hlstd{shape2} \hlkwb{<-} \hlnum{2}
+\hlcom{## Set number of simulations}
+\hlstd{nSims} \hlkwb{<-} \hlnum{200}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
 
-Function to generate p-values from correlated binary data + helper function:
+Do the simulations for a variety of alternative distributions:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlcom{##this is based on ra2ba from the bindata package, but returns a logical rather than a numeric variable (should save time as I was converting it into logical from binary)}
-\hlstd{ra2baLogic} \hlkwb{<-} \hlkwa{function} \hlstd{(}\hlkwc{x}\hlstd{)}
-\hlstd{\{}
-  \hlstd{retval} \hlkwb{<-} \hlstd{x} \hlopt{>} \hlnum{0}
-  \hlkwd{dim}\hlstd{(retval)} \hlkwb{<-} \hlkwd{dim}\hlstd{(x)}
-  \hlstd{retval}
-\hlstd{\}}
-
-\hlcom{##function to generate p-values}
-\hlstd{genPvals} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{pi0}\hlstd{,} \hlkwc{shape2}\hlstd{,} \hlkwc{Sigma}\hlstd{)}
-\hlstd{\{}
-  \hlstd{ntest} \hlkwb{<-} \hlkwd{length}\hlstd{(pi0)}
-
-  \hlstd{nullIlist} \hlkwb{<-} \hlkwd{rmvnorm}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwd{qnorm}\hlstd{(pi0), Sigma)}
-  \hlstd{nullI} \hlkwb{<-} \hlkwd{ra2baLogic}\hlstd{(nullIlist)[}\hlnum{1}\hlstd{,]}
-
-  \hlcom{##nullI <- rbinom(ntest,prob=pi0,size=1)> 0}
-
-  \hlstd{pValues} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{NA}\hlstd{,ntest)}
-  \hlstd{pValues[nullI]} \hlkwb{<-} \hlkwd{runif}\hlstd{(}\hlkwd{sum}\hlstd{(nullI))}
-  \hlstd{pValues[}\hlopt{!}\hlstd{nullI]} \hlkwb{<-} \hlkwd{rbeta}\hlstd{(}\hlkwd{sum}\hlstd{(}\hlopt{!}\hlstd{nullI),}\hlnum{1}\hlstd{,shape2)}
-
-  \hlstd{pValues}
-\hlstd{\}}
+\hlstd{altsGrid} \hlkwb{<-} \hlkwd{as.matrix}\hlstd{(}\hlkwd{expand.grid}\hlstd{(}\hlkwc{dist}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"z"}\hlstd{,}\hlstr{"t"}\hlstd{),}\hlkwc{nrBlocks}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{10}\hlstd{,}\hlnum{20}\hlstd{),}\hlkwc{corr}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0.2}\hlstd{,}\hlnum{0.5}\hlstd{,}\hlnum{0.9}\hlstd{)))}
+\hlstd{alts} \hlkwb{<-} \hlkwd{apply}\hlstd{(altsGrid,} \hlnum{1}\hlstd{,} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)\{}\hlkwd{paste}\hlstd{(}\hlstr{"alt"}\hlstd{,x[}\hlnum{1}\hlstd{],}\hlstr{"large"}\hlstd{,x[}\hlnum{2}\hlstd{],x[}\hlnum{3}\hlstd{],}\hlkwc{sep}\hlstd{=}\hlstr{"_"}\hlstd{)\})}
+\hlstd{alts}
 \end{alltt}
+\begin{verbatim}
+##  [1] "alt_z_large_10_0.2" "alt_t_large_10_0.2"
+##  [3] "alt_z_large_20_0.2" "alt_t_large_20_0.2"
+##  [5] "alt_z_large_10_0.5" "alt_t_large_10_0.5"
+##  [7] "alt_z_large_20_0.5" "alt_t_large_20_0.5"
+##  [9] "alt_z_large_10_0.9" "alt_t_large_10_0.9"
+## [11] "alt_z_large_20_0.9" "alt_t_large_20_0.9"
+\end{verbatim}
 \end{kframe}
 \end{knitrout}
 
-Create block diagonal correlation matrix:
+\section{Probability of being a false positive is flat}
+
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlcom{##create correlation matrix with 10 blocks of 100 rvs}
-\hlstd{rho} \hlkwb{<-} \hlnum{0.9}
-\hlstd{sizeBlock} \hlkwb{<-} \hlnum{100}
-\hlstd{nrBlocks} \hlkwb{<-} \hlstd{ntest}\hlopt{/}\hlstd{sizeBlock}
+\hlcom{## Set up the time vector and the probability of being null}
+\hlstd{tme} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{1}\hlstd{,} \hlkwc{length}\hlstd{=ntest)}
+\hlstd{pi0} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{0.9}\hlstd{,} \hlkwc{length}\hlstd{=ntest)}
 
-\hlstd{block} \hlkwb{<-} \hlkwd{matrix}\hlstd{(rho, sizeBlock, sizeBlock)}
-\hlkwd{diag}\hlstd{(block)} \hlkwb{<-} \hlnum{1}
-\hlstd{blockList} \hlkwb{<-} \hlkwd{list}\hlstd{()}
-\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlstd{nrBlocks)}
+\hlkwd{plot}\hlstd{(pi0} \hlopt{~} \hlstd{tme)}
+
+\hlkwa{for}\hlstd{(alt} \hlkwa{in} \hlstd{alts)}
 \hlstd{\{}
-  \hlstd{blockList[[i]]} \hlkwb{<-} \hlstd{block}
+  \hlstd{pValuesSims} \hlkwb{<-} \hlkwd{run_sims_alt_corr}\hlstd{(alt, nSims, pi0)}
+
+  \hlstd{zValuesSims} \hlkwb{<-} \hlstd{pValuesSims[,(}\hlnum{2}\hlopt{*}\hlstd{ntest}\hlopt{+}\hlnum{1}\hlstd{)}\hlopt{:}\hlstd{(}\hlnum{3}\hlopt{*}\hlstd{ntest)]}
+  \hlstd{nullHypSims} \hlkwb{<-} \hlstd{pValuesSims[,(ntest}\hlopt{+}\hlnum{1}\hlstd{)}\hlopt{:}\hlstd{(}\hlnum{2}\hlopt{*}\hlstd{ntest)]}
+  \hlstd{pValuesSims} \hlkwb{<-} \hlstd{pValuesSims[,}\hlnum{1}\hlopt{:}\hlstd{ntest]}
+
+  \hlcom{##save results}
+  \hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlkwd{paste}\hlstd{(alt,} \hlstr{"simResults_1.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{),}
+       \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"pi0"}\hlstd{,} \hlstr{"tme"}\hlstd{,} \hlstr{"nullHypSims"}\hlstd{,}\hlstr{"pValuesSims"}\hlstd{,}\hlstr{"zValuesSims"}\hlstd{))}
 \hlstd{\}}
-\hlstd{Sigma} \hlkwb{<-} \hlkwd{bdiag}\hlstd{(blockList)}
-\hlkwd{image}\hlstd{(Sigma)}
-\hlstd{Sigma} \hlkwb{<-} \hlkwd{as.matrix}\hlstd{(Sigma)}
 \end{alltt}
 \end{kframe}
 
-{\centering \includegraphics[width=\maxwidth]{Figures/unnamed-chunk-2-1} 
+{\centering \includegraphics[width=\maxwidth]{Figures/I-1} 
 
 }
 
@@ -165,138 +152,134 @@ Create block diagonal correlation matrix:
 
 \end{knitrout}
 
-\section{Probability of being a false positive as a linear function of time}
+\section{Probability of being a false positive is smooth in one variable}
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlcom{## Set up the time vector and the probability of being null}
-\hlstd{tme} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlopt{-}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{,}\hlkwc{length}\hlstd{=ntest)}
-\hlstd{pi0} \hlkwb{<-} \hlnum{1}\hlopt{/}\hlnum{4}\hlopt{*}\hlstd{tme}\hlopt{+}\hlnum{1}\hlopt{/}\hlnum{2}
+\hlstd{tme} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{1}\hlstd{,} \hlkwc{length}\hlstd{=ntest)}
+\hlstd{pi0} \hlkwb{<-} \hlkwd{fSingle}\hlstd{(tme)}
 
-\hlstd{cl}\hlkwb{<-}\hlkwd{makeCluster}\hlstd{(}\hlnum{8}\hlstd{)} \hlcom{##specify number of cores less than or equal to number of cores on your computer}
-\hlkwd{registerDoParallel}\hlstd{(cl)}
+\hlkwd{plot}\hlstd{(pi0} \hlopt{~} \hlstd{tme)}
 
-\hlkwd{set.seed}\hlstd{(}\hlnum{1345}\hlstd{)}
+\hlkwa{for}\hlstd{(alt} \hlkwa{in} \hlstd{alts)}
+\hlstd{\{}
+  \hlstd{pValuesSims} \hlkwb{<-} \hlkwd{run_sims_alt_corr}\hlstd{(alt, nSims, pi0)}
 
-\hlstd{pValuesSims} \hlkwb{<-} \hlkwd{foreach}\hlstd{(}\hlkwc{sim}\hlstd{=}\hlnum{1}\hlopt{:}\hlstd{nSims,} \hlkwc{.packages}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"Matrix"}\hlstd{,}\hlstr{"mvtnorm"}\hlstd{))} \hlopt{%dorng%} \hlstd{\{}
-  \hlkwd{genPvals}\hlstd{(pi0, shape2, Sigma)}
+  \hlkwd{dim}\hlstd{(pValuesSims)}
+
+  \hlstd{zValuesSims} \hlkwb{<-} \hlstd{pValuesSims[,(}\hlnum{2}\hlopt{*}\hlstd{ntest}\hlopt{+}\hlnum{1}\hlstd{)}\hlopt{:}\hlstd{(}\hlnum{3}\hlopt{*}\hlstd{ntest)]}
+  \hlstd{nullHypSims} \hlkwb{<-} \hlstd{pValuesSims[,(ntest}\hlopt{+}\hlnum{1}\hlstd{)}\hlopt{:}\hlstd{(}\hlnum{2}\hlopt{*}\hlstd{ntest)]}
+  \hlstd{pValuesSims} \hlkwb{<-} \hlstd{pValuesSims[,}\hlnum{1}\hlopt{:}\hlstd{ntest]}
+
+  \hlcom{##save results}
+  \hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlkwd{paste}\hlstd{(alt,} \hlstr{"simResults_2.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{),}
+       \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"pi0"}\hlstd{,} \hlstr{"tme"}\hlstd{,} \hlstr{"nullHypSims"}\hlstd{,}\hlstr{"pValuesSims"}\hlstd{,}\hlstr{"zValuesSims"}\hlstd{))}
 \hlstd{\}}
-
-\hlcom{##close the cluster}
-\hlkwd{stopCluster}\hlstd{(cl)}
-
-\hlkwd{length}\hlstd{(pValuesSims)}
-\end{alltt}
-\begin{verbatim}
-## [1] 10000
-\end{verbatim}
-\begin{alltt}
-\hlkwd{length}\hlstd{(pValuesSims[[}\hlnum{1}\hlstd{]])}
-\end{alltt}
-\begin{verbatim}
-## [1] 1000
-\end{verbatim}
-\begin{alltt}
-\hlcom{##save results}
-\hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlstr{"simResults_1.RData"}\hlstd{,}
-     \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"pValuesSims"}\hlstd{))}
 \end{alltt}
 \end{kframe}
+
+{\centering \includegraphics[width=\maxwidth]{Figures/II-1} 
+
+}
+
+
+
 \end{knitrout}
 
-\section{Probability of being a false positive as a smooth function of time}
+\section{Probability of being a false positive is smooth in one variable within levels of second variable}
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{set.seed}\hlstd{(}\hlnum{1345}\hlstd{)}
-
 \hlcom{## Set up the time vector and the probability of being null}
-\hlstd{tme} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlopt{-}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{,}\hlkwc{length}\hlstd{=ntest)}
-\hlstd{pi0} \hlkwb{<-} \hlkwd{pnorm}\hlstd{(tme)}
-
-\hlstd{splineMat} \hlkwb{<-} \hlkwd{ns}\hlstd{(tme,}\hlkwc{df}\hlstd{=}\hlnum{3}\hlstd{)}
-
-\hlstd{cl}\hlkwb{<-}\hlkwd{makeCluster}\hlstd{(}\hlnum{8}\hlstd{)} \hlcom{##specify number of cores less than or equal to number of cores on your computer}
-\hlkwd{registerDoParallel}\hlstd{(cl)}
-
-\hlkwd{set.seed}\hlstd{(}\hlnum{1345}\hlstd{)}
-
-\hlstd{pValuesSims} \hlkwb{<-} \hlkwd{foreach}\hlstd{(}\hlkwc{sim}\hlstd{=}\hlnum{1}\hlopt{:}\hlstd{nSims,} \hlkwc{.packages}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"Matrix"}\hlstd{,}\hlstr{"mvtnorm"}\hlstd{))} \hlopt{%dorng%} \hlstd{\{}
-  \hlkwd{genPvals}\hlstd{(pi0, shape2, Sigma)}
-\hlstd{\}}
-
-\hlcom{##close the cluster}
-\hlkwd{stopCluster}\hlstd{(cl)}
-
-\hlkwd{length}\hlstd{(pValuesSims)}
-\end{alltt}
-\begin{verbatim}
-## [1] 10000
-\end{verbatim}
-\begin{alltt}
-\hlkwd{length}\hlstd{(pValuesSims[[}\hlnum{1}\hlstd{]])}
-\end{alltt}
-\begin{verbatim}
-## [1] 1000
-\end{verbatim}
-\begin{alltt}
-\hlcom{##save results}
-\hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlstr{"simResults_2.RData"}\hlstd{,}
-     \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"pValuesSims"}\hlstd{))}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
-\section{Probability of being a false positive as a sine + step function}
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{set.seed}\hlstd{(}\hlnum{1345}\hlstd{)}
-
-\hlcom{## Set up the time vector and the probability of being null}
-\hlstd{tme1} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlopt{-}\hlnum{1}\hlopt{*}\hlstd{pi,}\hlnum{2}\hlopt{*}\hlstd{pi,}\hlkwc{length}\hlstd{=ntest)}
-\hlstd{tme2} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{0}\hlstd{,} \hlkwc{each}\hlstd{=ntest}\hlopt{/}\hlnum{2}\hlstd{)}
-\hlstd{pi0} \hlkwb{<-} \hlnum{1}\hlopt{/}\hlnum{4}\hlopt{*}\hlkwd{sin}\hlstd{(tme1)} \hlopt{+} \hlstd{tme2}\hlopt{/}\hlnum{4} \hlopt{+} \hlnum{1}\hlopt{/}\hlnum{2}
+\hlstd{tme1} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{1}\hlstd{,}\hlkwc{length}\hlstd{=ntest)}
+\hlstd{tme2cont} \hlkwb{<-} \hlkwd{runif}\hlstd{(ntest,}\hlnum{0}\hlstd{,}\hlnum{0.5}\hlstd{)}
+\hlkwd{set.seed}\hlstd{(}\hlnum{309441}\hlstd{)}
+\hlstd{tme2} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{NA}\hlstd{, ntest)}
+\hlstd{tme2[tme2cont} \hlopt{<} \hlnum{0.127}\hlstd{]} \hlkwb{<-} \hlnum{1}
+\hlstd{tme2[tme2cont} \hlopt{>=} \hlnum{0.127}\hlstd{]} \hlkwb{<-} \hlnum{2}
+\hlstd{tme2[tme2cont} \hlopt{>=} \hlnum{0.302}\hlstd{]} \hlkwb{<-} \hlnum{3}
+\hlstd{pi0} \hlkwb{<-} \hlkwd{f}\hlstd{(tme1, tme2)}
 \hlkwd{range}\hlstd{(pi0)}
 \end{alltt}
 \begin{verbatim}
-## [1] 0.2500028 0.9999972
+## [1] 0.6500664 1.0000000
 \end{verbatim}
 \begin{alltt}
-\hlstd{splineMat3} \hlkwb{<-} \hlkwd{cbind}\hlstd{(}\hlkwd{ns}\hlstd{(tme1,}\hlkwc{df}\hlstd{=}\hlnum{3}\hlstd{), tme2)}
-\hlstd{splineMat20} \hlkwb{<-} \hlkwd{cbind}\hlstd{(}\hlkwd{ns}\hlstd{(tme1,}\hlkwc{df}\hlstd{=}\hlnum{20}\hlstd{), tme2)}
+\hlkwd{plot}\hlstd{(pi0} \hlopt{~} \hlstd{tme1)}
 
-\hlstd{cl}\hlkwb{<-}\hlkwd{makeCluster}\hlstd{(}\hlnum{8}\hlstd{)} \hlcom{##specify number of cores less than or equal to number of cores on your computer}
-\hlkwd{registerDoParallel}\hlstd{(cl)}
+\hlkwa{for}\hlstd{(alt} \hlkwa{in} \hlstd{alts)}
+\hlstd{\{}
+  \hlstd{pValuesSims} \hlkwb{<-} \hlkwd{run_sims_alt_corr}\hlstd{(alt, nSims, pi0)}
 
-\hlkwd{set.seed}\hlstd{(}\hlnum{1345}\hlstd{)}
+  \hlkwd{dim}\hlstd{(pValuesSims)}
 
-\hlstd{pValuesSims} \hlkwb{<-} \hlkwd{foreach}\hlstd{(}\hlkwc{sim}\hlstd{=}\hlnum{1}\hlopt{:}\hlstd{nSims,} \hlkwc{.packages}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"Matrix"}\hlstd{,}\hlstr{"mvtnorm"}\hlstd{))} \hlopt{%dorng%} \hlstd{\{}
-  \hlkwd{genPvals}\hlstd{(pi0, shape2, Sigma)}
+  \hlstd{zValuesSims} \hlkwb{<-} \hlstd{pValuesSims[,(}\hlnum{2}\hlopt{*}\hlstd{ntest}\hlopt{+}\hlnum{1}\hlstd{)}\hlopt{:}\hlstd{(}\hlnum{3}\hlopt{*}\hlstd{ntest)]}
+  \hlstd{nullHypSims} \hlkwb{<-} \hlstd{pValuesSims[,(ntest}\hlopt{+}\hlnum{1}\hlstd{)}\hlopt{:}\hlstd{(}\hlnum{2}\hlopt{*}\hlstd{ntest)]}
+  \hlstd{pValuesSims} \hlkwb{<-} \hlstd{pValuesSims[,}\hlnum{1}\hlopt{:}\hlstd{ntest]}
+
+  \hlcom{##save results}
+  \hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlkwd{paste}\hlstd{(alt,} \hlstr{"simResults_3.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{),}
+       \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"pi0"}\hlstd{,} \hlstr{"tme1"}\hlstd{,} \hlstr{"tme2"}\hlstd{,} \hlstr{"nullHypSims"}\hlstd{,}\hlstr{"pValuesSims"}\hlstd{,}\hlstr{"zValuesSims"}\hlstd{))}
 \hlstd{\}}
-
-\hlcom{##close the cluster}
-\hlkwd{stopCluster}\hlstd{(cl)}
-
-\hlkwd{length}\hlstd{(pValuesSims)}
-\end{alltt}
-\begin{verbatim}
-## [1] 10000
-\end{verbatim}
-\begin{alltt}
-\hlkwd{length}\hlstd{(pValuesSims[[}\hlnum{1}\hlstd{]])}
-\end{alltt}
-\begin{verbatim}
-## [1] 1000
-\end{verbatim}
-\begin{alltt}
-\hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlstr{"simResults_3.RData"}\hlstd{,}
-     \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"pValuesSims"}\hlstd{))}
 \end{alltt}
 \end{kframe}
+
+{\centering \includegraphics[width=\maxwidth]{Figures/III-1} 
+
+}
+
+
+
+\end{knitrout}
+
+\section{Probability of being a false positive is smooth in one variable within levels of second variable - lower priors}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{## Set up the time vector and the probability of being null}
+\hlstd{tme1} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{1}\hlstd{,}\hlkwc{length}\hlstd{=ntest)}
+\hlstd{tme2cont} \hlkwb{<-} \hlkwd{runif}\hlstd{(ntest,}\hlnum{0}\hlstd{,}\hlnum{0.5}\hlstd{)}
+\hlkwd{set.seed}\hlstd{(}\hlnum{309441}\hlstd{)}
+\hlstd{tme2} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{NA}\hlstd{, ntest)}
+\hlstd{tme2[tme2cont} \hlopt{<} \hlnum{0.127}\hlstd{]} \hlkwb{<-} \hlnum{1}
+\hlstd{tme2[tme2cont} \hlopt{>=} \hlnum{0.127}\hlstd{]} \hlkwb{<-} \hlnum{2}
+\hlstd{tme2[tme2cont} \hlopt{>=} \hlnum{0.302}\hlstd{]} \hlkwb{<-} \hlnum{3}
+\hlstd{pi0} \hlkwb{<-} \hlnum{0.6}\hlopt{*}\hlkwd{f}\hlstd{(tme1, tme2)}
+\hlkwd{range}\hlstd{(pi0)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.3900398 0.6000000
+\end{verbatim}
+\begin{alltt}
+\hlkwd{plot}\hlstd{(pi0} \hlopt{~} \hlstd{tme1)}
+
+\hlkwa{for}\hlstd{(alt} \hlkwa{in} \hlstd{alts)}
+\hlstd{\{}
+  \hlstd{pValuesSims} \hlkwb{<-} \hlkwd{run_sims_alt_corr}\hlstd{(alt, nSims, pi0)}
+
+  \hlkwd{dim}\hlstd{(pValuesSims)}
+
+  \hlstd{zValuesSims} \hlkwb{<-} \hlstd{pValuesSims[,(}\hlnum{2}\hlopt{*}\hlstd{ntest}\hlopt{+}\hlnum{1}\hlstd{)}\hlopt{:}\hlstd{(}\hlnum{3}\hlopt{*}\hlstd{ntest)]}
+  \hlstd{nullHypSims} \hlkwb{<-} \hlstd{pValuesSims[,(ntest}\hlopt{+}\hlnum{1}\hlstd{)}\hlopt{:}\hlstd{(}\hlnum{2}\hlopt{*}\hlstd{ntest)]}
+  \hlstd{pValuesSims} \hlkwb{<-} \hlstd{pValuesSims[,}\hlnum{1}\hlopt{:}\hlstd{ntest]}
+
+  \hlcom{##save results}
+  \hlkwd{save}\hlstd{(}\hlkwc{file}\hlstd{=}\hlkwd{paste}\hlstd{(alt,} \hlstr{"simResults_4.RData"}\hlstd{,}\hlkwc{sep}\hlstd{=}\hlstr{"/"}\hlstd{),}
+       \hlkwc{list}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"pi0"}\hlstd{,} \hlstr{"tme1"}\hlstd{,} \hlstr{"tme2"}\hlstd{,} \hlstr{"nullHypSims"}\hlstd{,}\hlstr{"pValuesSims"}\hlstd{,}\hlstr{"zValuesSims"}\hlstd{))}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=\maxwidth]{Figures/IV-1} 
+
+}
+
+
+
 \end{knitrout}
 
 Session info:
@@ -309,41 +292,41 @@ Session info:
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# Session info -----------------------------------------------}}\begin{verbatim}
 ##  setting  value                       
-##  version  R version 3.3.1 (2016-06-21)
+##  version  R version 3.4.0 (2017-04-21)
 ##  system   x86_64, mingw32             
 ##  ui       RTerm                       
 ##  language (EN)                        
 ##  collate  English_United States.1252  
 ##  tz       America/New_York            
-##  date     2017-01-01
+##  date     2017-06-01
 \end{verbatim}
 
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# Packages ---------------------------------------------------}}\begin{verbatim}
 ##  package    * version date       source        
-##  codetools    0.2-14  2015-07-15 CRAN (R 3.3.1)
-##  devtools     1.12.0  2016-06-24 CRAN (R 3.3.1)
-##  digest       0.6.9   2016-01-08 CRAN (R 3.3.1)
-##  doParallel * 1.0.10  2015-10-14 CRAN (R 3.3.2)
-##  doRNG      * 1.6     2014-03-07 CRAN (R 3.3.1)
-##  evaluate     0.10    2016-10-11 CRAN (R 3.3.2)
-##  foreach    * 1.4.3   2015-10-13 CRAN (R 3.3.1)
-##  highr        0.6     2016-05-09 CRAN (R 3.3.1)
-##  iterators  * 1.0.8   2015-10-13 CRAN (R 3.3.0)
-##  knitr      * 1.15.1  2016-11-22 CRAN (R 3.3.2)
-##  lattice      0.20-33 2015-07-14 CRAN (R 3.3.1)
-##  magrittr     1.5     2014-11-22 CRAN (R 3.3.1)
-##  MASS       * 7.3-45  2016-04-21 CRAN (R 3.3.1)
-##  Matrix     * 1.2-6   2016-05-02 CRAN (R 3.3.1)
-##  memoise      1.0.0   2016-01-29 CRAN (R 3.3.1)
-##  mvtnorm    * 1.0-5   2016-02-02 CRAN (R 3.3.2)
-##  pkgmaker   * 0.22    2014-05-14 CRAN (R 3.3.1)
-##  registry   * 0.3     2015-07-08 CRAN (R 3.3.1)
-##  rngtools   * 1.2.4   2014-03-06 CRAN (R 3.3.1)
-##  stringi      1.1.1   2016-05-27 CRAN (R 3.3.0)
-##  stringr      1.0.0   2015-04-30 CRAN (R 3.3.1)
-##  withr        1.0.2   2016-06-20 CRAN (R 3.3.1)
-##  xtable       1.8-2   2016-02-05 CRAN (R 3.3.1)
+##  codetools    0.2-15  2016-10-05 CRAN (R 3.4.0)
+##  devtools     1.12.0  2016-12-05 CRAN (R 3.4.0)
+##  digest       0.6.12  2017-01-27 CRAN (R 3.4.0)
+##  doParallel * 1.0.10  2015-10-14 CRAN (R 3.4.0)
+##  doRNG      * 1.6.6   2017-04-10 CRAN (R 3.4.0)
+##  evaluate     0.10    2016-10-11 CRAN (R 3.4.0)
+##  foreach    * 1.4.3   2015-10-13 CRAN (R 3.4.0)
+##  highr        0.6     2016-05-09 CRAN (R 3.4.0)
+##  iterators  * 1.0.8   2015-10-13 CRAN (R 3.4.0)
+##  knitr      * 1.15.1  2016-11-22 CRAN (R 3.4.0)
+##  lattice      0.20-35 2017-03-25 CRAN (R 3.4.0)
+##  magrittr     1.5     2014-11-22 CRAN (R 3.4.0)
+##  MASS       * 7.3-47  2017-02-26 CRAN (R 3.4.0)
+##  Matrix     * 1.2-9   2017-03-14 CRAN (R 3.4.0)
+##  memoise      1.1.0   2017-04-21 CRAN (R 3.4.0)
+##  mnormt     * 1.5-5   2016-10-15 CRAN (R 3.4.0)
+##  pkgmaker   * 0.22    2014-05-14 CRAN (R 3.4.0)
+##  registry   * 0.3     2015-07-08 CRAN (R 3.4.0)
+##  rngtools   * 1.2.4   2014-03-06 CRAN (R 3.4.0)
+##  stringi      1.1.5   2017-04-07 CRAN (R 3.4.0)
+##  stringr      1.2.0   2017-02-18 CRAN (R 3.4.0)
+##  withr        1.0.2   2016-06-20 CRAN (R 3.4.0)
+##  xtable       1.8-2   2016-02-05 CRAN (R 3.4.0)
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
