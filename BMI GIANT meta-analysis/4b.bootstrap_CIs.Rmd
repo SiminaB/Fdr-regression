@@ -81,7 +81,7 @@ cl<-makeCluster(8) ##specify number of cores less than or equal to number of cor
 registerDoParallel(cl)
 
 set.seed(310840)
-nBoot <- 10
+nBoot <- 100
 ##save results
 date()
 
