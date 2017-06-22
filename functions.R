@@ -414,15 +414,20 @@ estFDR.TPR <- function(FDR.BL, FDR.BH, FDR.Storey, FDR.Scott=NULL, FDR.Scott_emp
     tprScott_emp <- estTPR(discScott_emp, nullHypSims.Scott_emp)
   }
   
-  FDR.TPR <- matrix(NA, nrow=5, ncol=2)
-  colnames(FDR.TPR) <- c("FDR","TPR")
+  FDR.TPR <- matrix(NA, nrow=5, ncol=3)
+  colnames(FDR.TPR) <- c("FDR","TPR","Percent used")
   rownames(FDR.TPR) <- c("BL","Scott","Scott_emp","Storey","BH")
   
-  FDR.TPR["BL",] <- c(mean(fdrBL), mean(tprBL))
-  FDR.TPR["Scott",] <- c(mean(fdrScott), mean(tprScott))
-  FDR.TPR["Scott_emp",] <- c(mean(fdrScott_emp), mean(tprScott_emp))
-  FDR.TPR["Storey",] <- c(mean(fdrStorey), mean(tprStorey))
-  FDR.TPR["BH",] <- c(mean(fdrBH), mean(tprBH))
+  FDR.TPR["BL",] <- c(mean(fdrBL), mean(tprBL), nrow(FDR.BL)/nrow(nullHypSims)*100)
+  FDR.TPR["Scott",] <- c(mean(fdrScott), mean(tprScott), nrow(FDR.Scott)/nrow(nullHypSims)*100)
+  if(length(dim(FDR.Scott_emp))==2)
+  {
+    FDR.TPR["Scott_emp",] <- c(mean(fdrScott_emp), mean(tprScott_emp), nrow(FDR.Scott_emp)/nrow(nullHypSims)*100)
+  } else {
+    FDR.TPR["Scott_emp",] <- c(mean(fdrScott_emp), mean(tprScott_emp), 0)
+  }
+  FDR.TPR["Storey",] <- c(mean(fdrStorey), mean(tprStorey), nrow(FDR.Storey)/nrow(nullHypSims)*100)
+  FDR.TPR["BH",] <- c(mean(fdrBH), mean(tprBH), nrow(FDR.BH)/nrow(nullHypSims)*100)
   
   FDR.TPR
 }

@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.5.20)  14 JUN 2017 16:51
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.5.20)  22 JUN 2017 10:56
 entering extended mode
 **4.make_FDR_TPR_tables.tex
 
 ("C:\Users\smb310\Documents\Research\FDR regression\Simulations - independent -
- revision - 10000\4.make_FDR_TPR_tables.tex"
+ 10000\4.make_FDR_TPR_tables.tex"
 LaTeX2e <2011/06/27>
 Babel <v3.8m> and hyphenation patterns for english, afrikaans, ancientgreek, ar
 abic, armenian, assamese, basque, bengali, bokmal, bulgarian, catalan, coptic, 
@@ -88,7 +88,7 @@ Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
 tim
 )
 ("C:\Users\smb310\Documents\Research\FDR regression\Simulations - independent -
- revision - 10000\4.make_FDR_TPR_tables.aux")
+ 10000\4.make_FDR_TPR_tables.aux")
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 53.
 LaTeX Font Info:    ... okay on input line 53.
 LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 53.
@@ -329,21 +329,21 @@ Underfull \vbox (badness 10000) detected at line 629
 Package color Info: Redefining color shadecolor on input line 634.
  [13] [14]
 ("C:\Users\smb310\Documents\Research\FDR regression\Simulations - independent -
- revision - 10000\4.make_FDR_TPR_tables.aux") ) 
+ 10000\4.make_FDR_TPR_tables.aux") ) 
 Here is how much of TeX's memory you used:
  1265 strings out of 493921
- 17747 string characters out of 3144873
- 176010 words of memory out of 3000000
+ 17670 string characters out of 3144873
+ 208633 words of memory out of 3000000
  4590 multiletter control sequences out of 15000+200000
  3976 words of font info for 16 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
  27i,5n,37p,326b,276s stack positions out of 5000i,500n,10000p,200000b,50000s
-<C:/Program Files (x86)/MiKTeX 2
-.9/fonts/type1/public/amsfonts/cm/cmitt10.pfb><C:/Program Files (x86)/MiKTeX 2.
-9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program Files (x86)/MiKTeX 2.9/f
-onts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fon
-ts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on 4.make_FDR_TPR_tables.pdf (14 pages, 72718 bytes).
+<C:/Program Files (x86)/MiKTeX 2.9/fonts/ty
+pe1/public/amsfonts/cm/cmitt10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/typ
+e1/public/amsfonts/cm/cmr10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/
+public/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/pu
+blic/amsfonts/cm/cmtt10.pfb>
+Output written on 4.make_FDR_TPR_tables.pdf (14 pages, 73129 bytes).
 PDF statistics:
  64 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

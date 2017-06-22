@@ -12,147 +12,307 @@ options(replace.assign=TRUE,width=60)
 ## Load libraries
 library(splines)
 library(MASS)
+library(qvalue)
 
 ##source functions
 source("../functions.R")
 @
 
-<<>>=
+\section{Normally-distributed test statistics}
+
+<<plot_of_mean_estimates_norm, fig.height=5, fig.width=8>>=
 alts <- c("alt_z_large","alt_t_large")
 
-for(alt in alts)
-{
-  print(alt)
-  print("I")
-  
-  load(paste(alt,"simResults_1.RData",sep="/"))
-  load(paste(alt,"simResults_pi0x_thresh_1.RData",sep="/"))
-  load(paste(alt,"simResults_pi0x_Scott_emp_1.RData",sep="/"))
-  load(paste(alt,"simResults_pi0x_Scott_1.RData",sep="/"))
+alt <- alts[1]
 
-  plotMeanPi0(pi0, pi0MeansVars, pi0hatScottMean, tme=tme)
-  legend("topright", inset=c(-0.71,0), 
-         legend=c("Truth", expression(paste("SLR (", lambda, "=0.8)")), 
-                  expression(paste("SLR (", lambda, "=0.9)")), 
-                  "SLR (smoothed)", "SLR (Scott)"),
-         col=c("black", "orange", "orange", "orange", "blue"), bty="n",
-         lwd=c(8,2,2,3,3), lty=c(1,3,2,1,1),
-         cex=1.2, x.intersp=0.2, y.intersp=1.0)  
-  
-  #################################################################################
-  
-    print("II")
+print("I")
 
-  load(paste(alt,"simResults_2.RData",sep="/"))
-  load(paste(alt,"simResults_pi0x_thresh_2.RData",sep="/"))
-  load(paste(alt,"simResults_pi0x_Scott_emp_2.RData",sep="/"))
-  load(paste(alt,"simResults_pi0x_Scott_2.RData",sep="/"))
-  
-  plotMeanPi0(pi0, pi0Lin.MeansVars, pi0hatLin.ScottMean, tme=tme)
-  legend("topright", inset=c(-0.71,0),##x=-0.2, y=0.45,##"bottomright", ##x=-100, y=0.3, 
-         legend=c("Truth", 
-                  expression(paste("SLR (", lambda, "=0.8)")),
-                  expression(paste("SLR (", lambda, "=0.9)")),
-                  "SLR (smoothed)",
-                  "SLR (Scott)"),
-         col=c("black", 
-               rep("orange",3), 
-               "blue"), 
-         bty="n",
-         lwd=c(8,2,2,3,3), lty=c(1,3,2,1,1),
-         cex=1.2, x.intersp=0.2, y.intersp=1.0)
-  
-  plotMeanPi0(pi0, pi0Spl.MeansVars, pi0hatSpl.ScottMean, tme=tme)
-  legend("topright", inset=c(-0.71,0),##x=-0.2, y=0.45,##"bottomright", ##x=-100, y=0.3, 
-         legend=c("Truth", 
-                  expression(paste("B-splines, 3 df (", lambda, "=0.8)")),
-                  expression(paste("B-splines, 3 df (", lambda, "=0.9)")),
-                  "B-splines, 3 df (smoothed)",
-                  "B-splines, 3 df (Scott)"),
-         col=c("black", 
-               rep("orange",3),
-               "blue"), 
-         bty="n",
-         lwd=c(8,2,2,3,3), lty=c(1,3,2,1,1),
-         cex=1.2, x.intersp=0.2, y.intersp=1.0)
-  
-    #################################################################################
-  
-    print("III")
-  
-  load(paste(alt,"simResults_3.RData",sep="/"))
-  load(paste(alt,"simResults_pi0x_thresh_3.RData",sep="/"))
-  load(paste(alt,"simResults_pi0x_Scott_emp_3.RData",sep="/"))
-  load(paste(alt,"simResults_pi0x_Scott_3.RData",sep="/"))
-  
-  plotMeanPi0(pi0, pi0Lin.MeansVars, pi0hatLin.ScottMean, tme=tme)
-  legend("topright", inset=c(-0.71,0),##x=-0.2, y=0.45,##"bottomright", ##x=-100, y=0.3, 
-         legend=c("Truth", 
-                  expression(paste("SLR (", lambda, "=0.8)")),
-                  expression(paste("SLR (", lambda, "=0.9)")),
-                  "SLR (smoothed)",
-                  "SLR (Scott)"),
-         col=c("black", 
-               rep("orange",3), 
-               "blue"), 
-         bty="n",
-         lwd=c(8,2,2,3,3), lty=c(1,3,2,1,1),
-         cex=1.2, x.intersp=0.2, y.intersp=1.0)
-  
-  plotMeanPi0(pi0, pi0Spl.MeansVars, pi0hatSpl.ScottMean, tme=tme)
-  legend("topright", inset=c(-0.71,0),##x=-0.2, y=0.45,##"bottomright", ##x=-100, y=0.3, 
-         legend=c("Truth", 
-                  expression(paste("B-splines, 3 df (", lambda, "=0.8)")),
-                  expression(paste("B-splines, 3 df (", lambda, "=0.9)")),
-                  "B-splines, 3 df (smoothed)",
-                  "B-splines, 3 df (Scott)"),
-         col=c("black", 
-               rep("orange",3),
-               "blue"), 
-         bty="n",
-         lwd=c(8,2,2,3,3), lty=c(1,3,2,1,1),
-         cex=1.2, x.intersp=0.2, y.intersp=1.0)
-  
-     #################################################################################
-  
-    print("IV")
-  
-  load(paste(alt,"simResults_4.RData",sep="/"))
-  load(paste(alt,"simResults_pi0x_thresh_4.RData",sep="/"))
-  load(paste(alt,"simResults_pi0x_Scott_emp_4.RData",sep="/"))
-  load(paste(alt,"simResults_pi0x_Scott_4.RData",sep="/"))
-  
-  plotMeanPi0(pi0, pi0Lin.MeansVars, pi0hatLin.ScottMean, tme=tme)
-  legend("topright", inset=c(-0.71,0),##x=-0.2, y=0.45,##"bottomright", ##x=-100, y=0.3, 
-         legend=c("Truth", 
-                  expression(paste("SLR (", lambda, "=0.8)")),
-                  expression(paste("SLR (", lambda, "=0.9)")),
-                  "SLR (smoothed)",
-                  "SLR (Scott)"),
-         col=c("black", 
-               rep("orange",3), 
-               "blue"), 
-         bty="n",
-         lwd=c(8,2,2,3,3), lty=c(1,3,2,1,1),
-         cex=1.2, x.intersp=0.2, y.intersp=1.0)
+load(paste(alt,"simResults_1.RData",sep="/"))
+load(paste(alt,"simResults_pi0x_thresh_1.RData",sep="/"))
+load(paste(alt,"simResults_pi0x_Scott_emp_1.RData",sep="/"))
+load(paste(alt,"simResults_pi0x_Scott_1.RData",sep="/"))
 
-  plotMeanPi0(pi0, pi0Spl.MeansVars, pi0hatSpl.ScottMean, tme=tme)
-  legend("topright", inset=c(-0.71,0),##x=-0.2, y=0.45,##"bottomright", ##x=-100, y=0.3, 
-         legend=c("Truth", 
-                  expression(paste("B-splines, 3 df (", lambda, "=0.8)")),
-                  expression(paste("B-splines, 3 df (", lambda, "=0.9)")),
-                  "B-splines, 3 df (smoothed)",
-                  "B-splines, 3 df (Scott)"),
-         col=c("black", 
-               rep("orange",3),
-               "blue"), 
-         bty="n",
-         lwd=c(8,2,2,3,3), lty=c(1,3,2,1,1),
-         cex=1.2, x.intersp=0.2, y.intersp=1.0)
-}
+pi0StoreyMean <- mean(apply(pValuesSims, 1, function(p){qvalue(p)$pi0}))
+
+plotMeanPi0(pi0, pi0MeansVars, pi0hatScottMean, pi0StoreyMean, pi0StoreyMean, tme=tme, main="I")
+legend("topright", inset=c(-0.45,0),##x=-0.2, y=0.45,##"bottomright", ##x=-100, y=0.3, 
+       legend=c("Truth", 
+                "Linear (BL)",
+                "Linear (Scott T)",
+                "Storey"),
+       col=c("black", 
+             "orange",
+             "blue",
+             "brown"), 
+       bty="n",
+       lwd=c(3,3,3,3), lty=c(1,1,1,1),
+       cex=1.2, x.intersp=0.2, y.intersp=1.0)
+
+#################################################################################
+
+print("II")
+
+load(paste(alt,"simResults_2.RData",sep="/"))
+load(paste(alt,"simResults_pi0x_thresh_2.RData",sep="/"))
+load(paste(alt,"simResults_pi0x_Scott_emp_2.RData",sep="/"))
+load(paste(alt,"simResults_pi0x_Scott_2.RData",sep="/"))
+
+pi0StoreyMean <- mean(apply(pValuesSims, 1, function(p){qvalue(p)$pi0}))
+
+plotMeanPi0(pi0, pi0MeansVars, pi0hatScottMean, pi0StoreyMean, pi0StoreyMean, tme=tme, main="I")
+legend("topright", inset=c(-0.45,0),##x=-0.2, y=0.45,##"bottomright", ##x=-100, y=0.3, 
+       legend=c("Truth", 
+                "Linear (BL)",
+                "Linear (Scott T)",
+                "Storey"),
+       col=c("black", 
+             "orange",
+             "blue",
+             "brown"), 
+       bty="n",
+       lwd=c(3,3,3,3), lty=c(1,1,1,1),
+       cex=1.2, x.intersp=0.2, y.intersp=1.0)
+
+plotMeanPi0(pi0, pi0Spl.MeansVars, pi0hatSpl.ScottMean, pi0StoreyMean, tme=tme, main="II")
+legend("topright", inset=c(-0.7,0),##x=-0.2, y=0.45,##"bottomright", ##x=-100, y=0.3, 
+       legend=c("Truth", 
+                "Linear (BL)",
+                "Linear (Scott T)",
+                "Storey"),
+       col=c("black", 
+             "orange",
+             "blue",
+             "brown"), 
+       bty="n",
+       lwd=c(3,3,3,3), lty=c(1,1,1,1),
+       cex=1.2, x.intersp=0.2, y.intersp=1.0) 
+
+#################################################################################
+
+print("III")
+
+load(paste(alt,"simResults_3.RData",sep="/"))
+load(paste(alt,"simResults_pi0x_thresh_3.RData",sep="/"))
+load(paste(alt,"simResults_pi0x_Scott_emp_3.RData",sep="/"))
+load(paste(alt,"simResults_pi0x_Scott_3.RData",sep="/"))
+
+pi0StoreyMean <- mean(apply(pValuesSims, 1, function(p){qvalue(p)$pi0}))
+
+plotMeanPi0(pi0, pi0Lin.MeansVars, pi0hatLin.ScottMean, pi0StoreyMean, tme=tme, main="III")
+legend("topright", inset=c(-0.45,0),##x=-0.2, y=0.45,##"bottomright", ##x=-100, y=0.3, 
+       legend=c("Truth", 
+                "Linear (BL)",
+                "Linear (Scott T)",
+                "Storey"),
+       col=c("black", 
+             "orange",
+             "blue",
+             "brown"), 
+       bty="n",
+       lwd=c(3,3,3,3), lty=c(1,1,1,1),
+       cex=1.2, x.intersp=0.2, y.intersp=1.0)
+
+plotMeanPi0(pi0, pi0Spl.MeansVars, pi0hatSpl.ScottMean, pi0StoreyMean, tme=tme, main="III")
+legend("topright", inset=c(-0.7,0),##x=-0.2, y=0.45,##"bottomright", ##x=-100, y=0.3, 
+       legend=c("Truth", 
+                "Linear (BL)",
+                "Linear (Scott T)",
+                "Storey"),
+       col=c("black", 
+             "orange",
+             "blue",
+             "brown"), 
+       bty="n",
+       lwd=c(3,3,3,3), lty=c(1,1,1,1),
+       cex=1.2, x.intersp=0.2, y.intersp=1.0)
+
+#################################################################################
+
+print("IV")
+
+load(paste(alt,"simResults_4.RData",sep="/"))
+load(paste(alt,"simResults_pi0x_thresh_4.RData",sep="/"))
+load(paste(alt,"simResults_pi0x_Scott_emp_4.RData",sep="/"))
+load(paste(alt,"simResults_pi0x_Scott_4.RData",sep="/"))
+
+pi0StoreyMean <- mean(apply(pValuesSims, 1, function(p){qvalue(p)$pi0}))
+
+plotMeanPi0(pi0, pi0Lin.MeansVars, pi0hatLin.ScottMean, pi0StoreyMean, tme=tme, main="IV")
+legend("topright", inset=c(-0.45,0),##x=-0.2, y=0.45,##"bottomright", ##x=-100, y=0.3, 
+       legend=c("Truth", 
+                "Linear (BL)",
+                "Linear (Scott T)",
+                "Storey"),
+       col=c("black", 
+             "orange",
+             "blue",
+             "brown"), 
+       bty="n",
+       lwd=c(3,3,3,3), lty=c(1,1,1,1),
+       cex=1.2, x.intersp=0.2, y.intersp=1.0)
+
+plotMeanPi0(pi0, pi0Spl.MeansVars, pi0hatSpl.ScottMean, pi0StoreyMean, tme=tme, main="IV")
+legend("topright", inset=c(-0.7,0),##x=-0.2, y=0.45,##"bottomright", ##x=-100, y=0.3, 
+       legend=c("Truth", 
+                "Linear (BL)",
+                "Linear (Scott T)",
+                "Storey"),
+       col=c("black", 
+             "orange",
+             "blue",
+             "brown"), 
+       bty="n",
+       lwd=c(3,3,3,3), lty=c(1,1,1,1),
+       cex=1.2, x.intersp=0.2, y.intersp=1.0)
 
 @
 
+\section{T-distributed test statistics}
+
+<<plot_of_mean_estimates_t, fig.height=5, fig.width=8>>=
+alt <- alts[2]
+
+print("I")
+
+load(paste(alt,"simResults_1.RData",sep="/"))
+load(paste(alt,"simResults_pi0x_thresh_1.RData",sep="/"))
+load(paste(alt,"simResults_pi0x_Scott_emp_1.RData",sep="/"))
+load(paste(alt,"simResults_pi0x_Scott_1.RData",sep="/"))
+
+pi0StoreyMean <- mean(apply(pValuesSims, 1, function(p){qvalue(p)$pi0}))
+
+plotMeanPi0(pi0, pi0MeansVars, pi0hatScottMean, pi0StoreyMean, tme=tme, main="I")
+legend("topright", inset=c(-0.45,0),##x=-0.2, y=0.45,##"bottomright", ##x=-100, y=0.3, 
+       legend=c("Truth", 
+                "Linear (BL)",
+                "Linear (Scott T)",
+                "Storey"),
+       col=c("black", 
+             "orange",
+             "blue",
+             "brown"), 
+       bty="n",
+       lwd=c(3,3,3,3), lty=c(1,1,1,1),
+       cex=1.2, x.intersp=0.2, y.intersp=1.0)
+
+#################################################################################
+
+print("II")
+
+load(paste(alt,"simResults_2.RData",sep="/"))
+load(paste(alt,"simResults_pi0x_thresh_2.RData",sep="/"))
+load(paste(alt,"simResults_pi0x_Scott_emp_2.RData",sep="/"))
+load(paste(alt,"simResults_pi0x_Scott_2.RData",sep="/"))
+
+pi0StoreyMean <- mean(apply(pValuesSims, 1, function(p){qvalue(p)$pi0}))
+
+plotMeanPi0(pi0, pi0Lin.MeansVars, pi0hatLin.ScottMean, pi0StoreyMean, tme=tme, main="II")
+legend("topright", inset=c(-0.45,0),##x=-0.2, y=0.45,##"bottomright", ##x=-100, y=0.3, 
+       legend=c("Truth", 
+                "Linear (BL)",
+                "Linear (Scott T)",
+                "Storey"),
+       col=c("black", 
+             "orange",
+             "blue",
+             "brown"), 
+       bty="n",
+       lwd=c(3,3,3,3), lty=c(1,1,1,1),
+       cex=1.2, x.intersp=0.2, y.intersp=1.0)
+
+plotMeanPi0(pi0, pi0Spl.MeansVars, pi0hatSpl.ScottMean, pi0StoreyMean, tme=tme, main="II")
+legend("topright", inset=c(-0.7,0),##x=-0.2, y=0.45,##"bottomright", ##x=-100, y=0.3, 
+       legend=c("Truth", 
+                "Linear (BL)",
+                "Linear (Scott T)",
+                "Storey"),
+       col=c("black", 
+             "orange",
+             "blue",
+             "brown"), 
+       bty="n",
+       lwd=c(3,3,3,3), lty=c(1,1,1,1),
+       cex=1.2, x.intersp=0.2, y.intersp=1.0)
+
+#################################################################################
+
+print("III")
+
+load(paste(alt,"simResults_3.RData",sep="/"))
+load(paste(alt,"simResults_pi0x_thresh_3.RData",sep="/"))
+load(paste(alt,"simResults_pi0x_Scott_emp_3.RData",sep="/"))
+load(paste(alt,"simResults_pi0x_Scott_3.RData",sep="/"))
+
+pi0StoreyMean <- mean(apply(pValuesSims, 1, function(p){qvalue(p)$pi0}))
+
+plotMeanPi0(pi0, pi0Lin.MeansVars, pi0hatLin.ScottMean, pi0StoreyMean, tme=tme, main="III")
+legend("topright", inset=c(-0.45,0),##x=-0.2, y=0.45,##"bottomright", ##x=-100, y=0.3, 
+       legend=c("Truth", 
+                "Linear (BL)",
+                "Linear (Scott T)",
+                "Storey"),
+       col=c("black", 
+             "orange",
+             "blue",
+             "brown"), 
+       bty="n",
+       lwd=c(3,3,3,3), lty=c(1,1,1,1),
+       cex=1.2, x.intersp=0.2, y.intersp=1.0)
+
+plotMeanPi0(pi0, pi0Spl.MeansVars, pi0hatSpl.ScottMean, pi0StoreyMean, tme=tme, main="III")
+legend("topright", inset=c(-0.7,0),##x=-0.2, y=0.45,##"bottomright", ##x=-100, y=0.3, 
+       legend=c("Truth", 
+                "Linear (BL)",
+                "Linear (Scott T)",
+                "Storey"),
+       col=c("black", 
+             "orange",
+             "blue",
+             "brown"), 
+       bty="n",
+       lwd=c(3,3,3,3), lty=c(1,1,1,1),
+       cex=1.2, x.intersp=0.2, y.intersp=1.0)
+
+#################################################################################
+
+print("IV")
+
+load(paste(alt,"simResults_4.RData",sep="/"))
+load(paste(alt,"simResults_pi0x_thresh_4.RData",sep="/"))
+load(paste(alt,"simResults_pi0x_Scott_emp_4.RData",sep="/"))
+load(paste(alt,"simResults_pi0x_Scott_4.RData",sep="/"))
+
+pi0StoreyMean <- mean(apply(pValuesSims, 1, function(p){qvalue(p)$pi0}))
+
+plotMeanPi0(pi0, pi0Lin.MeansVars, pi0hatLin.ScottMean, pi0StoreyMean, tme=tme, main="IV")
+legend("topright", inset=c(-0.45,0),##x=-0.2, y=0.45,##"bottomright", ##x=-100, y=0.3, 
+       legend=c("Truth", 
+                "Linear (BL)",
+                "Linear (Scott T)",
+                "Storey"),
+       col=c("black", 
+             "orange",
+             "blue",
+             "brown"), 
+       bty="n",
+       lwd=c(3,3,3,3), lty=c(1,1,1,1),
+       cex=1.2, x.intersp=0.2, y.intersp=1.0)
+
+plotMeanPi0(pi0, pi0Spl.MeansVars, pi0hatSpl.ScottMean, pi0StoreyMean, tme=tme, main="IV")
+legend("topright", inset=c(-0.7,0),##x=-0.2, y=0.45,##"bottomright", ##x=-100, y=0.3, 
+       legend=c("Truth", 
+                "Linear (BL)",
+                "Linear (Scott T)",
+                "Storey"),
+       col=c("black", 
+             "orange",
+             "blue",
+             "brown"), 
+       bty="n",
+       lwd=c(3,3,3,3), lty=c(1,1,1,1),
+       cex=1.2, x.intersp=0.2, y.intersp=1.0)
+
+@
 
 
 
