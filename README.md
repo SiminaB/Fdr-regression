@@ -63,16 +63,21 @@ The file **6.make_Figure_comparing_means.Rnw** inputs alt_z_large/simResults* an
 This directory contains the code to run the simulations for the independent test statistics, m=10,000 feature case, and generate Table 4 and Figures S3-S4. 
 Before running it, should first create the subdirectories that start with alt*, which represent the different mechanisms for generating p-values under the alternative distribution.
 
-The file **1.run_simulations.Rnw** simulates data and creates the files **simResults_1.RData**, **simResults_2.RData**, **simResults_3.RData**. Each of these files is around 70 MB. *They are not included here due to repository size limitations*. Running it also generates the file **1.run_simulations.pdf**.
+Some of the output files are not included here due to repository size limitations.
 
-The file **2.estimate_pi0x_noThresh.Rnw** inputs the simResults\*.RData files and generates the **simResults_pi0x_noThresh\*.RData** files. Running it also generates the file **2.estimate_pi0x_noThresh.pdf**.
+The file **1.run_simulations.Rnw** simulates data and creates the files **alt\*/simResults_\*.RData**. Running it also generates the file **1.run_simulations.pdf**.
 
-The file **2.estimate_pi0x_thresh.Rnw** inputs the simResults\*.RData files and generates the **simResults_pi0x_thresh\*.RData** files. Running it also generates the file **2.estimate_pi0x_thresh.pdf**.
+The file **2.estimate_pi0x_thresh.Rnw** inputs the alt\*/simResults\*.RData files and generates the **alt\*/simResults_pi0x_thresh\*.RData** files. Running it also generates the file **2.estimate_pi0x_thresh.pdf**.
 
-The file **3.estimate_pi0x_Scott.Rnw** inputs the simResults\*.RData files and generates the **simResults_pi0x_Scott\*.RData** files. Running it also generates the file **3.estimate_pi0x_Scott.pdf**.
+The file **3.estimate_pi0x_Scott.Rnw** inputs the alt\*/simResults\*.RData files and generates the **simResults_pi0x_Scott\*.RData** files. Running it also generates the file **3.estimate_pi0x_Scott.pdf**.
 
-The file **4.make_Figure_1_S1.Rnw** inputs the simResults_pi0x_noThresh\*.RData and simResults_pi0x_Scott\*.RData files and generates Figures 1 and S1 from the paper, saved in **Figures/Fig1\*-1.pdf** and **Figures/FigS1\*-1.pdf**. Running it also generates the file **4.make_Figure_1_S1.pdf**.
+The file **3.estimate_pi0x_Scott_emp.Rnw** inputs the alt\*/simResults\*.RData files and generates the **simResults_pi0x_Scott_emp\*.RData** files. Running it also generates the file **3.estimate_pi0x_Scott_emp.pdf**.
 
-The file **4.make_Figure_2.Rnw** inputs the simResults_pi0x_thresh\*.RData and simResults_pi0x_Scott\*.RData files and generates Figure 2 from the paper, saved in **Figures/Fig2\*-1.pdf**. Running it also generates the file **4.make_Figure_2.pdf**.
+The file **4.make_FDR_TPR_tables.Rnw** inputs all the files in alt\* and generates the **alt\*/FDR_TPR_sims.RData** files. Running it also generates the file **4.make_FDR_TPR_tables.pdf**.
 
-The file **5.make_Table_S1.Rnw** generates the results that are used in Table S1 in the paper. The table can be obtained from the generated file **4.make_Table_S1.pdf**.
+The file **5.make_combined_FDR_TDR_table.Rnw** inputs alt\*/FDR_TPR_sims.RData** files and generates tables with all the simulation results. Running it also generates the file **5.make_combined_FDR_TPR_table.pdf**.
+
+The file **5.make_combined_FDR_TDR_table_only_WS.Rnw** inputs alt\*/FDR_TPR_sims.RData** files and generates Table 4. Running it also generates the file **5.make_combined_FDR_TPR_table_only_WS.pdf**.
+
+The file **6.make_Figure_comparing_means.Rnw** inputs alt_z_large/simResults* and alt_t_large/simResults* and generates Figures S3 and S4. Running it also generates the file **6.make_Figure_comparing_means.pdf**.
+
