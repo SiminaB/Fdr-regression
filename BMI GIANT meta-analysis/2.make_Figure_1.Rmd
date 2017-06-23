@@ -1,5 +1,5 @@
 ---
-title: "Generate histograms in Figure 1"
+title: "Generate histograms in Figures 1, S5"
 author: "Simina Boca, Jeff Leek"
 date: "`r Sys.Date()`"
 output: rmarkdown::pdf_document
@@ -27,6 +27,7 @@ library(betareg)
 library(splines)
 library(Hmisc)
 library(ggplot2)
+library(IHW)
 ```
 
 Load the .RData file with the BMI GIANT GWAS meta-analysis data:
@@ -42,6 +43,22 @@ par(mfrow=c(1,2))
 hist(BMI_GIANT_GWAS$p, col="grey", main="All N", xlab="P-value")
 hist(BMI_GIANT_GWAS$p[BMI_GIANT_GWAS$N < 200000], 
      col="grey", main="N < 200,000", xlab="P-value")
+```
+
+Do diagnostic plots as in \url{http://bioconductor.org/packages/release/bioc/vignettes/IHW/inst/doc/introduction_to_ihw.html#diagnostic-plots}:
+
+```{r FigS5, fig.width=9, fig.height=5}
+BMI_GIANT_GWAS$NGroup <- groups_by_filter(BMI_GIANT_GWAS$N,8)
+
+table(BMI_GIANT_GWAS$NGroup)
+
+ggplot(BMI_GIANT_GWAS, aes(x=p)) +
+  geom_histogram(binwidth = 0.025, boundary = 0) +
+  facet_wrap( ~ NGroup, nrow=2)
+
+ggplot(BMI_GIANT_GWAS, aes(x=p)) +
+  geom_histogram(binwidth = 0.025, boundary = 0) +
+  facet_wrap( ~ Freq_MAF_Int_Hapmap, nrow=1)
 ```
 
 ### Session Information

@@ -11,7 +11,7 @@ The .pdf files can be generated from the .Rmd/.Rnw files by opening them in RStu
 
 Some of the code is parallelized in order to substantially speed it up. Please note that this is only checked on a Windows machine and adjustments may need to be made for other operating systems and for machines with different numbers of cores.
 
-Note that the simulation code and the bootstrapping code can be particularly computationally intensitive and some of the files may take several hours to run. (Can compare date last modified for .Rnw files and .pdf files to obtain an estimate.)
+Note that the simulation code and the bootstrapping code can be particularly computationally intensitive and some of the files may take several hours to run. 
 Some of the output files are not included, due to reposity size limitations.
 
 The directory structure is as follows:
@@ -20,13 +20,13 @@ The directory structure is as follows:
 The file **functions.R** contains a number of R functions used in some of the Rnw and Rmd files below.
 
 ##BMI GIANT GWAS meta-analysis
-This directory contains the code to perform the data analysis and generate Figures 1 and 2, which are saved in the "Figures" subdirectory.
+This directory contains the code to perform the data analysis and generate Figures 1, 2, and S5 which are saved in the "Figures" subdirectory.
 The data must first be downloaded from https://www.broadinstitute.org/collaboration/giant/index.php/GIANT_consortium_data_files#GWAS_Anthropometric_2015_BMI
 It is not included here, due to repository size limitations.
 
 The file **1.read_in_GIANT.Rmd** reads in the data in tsv format and creates the **BMI_GIANT_GWAS.RData file**. Running it also generates the file **1.read_in_GIANT.pdf**.
 
-The file **2.make_Figure_1.Rmd** loads BMI_GIANT_GWAS.RData and generates Figure 1 from the paper, saved in Figures/Fig3-1.pdf. Running it also generates the file 2.make_Figure_1.pdf.
+The file **2.make_Figure_1.Rmd** loads BMI_GIANT_GWAS.RData and generates Figures 1 and S5 from the paper, saved in Figures/Fig3-1.pdf, Figures/FigS5-1.pdf, Figures/FigS5-2.pdf, as well as the numbers used in Table 2. Running it also generates the file 2.make_Figure_1.pdf.
 
 The file **3.run_analysis.Rmd** loads BMI_GIANT_GWAS.RData and runs our approach, saving the results to **BMI_GIANT_GWAS_results_logistic.RData**. Running it also generates the file **3.run_analysis.pdf**.
 
@@ -39,7 +39,7 @@ The file **4b.bootstrap_CIs.Rmd** loads BMI_GIANT_GWAS.RData, BMI_GIANT_GWAS_res
 The file **5.make_Figure_2.Rmd** loads BMI_GIANT_GWAS.RData, BMI_GIANT_GWAS_results_logistic.RData, BMI_GIANT_GWAS_results_Scott.RData,  BMI_GIANT_GWAS_results_Scott_theoretical.RData, and **BMI_GIANT_GWAS_bootstrap_CIs_logistic.RData** generates Figure 2 from the paper, saved in **Figures/Fig2-1.pdf**. Running it also generates the file **5.make_Figure_2.pdf**.
 
 ##Simulations - independent
-This directory contains the code to run the simulations and generate Figures 1, 2, and S1, and Table S1. 
+This directory contains the code to run the simulations for the independent test statistics, m=1,000 feature case, and generate Table 3 and Figures S1-S2. 
 
 The file **1.run_simulations.Rnw** simulates data and creates the files **simResults_1.RData**, **simResults_2.RData**, **simResults_3.RData**. Each of these files is around 70 MB. *They are not included here due to repository size limitations*. Running it also generates the file **1.run_simulations.pdf**.
 
