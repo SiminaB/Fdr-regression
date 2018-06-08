@@ -249,7 +249,7 @@ genPvalsCorrT <- function(pi0, muAlt, Sigma, n=6)
 }
 
 ##------Function to plot means and true values of pi0------##
-plotMeanPi0 <- function(pi0, pi0Means, pi0ScottMean, pi0StoreyMean, tme, xi1=FALSE, main="I")
+plotMeanPi0 <- function(pi0, pi0Means, pi0ScottMean, pi0StoreyMean, tme, xi1=TRUE, main="I")
 {
   par(cex.axis = 1.1, cex.main=1.3,
       mar=c(5.1, 4.1, 4.1, 14.6), xpd=TRUE)
@@ -295,7 +295,7 @@ getVarBound <- function(z, lambda)
 }
 
 ##plot variance and upper bound
-plotVarBound <- function(pi0hatVarBound, pi0hatVar, tme, xi1=FALSE)
+plotVarBound <- function(pi0hatVarBound, pi0hatVar, tme, xi1=TRUE)
 {
   plot(pi0hatVarBound ~ tme, col="red", ylim=c(0, max(pi0hatVarBound)),
        lwd=3, lty=3,

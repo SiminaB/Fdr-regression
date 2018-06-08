@@ -1,24 +1,13 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2014.5.20)  22 JUN 2017 10:31
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6500 64-bit) (preloaded format=pdflatex 2018.2.6)  8 JUN 2018 15:24
 entering extended mode
-**6.make_Figure_comparing_means.tex
-
-("C:\Users\smb310\Documents\Research\FDR regression\Simulations - independent\6
-.make_Figure_comparing_means.tex"
-LaTeX2e <2011/06/27>
-Babel <v3.8m> and hyphenation patterns for english, afrikaans, ancientgreek, ar
-abic, armenian, assamese, basque, bengali, bokmal, bulgarian, catalan, coptic, 
-croatian, czech, danish, dutch, esperanto, estonian, farsi, finnish, french, ga
-lician, german, german-x-2013-05-26, greek, gujarati, hindi, hungarian, iceland
-ic, indonesian, interlingua, irish, italian, kannada, kurmanji, latin, latvian,
- lithuanian, malayalam, marathi, mongolian, mongolianlmc, monogreek, ngerman, n
-german-x-2013-05-26, nynorsk, oriya, panjabi, pinyin, polish, portuguese, roman
-ian, russian, sanskrit, serbian, slovak, slovenian, spanish, swedish, swissgerm
-an, tamil, telugu, turkish, turkmen, ukenglish, ukrainian, uppersorbian, usengl
-ishmax, welsh, loaded.
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\article.cls"
-Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\size10.clo"
-File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+**./6.make_Figure_comparing_means.tex
+(6.make_Figure_comparing_means.tex
+LaTeX2e <2017-04-15>
+Babel <3.15> and hyphenation patterns for 75 language(s) loaded.
+("C:\Program Files\MiKTeX 2.9\tex\latex\base\article.cls"
+Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
+("C:\Program Files\MiKTeX 2.9\tex\latex\base\size10.clo"
+File: size10.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
 )
 \c@part=\count79
 \c@section=\count80
@@ -32,47 +21,39 @@ File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 \belowcaptionskip=\skip42
 \bibindent=\dimen102
 )
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\graphicx.sty"
-Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\graphicx.sty"
+Package: graphicx 2017/06/01 v1.1a Enhanced LaTeX Graphics (DPC,SPQR)
 
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\keyval.sty"
-Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\keyval.sty"
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
 \KV@toks@=\toks14
 )
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\graphics.sty"
-Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\graphics.sty"
+Package: graphics 2017/06/25 v1.2c Standard LaTeX Graphics (DPC,SPQR)
 
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\trig.sty"
-Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\trig.sty"
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
 )
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\00miktex\graphics.cfg"
-File: graphics.cfg 2007/01/18 v1.5 graphics configuration of teTeX/TeXLive
+("C:\Program Files\MiKTeX 2.9\tex\latex\graphics-cfg\graphics.cfg"
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
-Package graphics Info: Driver file: pdftex.def on input line 91.
+Package graphics Info: Driver file: pdftex.def on input line 99.
 
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\pdftex-def\pdftex.def"
-File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
-
-("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\infwarerr.sty"
-Package: infwarerr 2010/04/08 v1.3 Providing info/warning/error messages (HO)
-)
-("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\ltxcmds.sty"
-Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
-)
-\Gread@gobject=\count87
+("C:\Program Files\MiKTeX 2.9\tex\latex\graphics-def\pdftex.def"
+File: pdftex.def 2017/06/24 v1.0g Graphics/color driver for pdftex
 ))
 \Gin@req@height=\dimen103
 \Gin@req@width=\dimen104
 )
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\color.sty"
-Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
+("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\color.sty"
+Package: color 2016/07/10 v1.1e Standard LaTeX Color (DPC)
 
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\00miktex\color.cfg"
-File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+("C:\Program Files\MiKTeX 2.9\tex\latex\graphics-cfg\color.cfg"
+File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
-Package color Info: Driver file: pdftex.def on input line 130.
+Package color Info: Driver file: pdftex.def on input line 147.
 )
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\framed\framed.sty"
+("C:\Program Files\MiKTeX 2.9\tex\latex\framed\framed.sty"
 Package: framed 2011/10/22 v 0.96: framed or shaded text with page breaks
 \OuterFrameSep=\skip43
 \fb@frw=\dimen105
@@ -80,15 +61,16 @@ Package: framed 2011/10/22 v 0.96: framed or shaded text with page breaks
 \FrameRule=\dimen107
 \FrameSep=\dimen108
 )
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\alltt.sty"
+("C:\Program Files\MiKTeX 2.9\tex\latex\base\alltt.sty"
 Package: alltt 1997/06/16 v2.0g defines alltt environment
 )
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\upquote\upquote.sty"
+("C:\Program Files\MiKTeX 2.9\tex\latex\upquote\upquote.sty"
 Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
 tim
 )
-("C:\Users\smb310\Documents\Research\FDR regression\Simulations - independent\6
-.make_Figure_comparing_means.aux")
+(6.make_Figure_comparing_means.aux)
+\openout1 = `6.make_Figure_comparing_means.aux'.
+
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 53.
 LaTeX Font Info:    ... okay on input line 53.
 LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 53.
@@ -102,163 +84,223 @@ LaTeX Font Info:    ... okay on input line 53.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 53.
 LaTeX Font Info:    ... okay on input line 53.
 
-("C:\Program Files (x86)\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
+("C:\Program Files\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count88
+\scratchcounter=\count87
 \scratchdimen=\dimen109
 \scratchbox=\box26
-\nofMPsegments=\count89
-\nofMParguments=\count90
+\nofMPsegments=\count88
+\nofMParguments=\count89
 \everyMPshowfont=\toks15
-\MPscratchCnt=\count91
+\MPscratchCnt=\count90
 \MPscratchDim=\dimen110
-\MPnumerator=\count92
-\makeMPintoPDFobject=\count93
+\MPnumerator=\count91
+\makeMPintoPDFobject=\count92
 \everyMPtoPDFconversion=\toks16
-)
-Package color Info: Redefining color shadecolor on input line 58.
-LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10> not available
-(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 61.
-Package color Info: Redefining color shadecolor on input line 74.
-LaTeX Font Info:    Try loading font information for OMS+cmtt on input line 91.
+) ("C:\Program Files\MiKTeX 2.9\tex\latex\oberdiek\epstopdf-base.sty"
+Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
 
- (C:/PROGRA~1/R/R-33~1.1/share/texmf/tex/latex\omscmtt.fd
+("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\infwarerr.sty"
+Package: infwarerr 2016/05/16 v1.4 Providing info/warning/error messages (HO)
+)
+("C:\Program Files\MiKTeX 2.9\tex\latex\oberdiek\grfext.sty"
+Package: grfext 2016/05/16 v1.2 Manage graphics extensions (HO)
+
+("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\kvdefinekeys.sty"
+Package: kvdefinekeys 2016/05/16 v1.4 Define keys (HO)
+
+("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\ltxcmds.sty"
+Package: ltxcmds 2016/05/16 v1.23 LaTeX kernel commands for general use (HO)
+)))
+("C:\Program Files\MiKTeX 2.9\tex\latex\oberdiek\kvoptions.sty"
+Package: kvoptions 2016/05/16 v3.12 Key value format for package options (HO)
+
+("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\kvsetkeys.sty"
+Package: kvsetkeys 2016/05/16 v1.17 Key value parser (HO)
+
+("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\etexcmds.sty"
+Package: etexcmds 2016/05/16 v1.6 Avoid name clashes with e-TeX commands (HO)
+
+("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\ifluatex.sty"
+Package: ifluatex 2016/05/16 v1.4 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+)))
+("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\pdftexcmds.sty"
+Package: pdftexcmds 2017/03/19 v0.25 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\ifpdf.sty"
+Package: ifpdf 2017/03/15 v3.2 Provides the ifpdf switch
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+38.
+Package grfext Info: Graphics extension search list:
+(grfext)             [.pdf,.png,.jpg,.mps,.jpeg,.jbig2,.jb2,.PDF,.PNG,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 456.
+)
+! Undefined control sequence.
+l.54 \SweaveOpts
+                {concordance=TRUE}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+Package color Info: Redefining color shadecolor on input line 59.
+LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10> not available
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 62.
+Package color Info: Redefining color shadecolor on input line 75.
+LaTeX Font Info:    Try loading font information for OMS+cmtt on input line 92.
+
+(C:/PROGRA~1/R/R-34~1.4/share/texmf/tex/latex\omscmtt.fd
 File: omscmtt.fd 
 )
 LaTeX Font Info:    Font shape `OMS/cmtt/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 91.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 92.
 
-Overfull \hbox (32.49683pt too wide) in paragraph at lines 91--91
+Overfull \hbox (32.49683pt too wide) in paragraph at lines 92--92
 [][]\OT1/cmtt/m/n/10 pi0StoreyMean[] []<-[] []mean[][]([][]apply[][](pValuesSim
 s,[] []1[][],[] []function[][]([][]p[][])\OMS/cmsy/m/n/10 f[][]\OT1/cmtt/m/n/10
  qvalue[][](p)[][]$[][]pi0\OMS/cmsy/m/n/10 g\OT1/cmtt/m/n/10 ))[][] 
  []
 
 
-Overfull \hbox (158.9956pt too wide) in paragraph at lines 93--93
+Overfull \hbox (158.9956pt too wide) in paragraph at lines 94--94
 [][]\OT1/cmtt/m/n/10 plotMeanPi0[][](pi0, pi0MeansVars, pi0hatScottMean, pi0Sto
 reyMean, pi0StoreyMean,[] []tme[][]=tme,[] []main[][]=[][]"I"[][])[][] 
  []
 
 
-Overfull \hbox (113.48213pt too wide) in paragraph at lines 94--94
+Overfull \hbox (113.48213pt too wide) in paragraph at lines 95--95
 [][]\OT1/cmtt/m/n/10 legend[][]([][]"topright"[][],[] []inset[][]=[][]c[][]([][
 ]-[][]0.45[][],[][]0[][]),[][]\OT1/cmtt/m/it/10 ##x=-0.2, y=0.45,##"bottomright
 ", ##x=-100, y=0.3, [][] 
  []
 
 
-Overfull \hbox (81.9824pt too wide) in paragraph at lines 107--107
+Overfull \hbox (81.9824pt too wide) in paragraph at lines 108--108
 [][]\OT1/cmtt/m/it/10 #########################################################
 ########################[][] 
  []
 
 
-Overfull \hbox (32.49683pt too wide) in paragraph at lines 120--120
+Overfull \hbox (32.49683pt too wide) in paragraph at lines 121--121
 [][]\OT1/cmtt/m/n/10 pi0StoreyMean[] []<-[] []mean[][]([][]apply[][](pValuesSim
 s,[] []1[][],[] []function[][]([][]p[][])\OMS/cmsy/m/n/10 f[][]\OT1/cmtt/m/n/10
  qvalue[][](p)[][]$[][]pi0\OMS/cmsy/m/n/10 g\OT1/cmtt/m/n/10 ))[][] 
  []
 
 
-Overfull \hbox (158.9956pt too wide) in paragraph at lines 122--122
+Overfull \hbox (164.24556pt too wide) in paragraph at lines 123--123
 [][]\OT1/cmtt/m/n/10 plotMeanPi0[][](pi0, pi0MeansVars, pi0hatScottMean, pi0Sto
-reyMean, pi0StoreyMean,[] []tme[][]=tme,[] []main[][]=[][]"I"[][])[][] 
+reyMean, pi0StoreyMean,[] []tme[][]=tme,[] []main[][]=[][]"II"[][])[][] 
  []
 
 
-Overfull \hbox (113.48213pt too wide) in paragraph at lines 123--123
+Overfull \hbox (113.48213pt too wide) in paragraph at lines 124--124
 [][]\OT1/cmtt/m/n/10 legend[][]([][]"topright"[][],[] []inset[][]=[][]c[][]([][
 ]-[][]0.45[][],[][]0[][]),[][]\OT1/cmtt/m/it/10 ##x=-0.2, y=0.45,##"bottomright
 ", ##x=-100, y=0.3, [][] 
  []
 
 
-Overfull \hbox (127.49588pt too wide) in paragraph at lines 136--136
+Overfull \hbox (127.49588pt too wide) in paragraph at lines 137--137
 [][]\OT1/cmtt/m/n/10 plotMeanPi0[][](pi0, pi0Spl.MeansVars, pi0hatSpl.ScottMean
 , pi0StoreyMean,[] []tme[][]=tme,[] []main[][]=[][]"II"[][])[][] 
  []
 
 
-Overfull \hbox (108.23218pt too wide) in paragraph at lines 137--137
+Overfull \hbox (108.23218pt too wide) in paragraph at lines 138--138
 [][]\OT1/cmtt/m/n/10 legend[][]([][]"topright"[][],[] []inset[][]=[][]c[][]([][
 ]-[][]0.7[][],[][]0[][]),[][]\OT1/cmtt/m/it/10 ##x=-0.2, y=0.45,##"bottomright"
 , ##x=-100, y=0.3, [][] 
  []
 
 
-Overfull \hbox (81.9824pt too wide) in paragraph at lines 150--150
+Overfull \hbox (81.9824pt too wide) in paragraph at lines 151--151
 [][]\OT1/cmtt/m/it/10 #########################################################
 ########################[][] 
  []
 
 
-Overfull \hbox (32.49683pt too wide) in paragraph at lines 163--163
+Overfull \hbox (32.49683pt too wide) in paragraph at lines 164--164
 [][]\OT1/cmtt/m/n/10 pi0StoreyMean[] []<-[] []mean[][]([][]apply[][](pValuesSim
 s,[] []1[][],[] []function[][]([][]p[][])\OMS/cmsy/m/n/10 f[][]\OT1/cmtt/m/n/10
  qvalue[][](p)[][]$[][]pi0\OMS/cmsy/m/n/10 g\OT1/cmtt/m/n/10 ))[][] 
  []
 
 
-Overfull \hbox (132.74583pt too wide) in paragraph at lines 165--165
+Overfull \hbox (132.74583pt too wide) in paragraph at lines 166--166
 [][]\OT1/cmtt/m/n/10 plotMeanPi0[][](pi0, pi0Lin.MeansVars, pi0hatLin.ScottMean
 , pi0StoreyMean,[] []tme[][]=tme,[] []main[][]=[][]"III"[][])[][] 
  []
 
 
-Overfull \hbox (113.48213pt too wide) in paragraph at lines 166--166
+Overfull \hbox (113.48213pt too wide) in paragraph at lines 167--167
 [][]\OT1/cmtt/m/n/10 legend[][]([][]"topright"[][],[] []inset[][]=[][]c[][]([][
 ]-[][]0.45[][],[][]0[][]),[][]\OT1/cmtt/m/it/10 ##x=-0.2, y=0.45,##"bottomright
 ", ##x=-100, y=0.3, [][] 
  []
 
 
-Overfull \hbox (132.74583pt too wide) in paragraph at lines 179--179
+Overfull \hbox (132.74583pt too wide) in paragraph at lines 180--180
 [][]\OT1/cmtt/m/n/10 plotMeanPi0[][](pi0, pi0Spl.MeansVars, pi0hatSpl.ScottMean
 , pi0StoreyMean,[] []tme[][]=tme,[] []main[][]=[][]"III"[][])[][] 
  []
 
 
-Overfull \hbox (108.23218pt too wide) in paragraph at lines 180--180
+Overfull \hbox (108.23218pt too wide) in paragraph at lines 181--181
 [][]\OT1/cmtt/m/n/10 legend[][]([][]"topright"[][],[] []inset[][]=[][]c[][]([][
 ]-[][]0.7[][],[][]0[][]),[][]\OT1/cmtt/m/it/10 ##x=-0.2, y=0.45,##"bottomright"
 , ##x=-100, y=0.3, [][] 
  []
 
 
-Overfull \hbox (81.9824pt too wide) in paragraph at lines 193--193
+Overfull \hbox (81.9824pt too wide) in paragraph at lines 194--194
 [][]\OT1/cmtt/m/it/10 #########################################################
 ########################[][] 
  []
 
 
-Overfull \hbox (32.49683pt too wide) in paragraph at lines 206--206
+Overfull \hbox (32.49683pt too wide) in paragraph at lines 207--207
 [][]\OT1/cmtt/m/n/10 pi0StoreyMean[] []<-[] []mean[][]([][]apply[][](pValuesSim
 s,[] []1[][],[] []function[][]([][]p[][])\OMS/cmsy/m/n/10 f[][]\OT1/cmtt/m/n/10
  qvalue[][](p)[][]$[][]pi0\OMS/cmsy/m/n/10 g\OT1/cmtt/m/n/10 ))[][] 
  []
 
 
-Overfull \hbox (127.49588pt too wide) in paragraph at lines 208--208
+Overfull \hbox (127.49588pt too wide) in paragraph at lines 209--209
 [][]\OT1/cmtt/m/n/10 plotMeanPi0[][](pi0, pi0Lin.MeansVars, pi0hatLin.ScottMean
 , pi0StoreyMean,[] []tme[][]=tme,[] []main[][]=[][]"IV"[][])[][] 
  []
 
 
-Overfull \hbox (113.48213pt too wide) in paragraph at lines 209--209
+Overfull \hbox (113.48213pt too wide) in paragraph at lines 210--210
 [][]\OT1/cmtt/m/n/10 legend[][]([][]"topright"[][],[] []inset[][]=[][]c[][]([][
 ]-[][]0.45[][],[][]0[][]),[][]\OT1/cmtt/m/it/10 ##x=-0.2, y=0.45,##"bottomright
 ", ##x=-100, y=0.3, [][] 
  []
 
 
-Overfull \hbox (127.49588pt too wide) in paragraph at lines 222--222
+Overfull \hbox (127.49588pt too wide) in paragraph at lines 223--223
 [][]\OT1/cmtt/m/n/10 plotMeanPi0[][](pi0, pi0Spl.MeansVars, pi0hatSpl.ScottMean
 , pi0StoreyMean,[] []tme[][]=tme,[] []main[][]=[][]"IV"[][])[][] 
  []
 
 
-Overfull \hbox (108.23218pt too wide) in paragraph at lines 223--223
+Overfull \hbox (108.23218pt too wide) in paragraph at lines 224--224
 [][]\OT1/cmtt/m/n/10 legend[][]([][]"topright"[][],[] []inset[][]=[][]c[][]([][
 ]-[][]0.7[][],[][]0[][]),[][]\OT1/cmtt/m/it/10 ##x=-0.2, y=0.45,##"bottomright"
 , ##x=-100, y=0.3, [][] 
@@ -266,299 +308,295 @@ Overfull \hbox (108.23218pt too wide) in paragraph at lines 223--223
 
 [1
 
-{C:/Users/smb310/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}] [2]
-[3] <Figures/plot_of_mean_estimates_norm-1.pdf, id=16, 578.16pt x 361.35pt>
+{C:/Users/Simina/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}] [2]
+[3]
+<Figures/plot_of_mean_estimates_norm-1.pdf, id=16, pagebox=cropbox, 578.16pt x 
+361.35pt>
 File: Figures/plot_of_mean_estimates_norm-1.pdf Graphic file (type pdf)
-
 <use Figures/plot_of_mean_estimates_norm-1.pdf>
-Package pdftex.def Info: Figures/plot_of_mean_estimates_norm-1.pdf used on inpu
-t line 238.
-(pdftex.def)             Requested size: 345.0pt x 215.6207pt.
-
-<Figures/plot_of_mean_estimates_norm-2.pdf, id=17, 578.16pt x 361.35pt>
+Package pdftex.def Info: Figures/plot_of_mean_estimates_norm-1.pdf  used on inp
+ut line 239. on input line 239.
+Package pdftex.def Info: Requested size: 345.0pt x 215.6207pt on input line 239
+.
+<Figures/plot_of_mean_estimates_norm-2.pdf, id=17, pagebox=cropbox, 578.16pt x 
+361.35pt>
 File: Figures/plot_of_mean_estimates_norm-2.pdf Graphic file (type pdf)
-
 <use Figures/plot_of_mean_estimates_norm-2.pdf>
-Package pdftex.def Info: Figures/plot_of_mean_estimates_norm-2.pdf used on inpu
-t line 239.
-(pdftex.def)             Requested size: 345.0pt x 215.6207pt.
-
-<Figures/plot_of_mean_estimates_norm-3.pdf, id=18, 578.16pt x 361.35pt>
+Package pdftex.def Info: Figures/plot_of_mean_estimates_norm-2.pdf  used on inp
+ut line 240. on input line 240.
+Package pdftex.def Info: Requested size: 345.0pt x 215.6207pt on input line 240
+.
+<Figures/plot_of_mean_estimates_norm-3.pdf, id=18, pagebox=cropbox, 578.16pt x 
+361.35pt>
 File: Figures/plot_of_mean_estimates_norm-3.pdf Graphic file (type pdf)
-
 <use Figures/plot_of_mean_estimates_norm-3.pdf>
-Package pdftex.def Info: Figures/plot_of_mean_estimates_norm-3.pdf used on inpu
-t line 240.
-(pdftex.def)             Requested size: 345.0pt x 215.6207pt.
-
-<Figures/plot_of_mean_estimates_norm-4.pdf, id=19, 578.16pt x 361.35pt>
+Package pdftex.def Info: Figures/plot_of_mean_estimates_norm-3.pdf  used on inp
+ut line 241. on input line 241.
+Package pdftex.def Info: Requested size: 345.0pt x 215.6207pt on input line 241
+.
+<Figures/plot_of_mean_estimates_norm-4.pdf, id=19, pagebox=cropbox, 578.16pt x 
+361.35pt>
 File: Figures/plot_of_mean_estimates_norm-4.pdf Graphic file (type pdf)
-
 <use Figures/plot_of_mean_estimates_norm-4.pdf>
-Package pdftex.def Info: Figures/plot_of_mean_estimates_norm-4.pdf used on inpu
-t line 241.
-(pdftex.def)             Requested size: 345.0pt x 215.6207pt.
-
-<Figures/plot_of_mean_estimates_norm-5.pdf, id=20, 578.16pt x 361.35pt>
+Package pdftex.def Info: Figures/plot_of_mean_estimates_norm-4.pdf  used on inp
+ut line 242. on input line 242.
+Package pdftex.def Info: Requested size: 345.0pt x 215.6207pt on input line 242
+.
+<Figures/plot_of_mean_estimates_norm-5.pdf, id=20, pagebox=cropbox, 578.16pt x 
+361.35pt>
 File: Figures/plot_of_mean_estimates_norm-5.pdf Graphic file (type pdf)
-
 <use Figures/plot_of_mean_estimates_norm-5.pdf>
-Package pdftex.def Info: Figures/plot_of_mean_estimates_norm-5.pdf used on inpu
-t line 242.
-(pdftex.def)             Requested size: 345.0pt x 215.6207pt.
-
-<Figures/plot_of_mean_estimates_norm-6.pdf, id=21, 578.16pt x 361.35pt>
+Package pdftex.def Info: Figures/plot_of_mean_estimates_norm-5.pdf  used on inp
+ut line 243. on input line 243.
+Package pdftex.def Info: Requested size: 345.0pt x 215.6207pt on input line 243
+.
+<Figures/plot_of_mean_estimates_norm-6.pdf, id=21, pagebox=cropbox, 578.16pt x 
+361.35pt>
 File: Figures/plot_of_mean_estimates_norm-6.pdf Graphic file (type pdf)
-
 <use Figures/plot_of_mean_estimates_norm-6.pdf>
-Package pdftex.def Info: Figures/plot_of_mean_estimates_norm-6.pdf used on inpu
-t line 243.
-(pdftex.def)             Requested size: 345.0pt x 215.6207pt.
-
-<Figures/plot_of_mean_estimates_norm-7.pdf, id=22, 578.16pt x 361.35pt>
+Package pdftex.def Info: Figures/plot_of_mean_estimates_norm-6.pdf  used on inp
+ut line 244. on input line 244.
+Package pdftex.def Info: Requested size: 345.0pt x 215.6207pt on input line 244
+.
+<Figures/plot_of_mean_estimates_norm-7.pdf, id=22, pagebox=cropbox, 578.16pt x 
+361.35pt>
 File: Figures/plot_of_mean_estimates_norm-7.pdf Graphic file (type pdf)
-
 <use Figures/plot_of_mean_estimates_norm-7.pdf>
-Package pdftex.def Info: Figures/plot_of_mean_estimates_norm-7.pdf used on inpu
-t line 244.
-(pdftex.def)             Requested size: 345.0pt x 215.6207pt.
- [4 <C:/Users/smb310/Documents/Research/FDR regression/Simulations - independen
-t/Figures/plot_of_mean_estimates_norm-1.pdf>] [5 <C:/Users/smb310/Documents/Res
-earch/FDR regression/Simulations - independent/Figures/plot_of_mean_estimates_n
-orm-2.pdf> <C:/Users/smb310/Documents/Research/FDR regression/Simulations - ind
-ependent/Figures/plot_of_mean_estimates_norm-3.pdf>] [6 <C:/Users/smb310/Docume
-nts/Research/FDR regression/Simulations - independent/Figures/plot_of_mean_esti
-mates_norm-4.pdf> <C:/Users/smb310/Documents/Research/FDR regression/Simulation
-s - independent/Figures/plot_of_mean_estimates_norm-5.pdf>]
-Package color Info: Redefining color shadecolor on input line 255.
+Package pdftex.def Info: Figures/plot_of_mean_estimates_norm-7.pdf  used on inp
+ut line 245. on input line 245.
+Package pdftex.def Info: Requested size: 345.0pt x 215.6207pt on input line 245
+.
+ [4 <./Figures/plot_of_mean_estimates_norm-1.pdf>] [5 <./Figures/plot_of_mean_e
+stimates_norm-2.pdf> <./Figures/plot_of_mean_estimates_norm-3.pdf>] [6 <./Figur
+es/plot_of_mean_estimates_norm-4.pdf> <./Figures/plot_of_mean_estimates_norm-5.
+pdf>]
+Package color Info: Redefining color shadecolor on input line 256.
 
-Overfull \hbox (32.49683pt too wide) in paragraph at lines 270--270
+Overfull \hbox (32.49683pt too wide) in paragraph at lines 271--271
 [][]\OT1/cmtt/m/n/10 pi0StoreyMean[] []<-[] []mean[][]([][]apply[][](pValuesSim
 s,[] []1[][],[] []function[][]([][]p[][])\OMS/cmsy/m/n/10 f[][]\OT1/cmtt/m/n/10
  qvalue[][](p)[][]$[][]pi0\OMS/cmsy/m/n/10 g\OT1/cmtt/m/n/10 ))[][] 
  []
 
 
-Overfull \hbox (80.24629pt too wide) in paragraph at lines 272--272
+Overfull \hbox (80.24629pt too wide) in paragraph at lines 273--273
 [][]\OT1/cmtt/m/n/10 plotMeanPi0[][](pi0, pi0MeansVars, pi0hatScottMean, pi0Sto
 reyMean,[] []tme[][]=tme,[] []main[][]=[][]"I"[][])[][] 
  []
 
 
-Overfull \hbox (113.48213pt too wide) in paragraph at lines 273--273
+Overfull \hbox (113.48213pt too wide) in paragraph at lines 274--274
 [][]\OT1/cmtt/m/n/10 legend[][]([][]"topright"[][],[] []inset[][]=[][]c[][]([][
 ]-[][]0.45[][],[][]0[][]),[][]\OT1/cmtt/m/it/10 ##x=-0.2, y=0.45,##"bottomright
 ", ##x=-100, y=0.3, [][] 
  []
 
 
-Overfull \hbox (81.9824pt too wide) in paragraph at lines 286--286
+Overfull \hbox (81.9824pt too wide) in paragraph at lines 287--287
 [][]\OT1/cmtt/m/it/10 #########################################################
 ########################[][] 
  []
 
 
-Overfull \hbox (32.49683pt too wide) in paragraph at lines 299--299
+Overfull \hbox (32.49683pt too wide) in paragraph at lines 300--300
 [][]\OT1/cmtt/m/n/10 pi0StoreyMean[] []<-[] []mean[][]([][]apply[][](pValuesSim
 s,[] []1[][],[] []function[][]([][]p[][])\OMS/cmsy/m/n/10 f[][]\OT1/cmtt/m/n/10
  qvalue[][](p)[][]$[][]pi0\OMS/cmsy/m/n/10 g\OT1/cmtt/m/n/10 ))[][] 
  []
 
 
-Overfull \hbox (127.49588pt too wide) in paragraph at lines 301--301
+Overfull \hbox (127.49588pt too wide) in paragraph at lines 302--302
 [][]\OT1/cmtt/m/n/10 plotMeanPi0[][](pi0, pi0Lin.MeansVars, pi0hatLin.ScottMean
 , pi0StoreyMean,[] []tme[][]=tme,[] []main[][]=[][]"II"[][])[][] 
  []
 
 
-Overfull \hbox (113.48213pt too wide) in paragraph at lines 302--302
+Overfull \hbox (113.48213pt too wide) in paragraph at lines 303--303
 [][]\OT1/cmtt/m/n/10 legend[][]([][]"topright"[][],[] []inset[][]=[][]c[][]([][
 ]-[][]0.45[][],[][]0[][]),[][]\OT1/cmtt/m/it/10 ##x=-0.2, y=0.45,##"bottomright
 ", ##x=-100, y=0.3, [][] 
  []
 
 
-Overfull \hbox (127.49588pt too wide) in paragraph at lines 315--315
+Overfull \hbox (127.49588pt too wide) in paragraph at lines 316--316
 [][]\OT1/cmtt/m/n/10 plotMeanPi0[][](pi0, pi0Spl.MeansVars, pi0hatSpl.ScottMean
 , pi0StoreyMean,[] []tme[][]=tme,[] []main[][]=[][]"II"[][])[][] 
  []
 
 
-Overfull \hbox (108.23218pt too wide) in paragraph at lines 316--316
+Overfull \hbox (108.23218pt too wide) in paragraph at lines 317--317
 [][]\OT1/cmtt/m/n/10 legend[][]([][]"topright"[][],[] []inset[][]=[][]c[][]([][
 ]-[][]0.7[][],[][]0[][]),[][]\OT1/cmtt/m/it/10 ##x=-0.2, y=0.45,##"bottomright"
 , ##x=-100, y=0.3, [][] 
  []
 
 
-Overfull \hbox (81.9824pt too wide) in paragraph at lines 329--329
+Overfull \hbox (81.9824pt too wide) in paragraph at lines 330--330
 [][]\OT1/cmtt/m/it/10 #########################################################
 ########################[][] 
  []
 
 
-Overfull \hbox (32.49683pt too wide) in paragraph at lines 342--342
+Overfull \hbox (32.49683pt too wide) in paragraph at lines 343--343
 [][]\OT1/cmtt/m/n/10 pi0StoreyMean[] []<-[] []mean[][]([][]apply[][](pValuesSim
 s,[] []1[][],[] []function[][]([][]p[][])\OMS/cmsy/m/n/10 f[][]\OT1/cmtt/m/n/10
  qvalue[][](p)[][]$[][]pi0\OMS/cmsy/m/n/10 g\OT1/cmtt/m/n/10 ))[][] 
  []
 
 
-Overfull \hbox (132.74583pt too wide) in paragraph at lines 344--344
+Overfull \hbox (132.74583pt too wide) in paragraph at lines 345--345
 [][]\OT1/cmtt/m/n/10 plotMeanPi0[][](pi0, pi0Lin.MeansVars, pi0hatLin.ScottMean
 , pi0StoreyMean,[] []tme[][]=tme,[] []main[][]=[][]"III"[][])[][] 
  []
 
 
-Overfull \hbox (113.48213pt too wide) in paragraph at lines 345--345
+Overfull \hbox (113.48213pt too wide) in paragraph at lines 346--346
 [][]\OT1/cmtt/m/n/10 legend[][]([][]"topright"[][],[] []inset[][]=[][]c[][]([][
 ]-[][]0.45[][],[][]0[][]),[][]\OT1/cmtt/m/it/10 ##x=-0.2, y=0.45,##"bottomright
 ", ##x=-100, y=0.3, [][] 
  []
 
 
-Overfull \hbox (132.74583pt too wide) in paragraph at lines 358--358
+Overfull \hbox (132.74583pt too wide) in paragraph at lines 359--359
 [][]\OT1/cmtt/m/n/10 plotMeanPi0[][](pi0, pi0Spl.MeansVars, pi0hatSpl.ScottMean
 , pi0StoreyMean,[] []tme[][]=tme,[] []main[][]=[][]"III"[][])[][] 
  []
 
 
-Overfull \hbox (108.23218pt too wide) in paragraph at lines 359--359
+Overfull \hbox (108.23218pt too wide) in paragraph at lines 360--360
 [][]\OT1/cmtt/m/n/10 legend[][]([][]"topright"[][],[] []inset[][]=[][]c[][]([][
 ]-[][]0.7[][],[][]0[][]),[][]\OT1/cmtt/m/it/10 ##x=-0.2, y=0.45,##"bottomright"
 , ##x=-100, y=0.3, [][] 
  []
 
 
-Overfull \hbox (81.9824pt too wide) in paragraph at lines 372--372
+Overfull \hbox (81.9824pt too wide) in paragraph at lines 373--373
 [][]\OT1/cmtt/m/it/10 #########################################################
 ########################[][] 
  []
 
 
-Overfull \hbox (32.49683pt too wide) in paragraph at lines 385--385
+Overfull \hbox (32.49683pt too wide) in paragraph at lines 386--386
 [][]\OT1/cmtt/m/n/10 pi0StoreyMean[] []<-[] []mean[][]([][]apply[][](pValuesSim
 s,[] []1[][],[] []function[][]([][]p[][])\OMS/cmsy/m/n/10 f[][]\OT1/cmtt/m/n/10
  qvalue[][](p)[][]$[][]pi0\OMS/cmsy/m/n/10 g\OT1/cmtt/m/n/10 ))[][] 
  []
 
 
-Overfull \hbox (127.49588pt too wide) in paragraph at lines 387--387
+Overfull \hbox (127.49588pt too wide) in paragraph at lines 388--388
 [][]\OT1/cmtt/m/n/10 plotMeanPi0[][](pi0, pi0Lin.MeansVars, pi0hatLin.ScottMean
 , pi0StoreyMean,[] []tme[][]=tme,[] []main[][]=[][]"IV"[][])[][] 
  []
 
 
-Overfull \hbox (113.48213pt too wide) in paragraph at lines 388--388
+Overfull \hbox (113.48213pt too wide) in paragraph at lines 389--389
 [][]\OT1/cmtt/m/n/10 legend[][]([][]"topright"[][],[] []inset[][]=[][]c[][]([][
 ]-[][]0.45[][],[][]0[][]),[][]\OT1/cmtt/m/it/10 ##x=-0.2, y=0.45,##"bottomright
 ", ##x=-100, y=0.3, [][] 
  []
 
 
-Overfull \hbox (127.49588pt too wide) in paragraph at lines 401--401
+Overfull \hbox (127.49588pt too wide) in paragraph at lines 402--402
 [][]\OT1/cmtt/m/n/10 plotMeanPi0[][](pi0, pi0Spl.MeansVars, pi0hatSpl.ScottMean
 , pi0StoreyMean,[] []tme[][]=tme,[] []main[][]=[][]"IV"[][])[][] 
  []
 
 
-Overfull \hbox (108.23218pt too wide) in paragraph at lines 402--402
+Overfull \hbox (108.23218pt too wide) in paragraph at lines 403--403
 [][]\OT1/cmtt/m/n/10 legend[][]([][]"topright"[][],[] []inset[][]=[][]c[][]([][
 ]-[][]0.7[][],[][]0[][]),[][]\OT1/cmtt/m/it/10 ##x=-0.2, y=0.45,##"bottomright"
 , ##x=-100, y=0.3, [][] 
  []
 
-[7 <C:/Users/smb310/Documents/Research/FDR regression/Simulations - independent
-/Figures/plot_of_mean_estimates_norm-6.pdf> <C:/Users/smb310/Documents/Research
-/FDR regression/Simulations - independent/Figures/plot_of_mean_estimates_norm-7
-.pdf>] [8] [9] [10]
-<Figures/plot_of_mean_estimates_t-1.pdf, id=122, 578.16pt x 361.35pt>
+[7 <./Figures/plot_of_mean_estimates_norm-6.pdf> <./Figures/plot_of_mean_estima
+tes_norm-7.pdf>] [8] [9] [10]
+<Figures/plot_of_mean_estimates_t-1.pdf, id=122, pagebox=cropbox, 578.16pt x 36
+1.35pt>
 File: Figures/plot_of_mean_estimates_t-1.pdf Graphic file (type pdf)
-
 <use Figures/plot_of_mean_estimates_t-1.pdf>
-Package pdftex.def Info: Figures/plot_of_mean_estimates_t-1.pdf used on input l
-ine 417.
-(pdftex.def)             Requested size: 345.0pt x 215.6207pt.
-
-<Figures/plot_of_mean_estimates_t-2.pdf, id=123, 578.16pt x 361.35pt>
+Package pdftex.def Info: Figures/plot_of_mean_estimates_t-1.pdf  used on input 
+line 418. on input line 418.
+Package pdftex.def Info: Requested size: 345.0pt x 215.6207pt on input line 418
+.
+<Figures/plot_of_mean_estimates_t-2.pdf, id=123, pagebox=cropbox, 578.16pt x 36
+1.35pt>
 File: Figures/plot_of_mean_estimates_t-2.pdf Graphic file (type pdf)
-
 <use Figures/plot_of_mean_estimates_t-2.pdf>
-Package pdftex.def Info: Figures/plot_of_mean_estimates_t-2.pdf used on input l
-ine 418.
-(pdftex.def)             Requested size: 345.0pt x 215.6207pt.
-
-<Figures/plot_of_mean_estimates_t-3.pdf, id=124, 578.16pt x 361.35pt>
+Package pdftex.def Info: Figures/plot_of_mean_estimates_t-2.pdf  used on input 
+line 419. on input line 419.
+Package pdftex.def Info: Requested size: 345.0pt x 215.6207pt on input line 419
+.
+<Figures/plot_of_mean_estimates_t-3.pdf, id=124, pagebox=cropbox, 578.16pt x 36
+1.35pt>
 File: Figures/plot_of_mean_estimates_t-3.pdf Graphic file (type pdf)
-
 <use Figures/plot_of_mean_estimates_t-3.pdf>
-Package pdftex.def Info: Figures/plot_of_mean_estimates_t-3.pdf used on input l
-ine 419.
-(pdftex.def)             Requested size: 345.0pt x 215.6207pt.
-
-<Figures/plot_of_mean_estimates_t-4.pdf, id=125, 578.16pt x 361.35pt>
+Package pdftex.def Info: Figures/plot_of_mean_estimates_t-3.pdf  used on input 
+line 420. on input line 420.
+Package pdftex.def Info: Requested size: 345.0pt x 215.6207pt on input line 420
+.
+<Figures/plot_of_mean_estimates_t-4.pdf, id=125, pagebox=cropbox, 578.16pt x 36
+1.35pt>
 File: Figures/plot_of_mean_estimates_t-4.pdf Graphic file (type pdf)
-
 <use Figures/plot_of_mean_estimates_t-4.pdf>
-Package pdftex.def Info: Figures/plot_of_mean_estimates_t-4.pdf used on input l
-ine 420.
-(pdftex.def)             Requested size: 345.0pt x 215.6207pt.
-
-<Figures/plot_of_mean_estimates_t-5.pdf, id=126, 578.16pt x 361.35pt>
+Package pdftex.def Info: Figures/plot_of_mean_estimates_t-4.pdf  used on input 
+line 421. on input line 421.
+Package pdftex.def Info: Requested size: 345.0pt x 215.6207pt on input line 421
+.
+<Figures/plot_of_mean_estimates_t-5.pdf, id=126, pagebox=cropbox, 578.16pt x 36
+1.35pt>
 File: Figures/plot_of_mean_estimates_t-5.pdf Graphic file (type pdf)
-
 <use Figures/plot_of_mean_estimates_t-5.pdf>
-Package pdftex.def Info: Figures/plot_of_mean_estimates_t-5.pdf used on input l
-ine 421.
-(pdftex.def)             Requested size: 345.0pt x 215.6207pt.
-
-<Figures/plot_of_mean_estimates_t-6.pdf, id=127, 578.16pt x 361.35pt>
+Package pdftex.def Info: Figures/plot_of_mean_estimates_t-5.pdf  used on input 
+line 422. on input line 422.
+Package pdftex.def Info: Requested size: 345.0pt x 215.6207pt on input line 422
+.
+<Figures/plot_of_mean_estimates_t-6.pdf, id=127, pagebox=cropbox, 578.16pt x 36
+1.35pt>
 File: Figures/plot_of_mean_estimates_t-6.pdf Graphic file (type pdf)
-
 <use Figures/plot_of_mean_estimates_t-6.pdf>
-Package pdftex.def Info: Figures/plot_of_mean_estimates_t-6.pdf used on input l
-ine 422.
-(pdftex.def)             Requested size: 345.0pt x 215.6207pt.
-
-<Figures/plot_of_mean_estimates_t-7.pdf, id=128, 578.16pt x 361.35pt>
+Package pdftex.def Info: Figures/plot_of_mean_estimates_t-6.pdf  used on input 
+line 423. on input line 423.
+Package pdftex.def Info: Requested size: 345.0pt x 215.6207pt on input line 423
+.
+<Figures/plot_of_mean_estimates_t-7.pdf, id=128, pagebox=cropbox, 578.16pt x 36
+1.35pt>
 File: Figures/plot_of_mean_estimates_t-7.pdf Graphic file (type pdf)
-
 <use Figures/plot_of_mean_estimates_t-7.pdf>
-Package pdftex.def Info: Figures/plot_of_mean_estimates_t-7.pdf used on input l
-ine 423.
-(pdftex.def)             Requested size: 345.0pt x 215.6207pt.
- [11 <C:/Users/smb310/Documents/Research/FDR regression/Simulations - independe
-nt/Figures/plot_of_mean_estimates_t-1.pdf> <C:/Users/smb310/Documents/Research/
-FDR regression/Simulations - independent/Figures/plot_of_mean_estimates_t-2.pdf
->] [12 <C:/Users/smb310/Documents/Research/FDR regression/Simulations - indepen
-dent/Figures/plot_of_mean_estimates_t-3.pdf> <C:/Users/smb310/Documents/Researc
-h/FDR regression/Simulations - independent/Figures/plot_of_mean_estimates_t-4.p
-df>] [13 <C:/Users/smb310/Documents/Research/FDR regression/Simulations - indep
-endent/Figures/plot_of_mean_estimates_t-5.pdf> <C:/Users/smb310/Documents/Resea
-rch/FDR regression/Simulations - independent/Figures/plot_of_mean_estimates_t-6
-.pdf>]
-Package color Info: Redefining color shadecolor on input line 436.
- [14 <C:/Users/smb310/Documents/Research/FDR regression/Simulations - independe
-nt/Figures/plot_of_mean_estimates_t-7.pdf>] [15]
-("C:\Users\smb310\Documents\Research\FDR regression\Simulations - independent\6
-.make_Figure_comparing_means.aux") ) 
+Package pdftex.def Info: Figures/plot_of_mean_estimates_t-7.pdf  used on input 
+line 424. on input line 424.
+Package pdftex.def Info: Requested size: 345.0pt x 215.6207pt on input line 424
+.
+ [11 <./Figures/plot_of_mean_estimates_t-1.pdf> <./Figures/plot_of_mean_estimat
+es_t-2.pdf>] [12 <./Figures/plot_of_mean_estimates_t-3.pdf> <./Figures/plot_of_
+mean_estimates_t-4.pdf>] [13 <./Figures/plot_of_mean_estimates_t-5.pdf> <./Figu
+res/plot_of_mean_estimates_t-6.pdf>]
+Package color Info: Redefining color shadecolor on input line 437.
+ [14 <./Figures/plot_of_mean_estimates_t-7.pdf>]
+Underfull \vbox (badness 10000) detected at line 529
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 529
+ []
+
+[15] [16] (6.make_Figure_comparing_means.aux) ) 
 Here is how much of TeX's memory you used:
- 1340 strings out of 493921
- 20642 string characters out of 3144873
- 120066 words of memory out of 3000000
- 4647 multiletter control sequences out of 15000+200000
+ 1646 strings out of 493312
+ 26237 string characters out of 3138897
+ 130920 words of memory out of 3000000
+ 5178 multiletter control sequences out of 15000+200000
  4581 words of font info for 18 fonts, out of 3000000 for 9000
- 841 hyphenation exceptions out of 8191
- 27i,6n,21p,307b,284s stack positions out of 5000i,500n,10000p,200000b,50000s
-<C:/Program Files (x86)/MiKTeX 2.9/fonts/ty
-pe1/public/amsfonts/cm/cmbx12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type
-1/public/amsfonts/cm/cmitt10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1
-/public/amsfonts/cm/cmr10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/pu
-blic/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/publ
-ic/amsfonts/cm/cmtt10.pfb>
-Output written on 6.make_Figure_comparing_means.pdf (15 pages, 3391435 bytes).
+ 1141 hyphenation exceptions out of 8191
+ 41i,6n,25p,304b,284s stack positions out of 5000i,500n,10000p,200000b,50000s
+<C:/Program Files/MiKTeX 2.9/fon
+ts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1
+/public/amsfonts/cm/cmitt10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public
+/amsfonts/cm/cmr10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts
+/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt
+10.pfb>
+Output written on 6.make_Figure_comparing_means.pdf (16 pages, 3393329 bytes).
 PDF statistics:
- 239 PDF objects out of 1000 (max. 8388607)
+ 242 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  71 words of extra memory for PDF output out of 10000 (max. 10000000)
 

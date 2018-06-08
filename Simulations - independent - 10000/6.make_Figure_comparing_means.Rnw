@@ -59,7 +59,7 @@ load(paste(alt,"simResults_pi0x_Scott_2.RData",sep="/"))
 
 pi0StoreyMean <- mean(apply(pValuesSims, 1, function(p){qvalue(p)$pi0}))
 
-plotMeanPi0(pi0, pi0MeansVars, pi0hatScottMean, pi0StoreyMean, pi0StoreyMean, tme=tme, main="I")
+plotMeanPi0(pi0, pi0MeansVars, pi0hatScottMean, pi0StoreyMean, pi0StoreyMean, tme=tme, main="II")
 legend("topright", inset=c(-0.45,0),##x=-0.2, y=0.45,##"bottomright", ##x=-100, y=0.3, 
        legend=c("Truth", 
                 "Linear (BL)",
