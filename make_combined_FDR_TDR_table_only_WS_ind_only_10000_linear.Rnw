@@ -1,0 +1,109 @@
+\documentclass{article}
+\usepackage[margin=0.5in]{geometry}
+
+
+\begin{document}
+
+<<include=FALSE, cache=FALSE, echo=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='Figures/', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=60,echo=FALSE)
+@
+
+<<echo=FALSE, include=FALSE>>=
+## Load libraries
+library(splines)
+library(MASS)
+library(xtable)
+library(dplyr)
+
+##Source functions
+source("functions.R")
+@
+
+\subsection*{Independent test statistics}
+
+We first generated independent test statistics.
+\\
+\noindent For the beta distribution, we generated the p-values directly from Beta(1,20). For the other distributions, we generated the test statistics and calculated the p-values from them.
+For the t-test, we considered 2 groups of 6 (so 2x6 = 10 df) and used the t-statistics instead of the z-statistics for the Scott method. For the chisquared test, 1 df corresponds to a 2x2 table, 4 df to a 3x3 table. We used the z-statistics obtained from back-transforming the p-values for the Scott method for the beta and the chisquared cases.
+\\
+BL = Boca-Leek, Scott T = Scott theoretical null, Scott E = Scott empirical null
+
+\clearpage
+
+\subsubsection*{10,000 tests}
+
+<<echo=FALSE>>=
+##make tables for results
+tabResFDR <- expand.grid(pi0x = c("V"),
+                         alts = c("Beta(1,20)",
+                                  "Norm",
+                                  "T",
+                                  "Chisq 1 df",
+                                  "Chisq 4 df"),
+                         est = "Linear")
+tabResFDR <- tabResFDR[order(tabResFDR$pi0x, tabResFDR$alts),]
+
+tabResFDR <- cbind(tabResFDR, matrix(NA,nrow=nrow(tabResFDR),ncol=5))
+
+colnames(tabResFDR)[4:8] <- c("BL","Scott","Scott_emp","Storey","BH")
+
+tabResFDR$pi0x <- as.character(tabResFDR$pi0x)
+
+tabResTPR <- tabResFDR
+@
+
+<<echo=FALSE, include=FALSE>>=
+##fill in tables
+##make correspondence between directory names and names in tables
+DirTabCorr <- cbind(c("alt_beta","alt_t_large","alt_z_large",
+                      "alt_chisq_large","alt_chisq_large_3_3"),
+                    c("Beta(1,20)","T","Norm",
+                      "Chisq 1 df","Chisq 4 df"))
+                    
+methods <- c("BL","Scott","Scott_emp", "Storey","BH")
+
+for(i in 1:nrow(DirTabCorr))
+{
+  Dir.i <- DirTabCorr[i,1]
+  Tab.i <- DirTabCorr[i,2]
+  
+  load(paste("Simulations - independent - 10000",Dir.i,"FDR_TPR_sims_additional.RData",sep="/"))
+  tabResFDR[tabResFDR$pi0x == "V" & tabResFDR$alts == Tab.i,methods] <-
+    scen5[methods,"FDR"]
+}
+
+for(i in 1:nrow(DirTabCorr))
+{
+  Dir.i <- DirTabCorr[i,1]
+  Tab.i <- DirTabCorr[i,2]
+  
+  load(paste("Simulations - independent - 10000",Dir.i,"FDR_TPR_sims_additional.RData",sep="/"))
+  tabResTPR[tabResTPR$pi0x == "V" & tabResTPR$alts == Tab.i,methods] <-
+    scen5[methods,"TPR"]
+}
+
+identical(tabResFDR[,1:3], tabResTPR[,1:3])
+tabResFDR.TPR <- cbind(tabResFDR, tabResTPR[,4:8])
+colnames(tabResFDR.TPR)[1:3] <- c("pi0(x)","Distribution under H1","Regression model")
+
+##order by second column (distribution)
+tabResFDR.TPR <- tabResFDR.TPR[order(tabResFDR.TPR[,2]),]
+
+##change everything to % 
+tabResFDR.TPR[,-(1:3)] <- sapply(tabResFDR.TPR[,-(1:3)], function(x){x*100})
+@
+
+<<echo=FALSE, results='asis'>>=
+tab <- xtable(tabResFDR.TPR,align=c("l","l","l","l|","l","l","l","l","l|","l","l","l","l","l"),digits=1)
+addtorow <- list()
+addtorow$pos <- list(0,0)
+addtorow$command <- c("&&& \\multicolumn{5}{c}{FDR} & \\multicolumn{5}{c}{TPR}\\\\\n",
+                      "$\\pi_0(x)$ &  Dist. under $H_1$ & Reg. model & BL & Scott T & Scott E & Storey & BH & BL & Scott T & Scott E & Storey & BH    \\\\\n")
+print(tab, include.colnames=FALSE, include.rownames=FALSE,
+      add.to.row=addtorow)
+@
+
+
+\end{document}

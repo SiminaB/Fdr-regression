@@ -249,7 +249,8 @@ genPvalsCorrT <- function(pi0, muAlt, Sigma, n=6)
 }
 
 ##------Function to plot means and true values of pi0------##
-plotMeanPi0 <- function(pi0, pi0Means, pi0ScottMean, pi0StoreyMean, tme, xi1=FALSE, main="I")
+plotMeanPi0 <- function(pi0, pi0Means, pi0ScottMean, pi0StoreyMean, tme, xi1=FALSE, main="I",
+                        ylim=c(0.3,1))
 {
   par(cex.axis = 1.1, cex.main=1.3,
       mar=c(5.1, 4.1, 4.1, 14.6), xpd=TRUE)
@@ -263,7 +264,7 @@ plotMeanPi0 <- function(pi0, pi0Means, pi0ScottMean, pi0StoreyMean, tme, xi1=FAL
   
   plot(pi0 ~ tme,col="white",type="p",lwd=8, lty=1,
        xlab="", yaxt = "n",
-       ylim=c(0.3,1), ylab="",
+       ylim=ylim, ylab="",
        main=main, pch=19, cex=0.1)
   points(pi0 ~ tme,pch=19, col=blackT, cex=0.3)
   if(xi1)
@@ -360,18 +361,29 @@ estFDR.TPR <- function(FDR.BL, FDR.BH, FDR.Storey, FDR.Scott=NULL, FDR.Scott_emp
     discStorey <- discThresh(FDR.Storey, 0.05)
   }  
   
-  discScott <- discThresh(FDR.Scott, 0.05)
-
-  ##for Scott empirical method, only use simulations that resulted in non-NA values
-  discScott_emp <- NULL
-  nullHypSims.Scott_emp <- nullHypSims
-  if(length(FDR.Scott_emp) > 0)
+  if(!is.null(FDR.Scott))
   {
-    which.nonNA.Scott_emp <- which(!is.na(rowSums(FDR.Scott_emp)))
-    FDR.Scott_emp <- FDR.Scott_emp[which.nonNA.Scott_emp,]
-    nullHypSims.Scott_emp <- nullHypSims[which.nonNA.Scott_emp,]
-    
-    discScott_emp <- discThresh(FDR.Scott_emp, 0.05)
+    discScott <- discThresh(FDR.Scott, 0.05)
+  } else {
+    discScott <- rep(NA, length(discBL))   
+  }
+  
+  if(!is.null(FDR.Scott_emp))
+  {
+    ##for Scott empirical method, only use simulations that resulted in non-NA values
+    discScott_emp <- NULL
+    nullHypSims.Scott_emp <- nullHypSims
+    if(length(FDR.Scott_emp) > 0)
+    {
+      which.nonNA.Scott_emp <- which(!is.na(rowSums(FDR.Scott_emp)))
+      FDR.Scott_emp <- FDR.Scott_emp[which.nonNA.Scott_emp,]
+      nullHypSims.Scott_emp <- nullHypSims[which.nonNA.Scott_emp,]
+      
+      discScott_emp <- discThresh(FDR.Scott_emp, 0.05)
+    }
+  }
+  else {
+    discScott_emp <- rep(NA, length(discBL))
   }
   
   ##now get fraction of false discoveries 
@@ -384,15 +396,21 @@ estFDR.TPR <- function(FDR.BL, FDR.BH, FDR.Storey, FDR.Scott=NULL, FDR.Scott_emp
     fdrStorey <- estFDR(discStorey, nullHypSims.Storey)
   }
   fdrScott <- rep(NA, length(discBL))
-  if(length(discScott) == length(nullHypSims))
+  if(!is.null(FDR.Scott))
   {
-    fdrScott <- estFDR(discScott, nullHypSims)
-  }
+    if(length(discScott) == length(nullHypSims))
+    {
+      fdrScott <- estFDR(discScott, nullHypSims)
+    }
+  } 
   fdrScott_emp <- rep(NA, length(discBL))
-  if(length(discScott_emp) == length(nullHypSims.Scott_emp))
+  if(!is.null(FDR.Scott_emp))
   {
-    fdrScott_emp <- estFDR(discScott_emp, nullHypSims.Scott_emp)
-  }
+    if(length(discScott_emp) == length(nullHypSims.Scott_emp))
+    {
+      fdrScott_emp <- estFDR(discScott_emp, nullHypSims.Scott_emp)
+    }
+  } 
 
   ##also get fraction of true discoveries out of the number of all alternatives
   tprBL <- estTPR(discBL, nullHypSims)
@@ -404,27 +422,44 @@ estFDR.TPR <- function(FDR.BL, FDR.BH, FDR.Storey, FDR.Scott=NULL, FDR.Scott_emp
     tprStorey <- estTPR(discStorey, nullHypSims.Storey)
   }  
   tprScott <- rep(NA, length(discBL))
-  if(length(discScott) == length(nullHypSims))
+  if(!is.null(FDR.Scott))
   {
-    tprScott <- estTPR(discScott, nullHypSims)
+    if(length(discScott) == length(nullHypSims))
+    {
+      tprScott <- estTPR(discScott, nullHypSims)
+    }
   }
   tprScott_emp <- rep(NA, length(discBL))
-  if(length(discScott_emp) == length(nullHypSims.Scott_emp))
+  if(!is.null(FDR.Scott_emp))
   {
-    tprScott_emp <- estTPR(discScott_emp, nullHypSims.Scott_emp)
+    if(length(discScott_emp) == length(nullHypSims.Scott_emp))
+    {
+      tprScott_emp <- estTPR(discScott_emp, nullHypSims.Scott_emp)
+    }
   }
-  
+      
   FDR.TPR <- matrix(NA, nrow=5, ncol=3)
   colnames(FDR.TPR) <- c("FDR","TPR","Percent used")
   rownames(FDR.TPR) <- c("BL","Scott","Scott_emp","Storey","BH")
   
   FDR.TPR["BL",] <- c(mean(fdrBL), mean(tprBL), nrow(FDR.BL)/nrow(nullHypSims)*100)
-  FDR.TPR["Scott",] <- c(mean(fdrScott), mean(tprScott), nrow(FDR.Scott)/nrow(nullHypSims)*100)
-  if(length(dim(FDR.Scott_emp))==2)
+  if(!is.null(FDR.Scott))
   {
-    FDR.TPR["Scott_emp",] <- c(mean(fdrScott_emp), mean(tprScott_emp), nrow(FDR.Scott_emp)/nrow(nullHypSims)*100)
+    FDR.TPR["Scott",] <- c(mean(fdrScott), mean(tprScott), nrow(FDR.Scott)/nrow(nullHypSims)*100)
+  } else
+  {
+    FDR.TPR["Scott",] <- rep(NA, 3)
+  }
+  if(!is.null(FDR.Scott_emp))
+  {
+    if(length(dim(FDR.Scott_emp))==2)
+    {
+      FDR.TPR["Scott_emp",] <- c(mean(fdrScott_emp), mean(tprScott_emp), nrow(FDR.Scott_emp)/nrow(nullHypSims)*100)
+    } else {
+      FDR.TPR["Scott_emp",] <- c(mean(fdrScott_emp), mean(tprScott_emp), 0)
+    }
   } else {
-    FDR.TPR["Scott_emp",] <- c(mean(fdrScott_emp), mean(tprScott_emp), 0)
+    FDR.TPR["Scott_emp",] <- rep(NA, 3)
   }
   FDR.TPR["Storey",] <- c(mean(fdrStorey), mean(tprStorey), nrow(FDR.Storey)/nrow(nullHypSims)*100)
   FDR.TPR["BH",] <- c(mean(fdrBH), mean(tprBH), nrow(FDR.BH)/nrow(nullHypSims)*100)
@@ -745,3 +780,5 @@ getFDRregSims <- function(pi0EstSim, qValuesSimsBH)
   pi0_final <- lapply(pi0EstSim, function(x){x[[3]]})
   t(mapply(function(q,pi0){q*pi0}, data.frame(t(qValuesSimsBH)), pi0_final, SIMPLIFY=TRUE))
 }
+
+

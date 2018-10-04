@@ -1,0 +1,140 @@
+\documentclass{article}
+\usepackage[margin=0.5in]{geometry}
+
+
+\begin{document}
+
+<<include=FALSE, cache=FALSE, echo=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='Figures/', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=60,echo=FALSE)
+@
+
+<<echo=FALSE, include=FALSE>>=
+## Load libraries
+library(splines)
+library(MASS)
+library(xtable)
+library(dplyr)
+
+##Source functions
+source("functions.R")
+@
+
+\subsection*{Dependent test statistics - 1,000 tests}
+
+We generated dependent test statistics. We used multivariate normal and t distributions (10 df for the t-distribution). 
+We considered block-diagnonal matrices with the number of blocks equal to 20 or 10 and the within-block correlation, $\rho$, of 0.2, 0.5, or 0.9. Thus, 20 blocks meant a block size of 50 tests (lesser dependence) and 10 blocks a block size of 100 tests (more dependence).
+\\
+BL = Boca-Leek, Scott T = Scott theoretical null, Scott E = Scott empirical null
+
+\clearpage
+
+<<echo=FALSE>>=
+##make tables for results
+tabResFDR <- expand.grid(pi0x = c("V"),
+                         alts = c("N, 20 blocks, $\\rho$=0.2",
+                                  "N, 20 blocks, $\\rho$=0.5",
+                                  "N, 20 blocks, $\\rho$=0.9",
+                                  "N, 10 blocks, $\\rho$=0.2",
+                                  "N, 10 blocks, $\\rho$=0.5",
+                                  "N, 10 blocks, $\\rho$=0.9",
+                                  "T, 20 blocks, $\\rho$=0.2",
+                                  "T, 20 blocks, $\\rho$=0.5",
+                                  "T, 20 blocks, $\\rho$=0.9",
+                                  "T, 10 blocks, $\\rho$=0.2",
+                                  "T, 10 blocks, $\\rho$=0.5",
+                                  "T, 10 blocks, $\\rho$=0.9"
+                         ),
+                         est = c("Linear"))
+tabResFDR <- tabResFDR[order(tabResFDR$pi0x, tabResFDR$alts),]
+
+tabResFDR <- cbind(tabResFDR, matrix(NA,nrow=nrow(tabResFDR),ncol=5))
+
+colnames(tabResFDR)[4:8] <- c("BL","Scott","Scott_emp","Storey","BH")
+
+tabResFDR$pi0x <- as.character(tabResFDR$pi0x)
+
+tabResTPR <- tabResFDR
+@
+
+<<echo=FALSE, include=FALSE>>=
+##fill in tables
+##make correspondence between directory names and names in tables
+DirTabCorr <- cbind(c("alt_z_large_20_0.2","alt_z_large_20_0.5","alt_z_large_20_0.9", 
+                      "alt_z_large_10_0.2","alt_z_large_10_0.5","alt_z_large_10_0.9",
+                      "alt_t_large_20_0.2","alt_t_large_20_0.5","alt_t_large_20_0.9",
+                      "alt_t_large_10_0.2","alt_t_large_10_0.5","alt_t_large_10_0.9"),
+                    c("N, 20 blocks, $\\rho$=0.2",
+                      "N, 20 blocks, $\\rho$=0.5",
+                      "N, 20 blocks, $\\rho$=0.9",
+                      "N, 10 blocks, $\\rho$=0.2",
+                      "N, 10 blocks, $\\rho$=0.5",
+                      "N, 10 blocks, $\\rho$=0.9",
+                      "T, 20 blocks, $\\rho$=0.2",
+                      "T, 20 blocks, $\\rho$=0.5",
+                      "T, 20 blocks, $\\rho$=0.9",
+                      "T, 10 blocks, $\\rho$=0.2",
+                      "T, 10 blocks, $\\rho$=0.5",
+                      "T, 10 blocks, $\\rho$=0.9"
+                      ))
+                    
+methods <- c("BL","Scott","Scott_emp", "Storey","BH")
+
+for(i in 1:nrow(DirTabCorr))
+{
+  Dir.i <- DirTabCorr[i,1]
+  Tab.i <- DirTabCorr[i,2]
+ 
+  ##print(Dir.i)
+   
+  load(paste("Simulations - dependent",Dir.i,"FDR_TPR_sims_additional.RData",sep="/"))
+  tabResFDR[tabResFDR$pi0x == "V" & tabResFDR$alts == Tab.i,methods] <-
+    scen5[methods,"FDR"]
+}
+
+for(i in 1:nrow(DirTabCorr))
+{
+  Dir.i <- DirTabCorr[i,1]
+  Tab.i <- DirTabCorr[i,2]
+  
+  load(paste("Simulations - dependent",Dir.i,"FDR_TPR_sims_additional.RData",sep="/"))
+
+  tabResTPR[tabResTPR$pi0x == "V" & tabResTPR$alts == Tab.i,methods] <-
+    scen5[methods,"TPR"]
+}
+
+identical(tabResFDR[,1:3], tabResTPR[,1:3])
+tabResFDR.TPR <- cbind(tabResFDR, tabResTPR[,4:8])
+colnames(tabResFDR.TPR)[1:3] <- c("pi0(x)","Distribution under H1","Regression model")
+
+##order by second column (distribution)
+tabResFDR.TPR <- tabResFDR.TPR[order(tabResFDR.TPR[,2]),]
+
+##change everything to % 
+tabResFDR.TPR[,-(1:3)] <- sapply(tabResFDR.TPR[,-(1:3)], function(x){x*100})
+@
+  
+<<echo=FALSE, results='asis'>>=
+tab <- xtable(tabResFDR.TPR,align=c("l","l","l","l|","l","l","l","l","l|","l","l","l","l","l"),digits=1)
+addtorow <- list()
+addtorow$pos <- list(0,0)
+addtorow$command <- c("&&& \\multicolumn{5}{c}{FDR} & \\multicolumn{5}{c}{TPR}\\\\\n",
+                      "$\\pi_0(x)$ &  Dist. under $H_1$ & Reg. model & BL & Scott T & Scott E & Storey & BH & BL & Scott T & Scott E & Storey & BH    \\\\\n")
+print(tab[1:6, ], include.colnames=FALSE, include.rownames=FALSE,
+      add.to.row=addtorow,sanitize.text.function=function(x){x})
+@
+
+<<echo=FALSE, results='asis'>>=
+tab <- xtable(tabResFDR.TPR,align=c("l","l","l","l|","l","l","l","l","l|","l","l","l","l","l"),digits=1)
+addtorow <- list()
+addtorow$pos <- list(0,0)
+addtorow$command <- c("&&& \\multicolumn{5}{c}{FDR} & \\multicolumn{5}{c}{TPR}\\\\\n",
+                      "$\\pi_0(x)$ &  Dist. under $H_1$ & Reg. model & BL & Scott T & Scott E & Storey & BH & BL & Scott T & Scott E & Storey & BH    \\\\\n")
+print(tab[7:12, ], include.colnames=FALSE, include.rownames=FALSE,
+      add.to.row=addtorow,sanitize.text.function=function(x){x})
+@
+
+
+
+\end{document}

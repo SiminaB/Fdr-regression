@@ -1,0 +1,70 @@
+\documentclass{article}
+\usepackage[margin=0.5in]{geometry}
+
+
+\begin{document}
+
+<<include=FALSE, cache=FALSE, echo=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='Figures/', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=60,echo=FALSE)
+pdf.options(useDingbats=TRUE)
+@
+
+<<echo=FALSE, include=FALSE>>=
+## Load libraries
+library(splines)
+library(MASS)
+library(xtable)
+library(dplyr)
+
+##Source functions
+source("functions.R")
+@
+
+\section*{Simulations: Overview}
+
+The following 5 functions are considered for $\pi_0(x)$:
+<<echo=FALSE, Simulation_scenarios, fig.height=10, fig.width=6>>=
+ntest <- 1000
+
+par(mfrow=c(3,2), cex.lab=1.2)
+tme <- seq(0,1, length=ntest)
+pi0 <- rep(0.9, length=ntest)
+plot(pi0 ~ tme, ylim=c(0,1), xlab=expression(x[1]), ylab=expression(pi[0](x[1])), main="I")
+
+tme <- seq(0,1, length=ntest)
+pi0 <- fSingle(tme)
+plot(pi0 ~ tme, ylim=c(0,1), xlab=expression(x[1]), ylab=expression(pi[0](x[1])), main="II")
+
+tme1 <- seq(0,1,length=ntest)
+tme2cont <- runif(ntest,0,0.5)
+set.seed(309441)
+tme2 <- rep(NA, ntest)
+tme2[tme2cont < 0.127] <- 1
+tme2[tme2cont >= 0.127] <- 2
+tme2[tme2cont >= 0.302] <- 3
+pi0 <- f(tme1, tme2)
+##range(pi0)
+plot(pi0 ~ tme1, ylim=c(0,1), xlab=expression(x[1]), ylab=expression(pi[0](x[1],x[2])), main="III")
+
+tme1 <- seq(0,1,length=ntest)
+tme2cont <- runif(ntest,0,0.5)
+set.seed(309441)
+tme2 <- rep(NA, ntest)
+tme2[tme2cont < 0.127] <- 1
+tme2[tme2cont >= 0.127] <- 2
+tme2[tme2cont >= 0.302] <- 3
+pi0 <- 0.6*f(tme1, tme2)
+##range(pi0)
+plot(pi0 ~ tme1, ylim=c(0,1), xlab=expression(x[1]), ylab=expression(pi[0](x[1],x[2])), main="IV")
+
+tme <- seq(0,1, length=ntest)
+pi0 <- tme
+plot(pi0 ~ tme, ylim=c(0,1), xlab=expression(x[1]), ylab=expression(pi[0](x[1])), main="V")
+
+@
+
+
+
+\end{document}
