@@ -1,0 +1,68 @@
+\documentclass{article}
+
+\begin{document}
+
+<<setup, include=FALSE, cache=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='Figures/', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=60)
+@
+
+<<prelims>>=
+## Load libraries
+library(splines)
+library(MASS)
+
+library(mnormt) ## for multivariate normal and t distributions
+library(Matrix) ##for the bdiag function to create block-diagonal matrices
+
+library(doParallel) ##to make cluster (on Windows)
+library(foreach) ##to use foreach function that does the parallel processing
+library(doRNG) ##for reproducible seeds when doing parallel processing
+
+##Source functions
+source("../functions.R")
+
+## Define the number of tests
+ntest <- 1000
+
+## Set number of simulations
+nSims <- 200
+@
+
+Do the simulations for a variety of alternative distributions:
+<<>>=
+altsGrid <- as.matrix(expand.grid(dist=c("z","t"),nrBlocks=c(10,20),corr=c(0.2,0.5,0.9)))
+alts <- apply(altsGrid, 1, function(x){paste("alt",x[1],"large",x[2],x[3],sep="_")})
+alts
+@
+
+\section{Probability of being a false positive is linear}
+
+<<V>>=
+## Set up the time vector and the probability of being null
+tme <- seq(0,1, length=ntest)
+pi0 <- tme
+
+plot(pi0 ~ tme)
+
+for(alt in alts)
+{
+  pValuesSims <- run_sims_alt_corr(alt, nSims, pi0)
+  
+  zValuesSims <- pValuesSims[,(2*ntest+1):(3*ntest)]
+  nullHypSims <- pValuesSims[,(ntest+1):(2*ntest)]
+  pValuesSims <- pValuesSims[,1:ntest]
+  
+  ##save results
+  save(file=paste(alt, "simResults_5.RData",sep="/"), 
+       list=c("pi0", "tme", "nullHypSims","pValuesSims","zValuesSims"))
+}
+@
+
+Session info:
+<<sessInf>>=
+devtools::session_info()
+@
+
+\end{document}

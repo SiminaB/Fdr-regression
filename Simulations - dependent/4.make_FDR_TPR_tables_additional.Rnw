@@ -1,0 +1,78 @@
+\documentclass{article}
+
+\begin{document}
+
+<<setup, include=FALSE, cache=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='Figures/', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=60)
+@
+
+<<prelims>>=
+## Load libraries
+library(splines)
+library(MASS)
+library(xtable)
+library(qvalue)
+
+##Source functions
+source("../functions.R")
+@
+
+Simulations are performed for a variety of alternative distributions:
+<<>>=
+altsGrid <- as.matrix(expand.grid(dist=c("z","t"),nrBlocks=c(10,20),corr=c(0.2,0.5,0.9)))
+alts <- apply(altsGrid, 1, function(x){paste("alt",x[1],"large",x[2],x[3],sep="_")})
+alts
+@
+
+Make FDR-TPR table:
+
+<<>>=
+for(alt in alts)
+{
+  
+  print(alt)
+  
+  ##For each simulation, get the FDR-TPR table: (BL = Boca-Leek method)
+  scen5 <- NULL
+  
+  ##-------------------Set 5----------------##
+  
+  #Load p-values and $\pi_0(x)$ estimates for the simulations:
+  for(l in listSimRes(alt, 5))
+  {
+    load(l)
+  }
+  
+  ##Get BH and Storey q-values for each simulation:
+  qValuesSimsBH <- getQValuesSimsBH(pValuesSims)
+  qValuesSimsStorey <- getQValuesSimsStorey(pValuesSims)
+
+  print(mean(qValuesSimsStorey))
+  
+  ##Get estimated FDR for each simulation for the final estimates
+  FDRreg <- getFDRregSims(pi0EstSim, qValuesSimsBH)
+  
+  ##get FDR-TPR table
+  scen5 <- estFDR.TPR(FDR.BL = FDRreg, 
+                      FDR.BH = qValuesSimsBH, FDR.Storey = qValuesSimsStorey, 
+                      FDR.Scott = FDR.ScottMat, FDR.Scott_emp = FDR.ScottMat_emp, nullHypSims)
+
+  print("Scenario 5")
+  print(scen5)
+  
+  save(list=c("scen5"),
+       file=paste(alt,"FDR_TPR_sims_additional.RData",sep="/"))
+  
+
+}
+@
+
+
+Session info:
+<<sessInf>>=
+devtools::session_info()
+@
+
+\end{document}
