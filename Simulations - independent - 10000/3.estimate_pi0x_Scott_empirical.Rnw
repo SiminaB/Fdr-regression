@@ -44,7 +44,7 @@ alts <- c("alt_beta","alt_chisq_large_3_3","alt_chisq_large",
 Perform estimation and save estimates:
 
 <<>>=
-for(alt in alts)
+for(alt in alts[6:9])
 {
   print(alt)
   
