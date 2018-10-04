@@ -1,0 +1,137 @@
+\documentclass{article}
+
+\begin{document}
+
+<<setup, include=FALSE, cache=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='Figures/', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=60)
+@
+
+<<prelims>>=
+## Load libraries
+library(splines)
+library(MASS)
+
+library(doParallel) ##to make cluster (on Windows)
+library(foreach) ##to use foreach function that does the parallel processing
+library(doRNG) ##for reproducible seeds when doing parallel processing
+
+##Source functions
+source("../functions.R")
+
+## Define the number of tests
+ntest <- 1000
+
+## Set number of simulations
+nSims <- 200
+@
+
+Do the simulations for a variety of alternative distributions:
+<<>>=
+alts <- c("alt_beta","alt_chisq_large_3_3","alt_chisq_large",
+          "alt_chisq_small_3_3","alt_chisq_small",
+          "alt_t_large","alt_t_small",
+          "alt_z_large",
+          "alt_z_small")
+@
+
+\section{Probability of being a false positive is linear}
+
+<<V>>=
+## Set up the time vector and the probability of being null
+tme <- seq(0,1, length=ntest)
+pi0 <- tme
+
+plot(pi0 ~ tme)
+
+for(alt in alts)
+{
+  pValuesSims <- run_sims_alt(alt, nSims, pi0)
+  
+  zValuesSims <- pValuesSims[,(2*ntest+1):(3*ntest)]
+  nullHypSims <- pValuesSims[,(ntest+1):(2*ntest)]
+  pValuesSims <- pValuesSims[,1:ntest]
+  
+  ##save results
+  save(file=paste(alt, "simResults_5.RData",sep="/"), 
+       list=c("pi0", "tme", "nullHypSims","pValuesSims","zValuesSims"))
+}
+@
+
+\section{Probability of being a false positive is linear - slope = 0.75}
+
+<<VI>>=
+## Set up the time vector and the probability of being null
+tme <- seq(0,1, length=ntest)
+pi0 <- 0.75*tme + 0.25
+
+plot(pi0 ~ tme, xlim = c(0,1), ylim = c(0,1))
+
+for(alt in alts)
+{
+  pValuesSims <- run_sims_alt(alt, nSims, pi0)
+  
+  zValuesSims <- pValuesSims[,(2*ntest+1):(3*ntest)]
+  nullHypSims <- pValuesSims[,(ntest+1):(2*ntest)]
+  pValuesSims <- pValuesSims[,1:ntest]
+  
+  ##save results
+  save(file=paste(alt, "simResults_6.RData",sep="/"), 
+       list=c("pi0", "tme", "nullHypSims","pValuesSims","zValuesSims"))
+}
+@
+
+\section{Probability of being a false positive is linear - slope = 0.5}
+
+<<VII>>=
+## Set up the time vector and the probability of being null
+tme <- seq(0,1, length=ntest)
+pi0 <- 0.5*tme + 0.5
+
+plot(pi0 ~ tme, xlim = c(0,1), ylim = c(0,1))
+
+for(alt in alts)
+{
+  pValuesSims <- run_sims_alt(alt, nSims, pi0)
+  
+  zValuesSims <- pValuesSims[,(2*ntest+1):(3*ntest)]
+  nullHypSims <- pValuesSims[,(ntest+1):(2*ntest)]
+  pValuesSims <- pValuesSims[,1:ntest]
+  
+  ##save results
+  save(file=paste(alt, "simResults_7.RData",sep="/"), 
+       list=c("pi0", "tme", "nullHypSims","pValuesSims","zValuesSims"))
+}
+@
+
+\section{Probability of being a false positive is linear - slope = 0.25}
+
+<<VIII>>=
+## Set up the time vector and the probability of being null
+tme <- seq(0,1, length=ntest)
+pi0 <- 0.25*tme + 0.75
+
+plot(pi0 ~ tme, xlim = c(0,1), ylim = c(0,1))
+
+for(alt in alts)
+{
+  pValuesSims <- run_sims_alt(alt, nSims, pi0)
+  
+  zValuesSims <- pValuesSims[,(2*ntest+1):(3*ntest)]
+  nullHypSims <- pValuesSims[,(ntest+1):(2*ntest)]
+  pValuesSims <- pValuesSims[,1:ntest]
+  
+  ##save results
+  save(file=paste(alt, "simResults_8.RData",sep="/"), 
+       list=c("pi0", "tme", "nullHypSims","pValuesSims","zValuesSims"))
+}
+@
+
+
+Session info:
+<<sessInf>>=
+devtools::session_info()
+@
+
+\end{document}

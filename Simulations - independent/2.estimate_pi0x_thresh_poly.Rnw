@@ -1,0 +1,176 @@
+\documentclass{article}
+
+\begin{document}
+
+<<setup, include=FALSE, cache=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='Figures/', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=60)
+@
+
+<<prelims>>=
+## Load libraries
+library(splines)
+library(MASS)
+library(swfdr)
+
+library(doParallel) ##to make cluster (on Windows)
+library(foreach) ##to use foreach function that does the parallel processing
+library(doRNG) ##for reproducible seeds when doing parallel processing
+##don't need doRNG here, but easier to keep it in
+
+##Source functions
+source("../functions.R")
+@
+
+Function to pull out means and variances across simulations:
+
+<<>>=
+pullMeansVars <- function(pi0EstSim)
+{
+  ##pull out estimates at lambda=0.8, lambda=0.9, and final estimate
+  pi0hat0.8 <- sapply(pi0EstSim, function(x){x[[1]]})
+  pi0hat0.9 <- sapply(pi0EstSim, function(x){x[[2]]})
+  pi0hatFinal <- sapply(pi0EstSim, function(x){x[[3]]})
+  
+  ##get means across simulations
+  pi0hatMean0.8 <- rowMeans(pi0hat0.8)
+  pi0hatMean0.9 <- rowMeans(pi0hat0.9)
+  pi0hatMeanFinal <- rowMeans(pi0hatFinal)
+  
+  ##also get variances across simulations
+  pi0hatVar0.8 <- apply(pi0hat0.8,1,var)
+  pi0hatVar0.9 <- apply(pi0hat0.9,1,var)
+  pi0hatVarFinal <- apply(pi0hatFinal,1,var)
+
+  return(list(pi0hatMean0.8=pi0hatMean0.8, 
+              pi0hatMean0.9=pi0hatMean0.9, 
+              pi0hatMeanFinal=pi0hatMeanFinal,
+              pi0hatVar0.8=pi0hatVar0.8, 
+              pi0hatVar0.9=pi0hatVar0.9, 
+              pi0hatVarFinal=pi0hatVarFinal))  
+}
+@
+
+Simulations are performed for a variety of alternative distributions:
+<<>>=
+alts <- c("alt_beta","alt_chisq_large_3_3","alt_chisq_large",
+          "alt_chisq_small_3_3","alt_chisq_small",
+          "alt_t_large","alt_t_small",
+          "alt_z_large",
+          "alt_z_small")
+@
+
+
+\section{Probability of being a false positive is $x^{5/4}$}
+
+Perform estimation and save estimates (use splines!):
+
+<<>>=
+for(alt in alts)
+{
+  load(paste(alt,"simResults_9.RData",sep="/"))
+  
+  splineMat <- ns(tme,df=3)
+  
+  pi0EstSim <- estimate_pi0x_sims(pValuesSims, splineMat)
+  
+  ##pull out means and variances of estimates at lambda=0.8, lambda=0.9, and final estimate
+  pi0MeansVars <- pullMeansVars(pi0EstSim)
+  
+  ##save full results
+  save(file=paste(alt,"simResults_pi0x_thresh_9_full.RData",sep="/"), 
+       list=c("pi0EstSim"))
+  
+  ##save summary results
+  save(file=paste(alt,"simResults_pi0x_thresh_9.RData",sep="/"), 
+       list=c("tme", "pi0", "pi0MeansVars"))
+}
+@
+
+
+\section{Probability of being a false positive is $x^{3/2}$}
+
+Perform estimation and save estimates (use splines!):
+
+<<>>=
+for(alt in alts)
+{
+  load(paste(alt,"simResults_10.RData",sep="/"))
+  
+  splineMat <- ns(tme,df=3)
+  
+  pi0EstSim <- estimate_pi0x_sims(pValuesSims, splineMat)
+  
+  ##pull out means and variances of estimates at lambda=0.8, lambda=0.9, and final estimate
+  pi0MeansVars <- pullMeansVars(pi0EstSim)
+  
+  ##save full results
+  save(file=paste(alt,"simResults_pi0x_thresh_10_full.RData",sep="/"), 
+       list=c("pi0EstSim"))
+  
+  ##save summary results
+  save(file=paste(alt,"simResults_pi0x_thresh_10.RData",sep="/"), 
+       list=c("tme", "pi0", "pi0MeansVars"))
+}
+@
+
+
+\section{Probability of being a false positive is quadratic}
+
+Perform estimation and save estimates (use splines!):
+
+<<>>=
+for(alt in alts)
+{
+  load(paste(alt,"simResults_11.RData",sep="/"))
+  
+  splineMat <- ns(tme,df=3)
+  
+  pi0EstSim <- estimate_pi0x_sims(pValuesSims, splineMat)
+  
+  ##pull out means and variances of estimates at lambda=0.8, lambda=0.9, and final estimate
+  pi0MeansVars <- pullMeansVars(pi0EstSim)
+  
+  ##save full results
+  save(file=paste(alt,"simResults_pi0x_thresh_11_full.RData",sep="/"), 
+       list=c("pi0EstSim"))
+  
+  ##save summary results
+  save(file=paste(alt,"simResults_pi0x_thresh_11.RData",sep="/"), 
+       list=c("tme", "pi0", "pi0MeansVars"))
+}
+@
+
+\section{Probability of being a false positive is cubic}
+
+Perform estimation and save estimates (use splines!):
+
+<<>>=
+for(alt in alts)
+{
+  load(paste(alt,"simResults_12.RData",sep="/"))
+  
+  splineMat <- ns(tme,df=3)
+  
+  pi0EstSim <- estimate_pi0x_sims(pValuesSims, splineMat)
+  
+  ##pull out means and variances of estimates at lambda=0.8, lambda=0.9, and final estimate
+  pi0MeansVars <- pullMeansVars(pi0EstSim)
+  
+  ##save full results
+  save(file=paste(alt,"simResults_pi0x_thresh_12_full.RData",sep="/"), 
+       list=c("pi0EstSim"))
+  
+  ##save summary results
+  save(file=paste(alt,"simResults_pi0x_thresh_12.RData",sep="/"), 
+       list=c("tme", "pi0", "pi0MeansVars"))
+}
+@
+
+Session info:
+<<sessInf>>=
+devtools::session_info()
+@
+
+\end{document}

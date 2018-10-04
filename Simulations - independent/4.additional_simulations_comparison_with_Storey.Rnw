@@ -1,0 +1,101 @@
+\documentclass{article}
+
+\begin{document}
+
+<<setup, include=FALSE, cache=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='Figures/', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=60)
+@
+
+<<prelims>>=
+## Load libraries
+library(splines)
+library(MASS)
+library(xtable)
+library(qvalue)
+library(ggplot2)
+
+##Source functions
+source("../functions.R")
+@
+
+
+Simulations are performed for a variety of alternative distributions:
+<<>>=
+alts <- c("alt_beta","alt_chisq_large_3_3","alt_chisq_large",
+          "alt_chisq_small_3_3","alt_chisq_small",
+          "alt_t_large","alt_t_small",
+          "alt_z_large",
+          "alt_z_small")
+@
+
+Only focus on z large and t large
+
+<<alt_z_large>>=
+alt = "alt_z_large"
+
+
+load(paste(alt,"FDR_TPR_sims_additional.RData",sep="/"))
+load(paste(alt,"FDR_TPR_sims_additional_6.RData",sep="/"))
+load(paste(alt,"FDR_TPR_sims_additional_7.RData",sep="/"))
+load(paste(alt,"FDR_TPR_sims_additional_8.RData",sep="/"))
+
+##get all the values to be plotted in a data frame
+FDR.TPR <- data.frame(slope = rep(c(0.25,0.5,0.75,1),each=2),
+                      method = rep(c("BL","Storey"), times=4),
+                      FDR = c(scen8[c("BL","Storey"),"FDR"],scen7[c("BL","Storey"),"FDR"],
+                              scen6[c("BL","Storey"),"FDR"],scen5[c("BL","Storey"),"FDR"]),
+                      TPR = c(scen8[c("BL","Storey"),"TPR"],scen7[c("BL","Storey"),"TPR"],
+                              scen6[c("BL","Storey"),"TPR"],scen5[c("BL","Storey"),"TPR"]))
+
+FDR.TPR
+
+ggplot(FDR.TPR, aes(x=slope, y=FDR, color=method)) +
+  geom_point() +
+  ylim(c(0,0.1))
+ggplot(FDR.TPR, aes(x=slope, y=TPR, color=method)) +
+  geom_point() +
+  ylim(c(0,1))
+
+
+@
+
+
+
+<<alt_t_large>>=
+alt = "alt_t_large"
+
+
+load(paste(alt,"FDR_TPR_sims_additional.RData",sep="/"))
+load(paste(alt,"FDR_TPR_sims_additional_6.RData",sep="/"))
+load(paste(alt,"FDR_TPR_sims_additional_7.RData",sep="/"))
+load(paste(alt,"FDR_TPR_sims_additional_8.RData",sep="/"))
+
+##get all the values to be plotted in a data frame
+FDR.TPR <- data.frame(slope = rep(c(0.25,0.5,0.75,1),each=2),
+                      method = rep(c("BL","Storey"), times=4),
+                      FDR = c(scen8[c("BL","Storey"),"FDR"],scen7[c("BL","Storey"),"FDR"],
+                              scen6[c("BL","Storey"),"FDR"],scen5[c("BL","Storey"),"FDR"]),
+                      TPR = c(scen8[c("BL","Storey"),"TPR"],scen7[c("BL","Storey"),"TPR"],
+                              scen6[c("BL","Storey"),"TPR"],scen5[c("BL","Storey"),"TPR"]))
+
+FDR.TPR
+
+ggplot(FDR.TPR, aes(x=slope, y=FDR, color=method)) +
+  geom_point() +
+  ylim(c(0,0.1))
+ggplot(FDR.TPR, aes(x=slope, y=TPR, color=method)) +
+  geom_point() +
+  ylim(c(0,1))
+
+
+@
+
+
+Session info:
+<<sessInf>>=
+devtools::session_info()
+@
+
+\end{document}

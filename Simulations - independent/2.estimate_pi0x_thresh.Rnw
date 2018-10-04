@@ -59,6 +59,7 @@ alts <- c("alt_beta","alt_chisq_large_3_3","alt_chisq_large",
           "alt_t_large","alt_t_small",
           "alt_z_large",
           "alt_z_small")
+alts <- alts[c(1,2,3,6,8)]
 @
 
 \section{Probability of being a false positive is flat}

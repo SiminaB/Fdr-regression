@@ -1,0 +1,70 @@
+\documentclass{article}
+
+\begin{document}
+
+<<setup, include=FALSE, cache=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='Figures/', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=60)
+@
+
+<<prelims>>=
+## Load libraries
+library(splines)
+library(MASS)
+
+library(doParallel) ##to make cluster (on Windows)
+library(foreach) ##to use foreach function that does the parallel processing
+library(doRNG) ##for reproducible seeds when doing parallel processing
+
+##Source functions
+source("../functions.R")
+
+## Define the number of tests
+ntest <- 1000
+
+## Set number of simulations
+nSims <- 1000 ##have more, since it's all null
+@
+
+Nothing from alternative distribution, since this is for the global null:
+<<>>=
+folder <- "global_null"
+@
+
+\section{Probability of being a false positive is 1}
+
+<<V>>=
+## Set up the time vector and the probability of being null
+tme <- seq(0,1, length=ntest)
+pi0 <- rep(1, ntest)
+
+plot(pi0 ~ tme)
+
+set.seed(314014)
+
+##generate z-values, p-values
+zValuesSims <- rnorm(nSims*ntest, 0, 1)
+pValuesSims <- 2*(1-pnorm(abs(zValuesSims)))
+##check
+hist(zValuesSims, col="grey")
+hist(pValuesSims, col="grey")
+
+##put into matrix form
+pValuesSims <- matrix(pValuesSims,nrow=nSims,ncol=ntest)
+zValuesSims <- matrix(zValuesSims,nrow=nSims,ncol=ntest)
+nullHypSims <- matrix(1,nrow=nSims,ncol=ntest)
+
+##save results
+save(file=paste(folder, "simResults_0.RData",sep="/"), 
+     list=c("pi0", "tme", "nullHypSims","pValuesSims","zValuesSims"))
+
+@
+
+
+Session info:
+<<sessInf>>=
+devtools::session_info()
+@
+
+\end{document}

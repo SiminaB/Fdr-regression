@@ -1,0 +1,153 @@
+\documentclass{article}
+
+\begin{document}
+
+<<setup, include=FALSE, cache=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='Figures/', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=60)
+@
+
+<<prelims>>=
+## Load libraries
+library(splines)
+library(MASS)
+library(FDRreg)
+library(curl)
+
+library(doParallel) ##to make cluster (on Windows)
+library(foreach) ##to use foreach function that does the parallel processing
+library(doRNG) ##for reproducible seeds when doing parallel processing
+
+##Source functions
+source("../functions.R")
+
+options(warn=1)
+@
+
+Define nulltype for Scott method:
+<<>>=
+nulltype <- "empirical"
+@
+
+Simulations are performed for a variety of alternative distributions:
+<<>>=
+alts <- c("alt_beta","alt_chisq_large_3_3","alt_chisq_large",
+          "alt_chisq_small_3_3","alt_chisq_small",
+          "alt_t_large","alt_t_small",
+          "alt_z_large",
+          "alt_z_small")
+alts <- alts[c(6,8)]
+@
+
+\section{Probability of being a false positive is 0.9}
+
+Perform estimation and save estimates:
+
+<<>>=
+for(alt in alts)
+{
+  print(alt)
+  
+  load(paste(alt,"simResults_1.RData",sep="/"))
+  ntest <- ncol(zValuesSims)
+  
+  splineMat <- ns(tme,df=3)
+  
+  pi0hatScottMat_empFitSpl <- estimate_Scott_sims(zValuesSims, splineMat, nulltype)
+
+  pi0hatSpl.ScottMean_emp <- colMeans(pi0hatScottMat_empFitSpl[,1:ntest])
+  pi0hatSpl.ScottVar_emp <- apply(pi0hatScottMat_empFitSpl[,1:ntest],2,var)
+  
+  pi0hat.Spl.ScottMat_emp <- pi0hatScottMat_empFitSpl[,1:ntest]
+  FDR.Spl.ScottMat_emp <- pi0hatScottMat_empFitSpl[,(ntest+1):(2*ntest)]
+  
+  ##save full results
+  save(file=paste(alt,"simResults_pi0x_Scott_emp_1_splines_full.RData",sep="/"), 
+       list=c("pi0hat.Spl.ScottMat_emp", "FDR.Spl.ScottMat_emp"))
+  
+  ##save summary results
+  save(file=paste(alt,"simResults_pi0x_Scott_emp_1_splines.RData",sep="/"), 
+       list=c("tme", "pi0", 
+              "pi0hatSpl.ScottMean_emp", "pi0hatSpl.ScottVar_emp"))
+}
+
+@
+
+\section{Probability of being a false positive is linear}
+
+Perform estimation and save estimates:
+
+<<>>=
+for(alt in alts)
+{
+  print(alt)
+  
+  load(paste(alt,"simResults_5.RData",sep="/"))
+  ntest <- ncol(zValuesSims)
+
+  splineMat <- ns(tme,df=3)
+  
+  pi0hatScottMat_empFitSpl <- estimate_Scott_sims(zValuesSims, splineMat, nulltype)
+
+  pi0hatSpl.ScottMean_emp <- colMeans(pi0hatScottMat_empFitSpl[,1:ntest])
+  pi0hatSpl.ScottVar_emp <- apply(pi0hatScottMat_empFitSpl[,1:ntest],2,var)
+  
+  pi0hat.Spl.ScottMat_emp <- pi0hatScottMat_empFitSpl[,1:ntest]
+  FDR.Spl.ScottMat_emp <- pi0hatScottMat_empFitSpl[,(ntest+1):(2*ntest)]
+  
+  ##save full results
+  save(file=paste(alt,"simResults_pi0x_Scott_emp_5_splines_full.RData",sep="/"), 
+       list=c("pi0hat.Spl.ScottMat_emp", "FDR.Spl.ScottMat_emp"))
+  
+  ##save summary results
+  save(file=paste(alt,"simResults_pi0x_Scott_emp_5_splines.RData",sep="/"), 
+       list=c("tme", "pi0", 
+              "pi0hatSpl.ScottMean_emp", "pi0hatSpl.ScottVar_emp"))
+}
+
+@
+
+\section{Probability of being a false positive is 1}
+
+Nothing from alternative distribution, since this is for the global null:
+<<>>=
+folder <- "global_null"
+@
+
+Perform estimation and save estimates:
+
+<<>>=
+set.seed(880184)
+
+print(folder)
+
+load(paste(folder,"simResults_0.RData",sep="/"))
+ntest <- ncol(zValuesSims)
+
+splineMat <- ns(tme,df=3)
+
+pi0hatScottMat_empFitSpl <- estimate_Scott_sims(zValuesSims, splineMat, nulltype)
+
+pi0hatSpl.ScottMean_emp <- colMeans(pi0hatScottMat_empFitSpl[,1:ntest])
+pi0hatSpl.ScottVar_emp <- apply(pi0hatScottMat_empFitSpl[,1:ntest],2,var)
+
+pi0hat.Spl.ScottMat_emp <- pi0hatScottMat_empFitSpl[,1:ntest]
+FDR.Spl.ScottMat_emp <- pi0hatScottMat_empFitSpl[,(ntest+1):(2*ntest)]
+
+##save full results
+save(file=paste(folder,"simResults_pi0x_Scott_emp_0_splines_full.RData",sep="/"), 
+     list=c("pi0hat.Spl.ScottMat_emp", "FDR.Spl.ScottMat_emp"))
+
+##save summary results
+save(file=paste(folder,"simResults_pi0x_Scott_emp_0_splines.RData",sep="/"), 
+     list=c("tme", "pi0", 
+            "pi0hatSpl.ScottMean_emp", "pi0hatSpl.ScottVar_emp"))
+@
+
+Session info:
+<<sessInf>>=
+devtools::session_info()
+@
+
+\end{document}

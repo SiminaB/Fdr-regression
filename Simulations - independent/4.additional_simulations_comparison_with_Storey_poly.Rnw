@@ -1,0 +1,186 @@
+\documentclass{article}
+
+\begin{document}
+
+<<setup, include=FALSE, cache=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='Figures/', fig.align='center', fig.show='hold', echo=FALSE)
+options(replace.assign=TRUE,width=60)
+@
+
+<<prelims>>=
+options(warn=-1)
+
+## Load libraries
+library(splines)
+library(MASS)
+library(xtable)
+library(qvalue)
+library(ggplot2)
+
+##Source functions
+source("../functions.R")
+@
+
+I considered functions like $\pi_0(x) = x^k$, with $k = \{1,1.25,1.5,2,3\}$ (so polynomial-ish). The tables/plots show their FDR and TPR in terms of k, i.e. the ``degree."
+
+%Simulations are performed for a variety of alternative distributions:
+<<>>=
+alts <- c("alt_beta","alt_chisq_large_3_3","alt_chisq_large",
+          "alt_chisq_small_3_3","alt_chisq_small",
+          "alt_t_large","alt_t_small",
+          "alt_z_large",
+          "alt_z_small")
+@
+
+\section{Z statistics}
+
+<<alt_z_large, fig.height=4, fig.width=5>>=
+alt = "alt_z_large"
+
+
+load(paste(alt,"FDR_TPR_sims_additional.RData",sep="/"))
+load(paste(alt,"FDR_TPR_sims_9.RData",sep="/"))
+load(paste(alt,"FDR_TPR_sims_10.RData",sep="/"))
+load(paste(alt,"FDR_TPR_sims_11.RData",sep="/"))
+load(paste(alt,"FDR_TPR_sims_12.RData",sep="/"))
+
+
+##get all the values to be plotted in a data frame
+FDR.TPR <- data.frame(##Exponent = rep(c("Exponent = 1","Exponent = 1.25","Exponent = 1.5","Exponent = 2","Exponent = 3"),each=2),
+  Exponent = rep(c(1,1.25,1.5,2,3), each=2),
+  Estimate = rep(c("BL","Storey"), times=5),
+  FDR = c(scen5[c("BL","Storey"),"FDR"],scen9[c("BL","Storey"),"FDR"],
+          scen10[c("BL","Storey"),"FDR"],scen11[c("BL","Storey"),"FDR"],
+          scen12[c("BL","Storey"),"FDR"]),
+  TPR = c(scen5[c("BL","Storey"),"TPR"],scen9[c("BL","Storey"),"TPR"],
+          scen10[c("BL","Storey"),"TPR"],scen11[c("BL","Storey"),"TPR"],
+          scen12[c("BL","Storey"),"TPR"]))
+
+FDR.TPR
+
+ggplot(FDR.TPR, aes(x=Exponent, y=FDR, color=Estimate, shape=Estimate)) +
+  geom_point() + scale_color_manual(values=c("orange","brown")) +
+  theme(axis.line = element_line(colour = "black"),
+        plot.title = element_text(size = 16, hjust = 0.5),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(),
+        legend.key = element_blank(),
+        legend.text.align = 0,
+        legend.title=element_text(size=13),
+        legend.text=element_text(size=12),
+        strip.background = element_blank(),
+        strip.text.x = element_text(size = 12),        
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10))+
+  geom_hline(yintercept=c(0.04,0.05,0.06), linetype="dotted") +
+  scale_x_continuous(breaks = c(1, 1.25, 1.5, 2, 3)) +
+  ylab("") +
+  ylim(c(0.025,0.075)) +
+  ggtitle("FDR")
+
+ggplot(FDR.TPR, aes(x=Exponent, y=TPR, color=Estimate, shape=Estimate)) +
+  geom_point() + scale_color_manual(values=c("orange","brown")) +
+  theme(axis.line = element_line(colour = "black"),
+        plot.title = element_text(size = 16, hjust = 0.5),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(),
+        legend.key = element_blank(),
+        legend.text.align = 0,
+        legend.title=element_text(size=13),
+        legend.text=element_text(size=12),
+        strip.background = element_blank(),
+        strip.text.x = element_text(size = 12),        
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10))+
+  scale_x_continuous(breaks = c(1, 1.25, 1.5, 2, 3)) +
+  ylab("") +
+  ylim(c(0.5,1)) +
+  ggtitle("TPR")
+
+
+@
+
+\clearpage
+
+\section{T statistics}
+
+<<alt_t_large, fig.height=4, fig.width=5>>=
+alt = "alt_t_large"
+
+load(paste(alt,"FDR_TPR_sims_additional.RData",sep="/"))
+load(paste(alt,"FDR_TPR_sims_9.RData",sep="/"))
+load(paste(alt,"FDR_TPR_sims_10.RData",sep="/"))
+load(paste(alt,"FDR_TPR_sims_11.RData",sep="/"))
+load(paste(alt,"FDR_TPR_sims_12.RData",sep="/"))
+
+##get all the values to be plotted in a data frame
+FDR.TPR <- data.frame(##Exponent = rep(c("Exponent = 1","Exponent = 1.25","Exponent = 1.5","Exponent = 2","Exponent = 3"),each=2),
+  Exponent = rep(c(1,1.25,1.5,2,3), each=2),
+  Estimate = rep(c("BL","Storey"), times=5),
+  FDR = c(scen5[c("BL","Storey"),"FDR"],scen9[c("BL","Storey"),"FDR"],
+          scen10[c("BL","Storey"),"FDR"],scen11[c("BL","Storey"),"FDR"],
+          scen12[c("BL","Storey"),"FDR"]),
+  TPR = c(scen5[c("BL","Storey"),"TPR"],scen9[c("BL","Storey"),"TPR"],
+          scen10[c("BL","Storey"),"TPR"],scen11[c("BL","Storey"),"TPR"],
+          scen12[c("BL","Storey"),"TPR"]))
+
+FDR.TPR
+
+ggplot(FDR.TPR, aes(x=Exponent, y=FDR, color=Estimate, shape=Estimate)) +
+  geom_point() + scale_color_manual(values=c("orange","brown")) +
+  theme(axis.line = element_line(colour = "black"),
+        plot.title = element_text(size = 16, hjust = 0.5),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(),
+        legend.key = element_blank(),
+        legend.text.align = 0,
+        legend.title=element_text(size=13),
+        legend.text=element_text(size=12),
+        strip.background = element_blank(),
+        strip.text.x = element_text(size = 12),        
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10))+
+  geom_hline(yintercept=c(0.04,0.05,0.06), linetype="dotted") +
+  scale_x_continuous(breaks = c(1, 1.25, 1.5, 2, 3)) +
+  ylab("") +
+  ylim(c(0.025,0.075)) +
+  ggtitle("FDR")
+
+ggplot(FDR.TPR, aes(x=Exponent, y=TPR, color=Estimate, shape=Estimate)) +
+  geom_point() + scale_color_manual(values=c("orange","brown")) +
+  theme(axis.line = element_line(colour = "black"),
+        plot.title = element_text(size = 16, hjust = 0.5),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(),
+        legend.key = element_blank(),
+        legend.text.align = 0,
+        legend.title=element_text(size=13),
+        legend.text=element_text(size=12),
+        strip.background = element_blank(),
+        strip.text.x = element_text(size = 12),        
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10))+
+  scale_x_continuous(breaks = c(1, 1.25, 1.5, 2, 3)) +
+  ylab("") +
+  ylim(c(0.5,1)) +
+  ggtitle("TPR")
+
+
+@
+
+
+%Session info:
+<<sessInf>>=
+#devtools::session_info()
+@
+
+\end{document}

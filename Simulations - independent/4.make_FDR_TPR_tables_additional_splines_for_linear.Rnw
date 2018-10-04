@@ -1,0 +1,176 @@
+\documentclass{article}
+
+\begin{document}
+
+<<setup, include=FALSE, cache=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='Figures/', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=60)
+@
+
+<<prelims>>=
+## Load libraries
+library(splines)
+library(MASS)
+library(xtable)
+library(qvalue)
+
+##Source functions
+source("../functions.R")
+@
+
+\section{Flat functions}
+
+Different alternative distributions:
+
+<<>>=
+alts <- c("alt_beta","alt_chisq_large_3_3","alt_chisq_large",
+          "alt_t_large","alt_z_large")
+@
+
+Make FDR-TPR tables:
+
+<<>>=
+for(a in 1:5)
+{
+  alt <- alts[a]
+  
+  print(alt)
+  
+  ##For each simulation, get the FDR-TPR table: (BL = Boca-Leek method)
+  scen5 <- NULL
+  
+  ##-------------------Set 5----------------##
+  
+  nr <- 5
+  
+  ##don't use Scott methods unless distribution of test statistics is normal or t
+  if(a %in% 4:5)
+  {
+    #Load p-values and $\pi_0(x)$ estimates for the simulations:
+    load(paste(alt,"/simResults_", nr, ".RData",sep=""))
+    load(paste(alt,"/simResults_pi0x_thresh_", nr, "_splines_full.RData",sep=""))
+    load(paste(alt,"/simResults_pi0x_Scott_", nr, "_splines_full.RData",sep=""))
+    load(paste(alt,"/simResults_pi0x_Scott_emp_", nr, "_splines_full.RData",sep=""))
+
+  } else {
+    load(paste(alt,"/simResults_", 5, ".RData",sep=""))
+    load(paste(alt,"/simResults_pi0x_thresh_", 5, "_full.RData",sep=""))
+    
+    FDR.Spl.ScottMat <- NULL
+    FDR.Spl.ScottMat_emp <- NULL
+  }
+  
+  ##Get BH and Storey q-values for each simulation:
+  qValuesSimsBH <- getQValuesSimsBH(pValuesSims)
+  qValuesSimsStorey <- getQValuesSimsStorey(pValuesSims)
+
+  ##Get estimated FDR for each simulation for the final estimates
+  FDRreg <- getFDRregSims(pi0EstSim, qValuesSimsBH)
+  
+  ##get FDR-TPR table
+  scen5 <- estFDR.TPR(FDR.BL = FDRreg, 
+                      FDR.BH = qValuesSimsBH, FDR.Storey = qValuesSimsStorey, 
+                      FDR.Scott = FDR.Spl.ScottMat, FDR.Scott_emp = FDR.Spl.ScottMat_emp, nullHypSims)
+
+  print("Scenario 5")
+  print(scen5)
+
+  ##For each simulation, get the FDR-TPR table: (BL = Boca-Leek method)
+  scen1 <- NULL
+  
+  ##-------------------Set 1----------------##
+  
+  nr <- 1
+  
+  ##don't use Scott methods unless distribution of test statistics is normal or t
+  if(a %in% 4:5)
+  {
+    #Load p-values and $\pi_0(x)$ estimates for the simulations:
+    load(paste(alt,"/simResults_", nr, ".RData",sep=""))
+    load(paste(alt,"/simResults_pi0x_thresh_", nr, "_splines_full.RData",sep=""))
+    load(paste(alt,"/simResults_pi0x_Scott_", nr, "_splines_full.RData",sep=""))
+    load(paste(alt,"/simResults_pi0x_Scott_emp_", nr, "_splines_full.RData",sep=""))
+
+  } else {
+    load(paste(alt,"/simResults_", 1, ".RData",sep=""))
+    load(paste(alt,"/simResults_pi0x_thresh_", 1, "_full.RData",sep=""))
+    
+    FDR.Spl.ScottMat <- NULL
+    FDR.Spl.ScottMat_emp <- NULL
+  }
+  
+  ##Get BH and Storey q-values for each simulation:
+  qValuesSimsBH <- getQValuesSimsBH(pValuesSims)
+  qValuesSimsStorey <- getQValuesSimsStorey(pValuesSims)
+
+  ##Get estimated FDR for each simulation for the final estimates
+  FDRreg <- getFDRregSims(pi0EstSim, qValuesSimsBH)
+  
+  ##get FDR-TPR table
+  scen1 <- estFDR.TPR(FDR.BL = FDRreg, 
+                      FDR.BH = qValuesSimsBH, FDR.Storey = qValuesSimsStorey, 
+                      FDR.Scott = FDR.Spl.ScottMat, FDR.Scott_emp = FDR.Spl.ScottMat_emp, nullHypSims)
+  
+  print("Scenario 1")
+  print(scen1)
+  
+  save(list=c("scen1","scen5"),
+       file=paste(alt,"FDR_TPR_sims_splines_I_V.RData",sep="/"))
+}
+@
+
+\section{Global null}
+
+Nothing from alternative distribution, since this is for the global null:
+<<>>=
+folder <- "global_null"
+@
+
+Make FDR-TPR table:
+
+<<>>=
+print(folder)
+
+##For each simulation, get the FDR-TPR table: (BL = Boca-Leek method)
+scen0 <- NULL
+
+##-------------------Set 0----------------##
+
+nr <- 0
+
+#Load p-values and $\pi_0(x)$ estimates for the simulations:
+load(paste(folder,"/simResults_", nr, ".RData",sep=""))
+load(paste(folder,"/simResults_pi0x_thresh_", nr, "_splines_full.RData",sep=""))
+load(paste(folder,"/simResults_pi0x_Scott_", nr, "_splines_full.RData",sep=""))
+load(paste(folder,"/simResults_pi0x_Scott_emp_", nr, "_splines_full.RData",sep=""))
+
+##Get BH and Storey q-values for each simulation:
+qValuesSimsBH <- getQValuesSimsBH(pValuesSims)
+qValuesSimsStorey <- getQValuesSimsStorey(pValuesSims)
+
+print(mean(qValuesSimsStorey))
+
+##Get estimated FDR for each simulation for the final estimates
+FDRreg <- getFDRregSims(pi0EstSim, qValuesSimsBH)
+
+##get FDR-TPR table
+scen0 <- estFDR.TPR(FDR.BL = FDRreg, 
+                    FDR.BH = qValuesSimsBH, FDR.Storey = qValuesSimsStorey, 
+                    FDR.Scott = FDR.Spl.ScottMat, FDR.Scott_emp = FDR.Spl.ScottMat_emp, nullHypSims)
+
+print("Scenario 0")
+print(scen0)
+
+save(list=c("scen0"),
+     file=paste(folder,"FDR_TPR_sims_additional_global_splines.RData",sep="/"))
+
+
+@
+
+Session info:
+<<sessInf>>=
+devtools::session_info()
+@
+
+\end{document}

@@ -1,0 +1,71 @@
+\documentclass{article}
+
+\begin{document}
+
+<<setup, include=FALSE, cache=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='Figures/', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=60)
+@
+
+<<prelims>>=
+## Load libraries
+library(splines)
+library(MASS)
+library(FDRreg)
+library(curl)
+
+library(doParallel) ##to make cluster (on Windows)
+library(foreach) ##to use foreach function that does the parallel processing
+library(doRNG) ##for reproducible seeds when doing parallel processing
+
+##Source functions
+source("../functions.R")
+
+options(warn=1) ##print warnings as you go along
+@
+
+Define nulltype for Scott method:
+<<>>=
+nulltype <- "theoretical"
+@
+
+Nothing from alternative distribution, since this is for the global null:
+<<>>=
+folder <- "global_null"
+@
+\section{Probability of being a false positive is 1}
+
+Perform estimation and save estimates:
+
+<<>>=
+
+print(folder)
+load(paste(folder,"simResults_0.RData",sep="/"))
+ntest <- ncol(zValuesSims)
+
+pi0hatScottMat <- estimate_Scott_sims(zValuesSims, tme, nulltype)
+
+pi0hatScottMean <- colMeans(pi0hatScottMat[,1:ntest])
+pi0hatScottVar <- apply(pi0hatScottMat[,1:ntest],2,var)
+
+pi0hat.ScottMat <- pi0hatScottMat[,1:ntest]
+FDR.ScottMat <- pi0hatScottMat[,(ntest+1):(2*ntest)]
+
+##save full results
+save(file=paste(folder,"simResults_pi0x_Scott_0_full.RData",sep="/"), 
+     list=c("pi0hat.ScottMat", "FDR.ScottMat"))
+
+##save summary results
+save(file=paste(folder,"simResults_pi0x_Scott_0.RData",sep="/"), 
+     list=c("tme", "pi0", 
+            "pi0hatScottMean","pi0hatScottVar"))
+
+@
+
+Session info:
+<<sessInf>>=
+devtools::session_info()
+@
+
+\end{document}
